@@ -376,6 +376,26 @@ const modelData = modelOptions.map((model) => ({
 
 			bubble.textContent = message[getCurrentLanguage()] || message.zh;
 			bubble.classList.add("live2d-bubble-active");
+			window.requestAnimationFrame(() => {
+				const bubbleRect = bubble.getBoundingClientRect();
+				const widgetRect = widget.getBoundingClientRect();
+				let offsetX = 0;
+
+				if (bubbleRect.left < 8) {
+					offsetX = 8 - bubbleRect.left;
+				} else if (bubbleRect.right > window.innerWidth - 8) {
+					offsetX = window.innerWidth - 8 - bubbleRect.right;
+				}
+
+				bubble.style.left = `${4 + offsetX}px`;
+				if (bubbleRect.top < 8) {
+					bubble.style.bottom = "auto";
+					bubble.style.top = `${Math.max(4, widgetRect.height * 0.08)}px`;
+				} else {
+					bubble.style.top = "auto";
+					bubble.style.bottom = "calc(100% + 0.35rem)";
+				}
+			});
 			window.clearTimeout(bubbleTimer);
 			bubbleTimer = window.setTimeout(() => {
 				bubble.classList.remove("live2d-bubble-active");
@@ -477,11 +497,32 @@ const modelData = modelOptions.map((model) => ({
 			}
 		};
 
-		canvas.addEventListener("click", () => {
+		const fitModelToWidget = (model, app) => {
+			model.scale.set(1);
+			model.anchor?.set?.(0.5, 0.5);
+
+			const screenWidth = app.screen.width;
+			const screenHeight = app.screen.height;
+			const modelWidth = Math.max(model.width, 1);
+			const modelHeight = Math.max(model.height, 1);
+			const scale = Math.min(
+				(screenWidth * 0.88) / modelWidth,
+				(screenHeight * 0.92) / modelHeight,
+			);
+
+			model.scale.set(scale);
+			model.position.set(screenWidth / 2, screenHeight / 2);
+		};
+
+		const triggerLive2DInteraction = () => {
 			if (live2dModel) {
 				playTapMotion(live2dModel);
+			} else {
+				showBubble();
 			}
-		});
+		};
+
+		canvas.addEventListener("click", triggerLive2DInteraction);
 
 		const loadModel = async (model = getSelectedModel(), forceReload = false) => {
 			if (live2dLoading) return;
@@ -518,13 +559,7 @@ const modelData = modelOptions.map((model) => ({
 			}
 
 			disposeModel();
-			loadedModel.anchor.set(0.5, 1);
-			loadedModel.position.set(app.renderer.width / 2, app.renderer.height);
-			const scale = Math.min(
-				app.renderer.width / loadedModel.width,
-				app.renderer.height / loadedModel.height,
-			) * 0.92;
-			loadedModel.scale.set(scale);
+			fitModelToWidget(loadedModel, app);
 			loadedModel.interactive = true;
 			loadedModel.buttonMode = true;
 			loadedModel.on("hit", () => playTapMotion(loadedModel));
@@ -534,7 +569,7 @@ const modelData = modelOptions.map((model) => ({
 			live2dModel = loadedModel;
 
 			resizeModel = () => {
-				loadedModel.position.set(app.renderer.width / 2, app.renderer.height);
+				fitModelToWidget(loadedModel, app);
 			};
 			window.addEventListener("resize", resizeModel);
 			live2dLoaded = true;
@@ -570,6 +605,9 @@ const modelData = modelOptions.map((model) => ({
 				pointerId: event.pointerId,
 				offsetX: event.clientX - rect.left,
 				offsetY: event.clientY - rect.top,
+				startX: event.clientX,
+				startY: event.clientY,
+				moved: false,
 			};
 			widget.classList.add("live2d-dragging");
 			widget.setPointerCapture(event.pointerId);
@@ -578,17 +616,28 @@ const modelData = modelOptions.map((model) => ({
 		widget.addEventListener("pointermove", (event) => {
 			if (!dragState || dragState.pointerId !== event.pointerId) return;
 			event.preventDefault();
+			const distance = Math.hypot(
+				event.clientX - dragState.startX,
+				event.clientY - dragState.startY,
+			);
+			if (distance > 5) {
+				dragState.moved = true;
+			}
 			setPosition(event.clientX - dragState.offsetX, event.clientY - dragState.offsetY);
 		});
 
 		const endDrag = (event) => {
 			if (!dragState || dragState.pointerId !== event.pointerId) return;
+			const wasTap = !dragState.moved;
 			dragState = null;
 			widget.classList.remove("live2d-dragging");
 			try {
 				widget.releasePointerCapture(event.pointerId);
 			} catch {
 				// Pointer capture may already be released by the browser.
+			}
+			if (wasTap && !event.target.closest("button, a, select")) {
+				triggerLive2DInteraction();
 			}
 		};
 
@@ -608,8 +657,14 @@ const modelData = modelOptions.map((model) => ({
 			return;
 		}
 
-		window.addEventListener("load", () => {
+		const queueInitialLoad = () => {
 			window.requestIdleCallback?.(loadModel) ?? window.setTimeout(loadModel, 800);
-		});
+		};
+
+		if (document.readyState === "complete" || document.readyState === "interactive") {
+			queueInitialLoad();
+		} else {
+			window.addEventListener("load", queueInitialLoad, { once: true });
+		}
 	})();
 </script>
