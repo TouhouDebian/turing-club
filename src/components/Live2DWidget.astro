@@ -334,7 +334,7 @@ const modelData = modelOptions.map((model) => ({
 				mouthForm: 0.25,
 				mouthOpen: 0.42,
 				brows: { y: 0.55, form: 0.18, angle: 0.2 },
-				gesture: { bodyX: -1.4, bodyY: 0.8, bodyZ: -0.9, armL: -1.1, armR: 0.8 },
+				gesture: { bodyX: -1.1, bodyY: 0.7, bodyZ: -0.7, wing: 0.7, handL: 0.55, handR: 0.35 },
 			},
 			{
 				mood: "happy",
@@ -344,7 +344,7 @@ const modelData = modelOptions.map((model) => ({
 				mouthForm: 0.75,
 				mouthOpen: 0.55,
 				brows: { y: 0.28, form: 0.35, angle: 0 },
-				gesture: { bodyX: 0.8, bodyY: -0.9, bodyZ: 1, armL: 1.4, armR: -1.2 },
+				gesture: { bodyX: 0.7, bodyY: -0.8, bodyZ: 0.8, wing: 1.1, handL: 0.2, handR: 0.75 },
 			},
 			{
 				mood: "cute",
@@ -354,7 +354,7 @@ const modelData = modelOptions.map((model) => ({
 				mouthForm: 0.65,
 				mouthOpen: 0.38,
 				brows: { y: 0.2, form: 0.45, angle: 0 },
-				gesture: { bodyX: 1, bodyY: 0.7, bodyZ: 1.2, armL: 1, armR: 1 },
+				gesture: { bodyX: 0.8, bodyY: 0.6, bodyZ: 1, wing: 1.2, handL: 0.7, handR: 0.7 },
 			},
 			{
 				mood: "cute",
@@ -364,7 +364,7 @@ const modelData = modelOptions.map((model) => ({
 				mouthForm: 0.62,
 				mouthOpen: 0.38,
 				brows: { y: 0.2, form: 0.45, angle: 0 },
-				gesture: { bodyX: 0.8, bodyY: -0.6, bodyZ: -1.2, armL: -1, armR: -1 },
+				gesture: { bodyX: 0.7, bodyY: -0.5, bodyZ: -1, wing: 1, handL: 0.65, handR: 0.45 },
 			},
 			{
 				mood: "annoyed",
@@ -374,7 +374,7 @@ const modelData = modelOptions.map((model) => ({
 				mouthForm: -0.55,
 				mouthOpen: 0.9,
 				brows: { y: -0.55, form: -0.45, angle: -0.8 },
-				gesture: { bodyX: -1.4, bodyY: -0.8, bodyZ: 1.6, armL: -1.6, armR: 1.6 },
+				gesture: { bodyX: -1.1, bodyY: -0.7, bodyZ: 1.2, wing: 1.4, handL: 1.15, handR: 1.15 },
 			},
 			{
 				mood: "shy",
@@ -384,7 +384,7 @@ const modelData = modelOptions.map((model) => ({
 				mouthForm: 0.2,
 				mouthOpen: 0.75,
 				brows: { y: 0.5, form: -0.15, angle: 0.55 },
-				gesture: { bodyX: -0.9, bodyY: 1.2, bodyZ: -1.4, armL: 1.2, armR: 1.2 },
+				gesture: { bodyX: -0.7, bodyY: 1, bodyZ: -1.1, wing: 0.9, handL: -0.25, handR: 0.35 },
 			},
 			{
 				mood: "proud",
@@ -394,7 +394,7 @@ const modelData = modelOptions.map((model) => ({
 				mouthForm: 0.9,
 				mouthOpen: 0.68,
 				brows: { y: 0.35, form: 0.2, angle: 0.1 },
-				gesture: { bodyX: 1.3, bodyY: 0, bodyZ: 0.9, armL: 1.8, armR: -1.8 },
+				gesture: { bodyX: 1, bodyY: 0, bodyZ: 0.8, wing: 1.4, handL: 0.9, handR: 0.25 },
 			},
 		];
 		let live2dLoaded = false;
@@ -809,6 +809,19 @@ const modelData = modelOptions.map((model) => ({
 			addModelParameter(model, ["ParamBodyAngleY"], Math.sin(t * 0.9) * 1.4, 0.5);
 			addModelParameter(model, ["ParamBodyAngleZ"], Math.sin(t * 1.15) * 1.0, 0.45);
 			addModelParameter(model, ["ParamAngleZ"], Math.sin(t * 1.05) * 1.1, 0.35);
+			const idleWing = Math.sin(t * 1.35) * 0.22 + Math.sin(t * 0.74) * 0.1;
+			addModelParameter(
+				model,
+				["ParamWingLZ", "ParamWingLEmoRotation", "ParamWingL"],
+				idleWing,
+				0.18,
+			);
+			addModelParameter(
+				model,
+				["ParamWingRZ", "ParamWingREmoRotation", "ParamWingR"],
+				idleWing,
+				0.18,
+			);
 			if (profile) {
 				const wave =
 					Math.sin((now - speechProfileStartedAt) / 130 + gestureSeed) * 0.5 +
@@ -816,38 +829,53 @@ const modelData = modelOptions.map((model) => ({
 				const gesture = profile.gesture;
 				const pulse = (0.72 + wave * 0.28) * speechEase;
 
-				addModelParameter(model, ["ParamBodyAngleX"], gesture.bodyX * pulse, 0.65);
-				addModelParameter(model, ["ParamBodyAngleY"], gesture.bodyY * pulse, 0.65);
-				addModelParameter(model, ["ParamBodyAngleZ"], gesture.bodyZ * pulse, 0.65);
+				addModelParameter(model, ["ParamBodyAngleX"], gesture.bodyX * pulse, 0.45);
+				addModelParameter(model, ["ParamBodyAngleY"], gesture.bodyY * pulse, 0.45);
+				addModelParameter(model, ["ParamBodyAngleZ"], gesture.bodyZ * pulse, 0.45);
+				const wingWave =
+					Math.sin((now - speechProfileStartedAt) / 170 + gestureSeed) * 0.5 + 0.5;
+				const wingPulse = -gesture.wing * (0.55 + wingWave * 0.25) * speechEase;
 				addModelParameter(
 					model,
-					["ParamLeftArmRotation", "ParamLArmShoulderRoll", "ParamArmLFrontBack"],
-					gesture.armL * pulse,
-					0.28,
+					[
+						"ParamWingLZ",
+						"ParamWingLRotation",
+						"ParamWingLEmoRotation",
+						"ParamWingL",
+						"ParamWingLOpen",
+					],
+					wingPulse,
+					0.36,
 				);
 				addModelParameter(
 					model,
-					["ParamRightArmRotation", "ParamRArmShoulderRoll", "ParamArmRFrontBack"],
-					gesture.armR * pulse,
-					0.28,
+					[
+						"ParamWingRZ",
+						"ParamWingRRotation",
+						"ParamWingREmoRotation",
+						"ParamWingR",
+						"ParamWingROpen",
+					],
+					wingPulse,
+					0.36,
+				);
+				addModelParameter(model, ["ParamWingRotation"], -wingPulse * 0.32, 0.24);
+				const handWave =
+					Math.sin((now - speechProfileStartedAt) / 220 + gestureSeed * 0.7) *
+						0.5 +
+					0.5;
+				const handPulse = (0.42 + handWave * 0.22) * speechEase;
+				addModelParameter(
+					model,
+					["ParamLeftHandGrip"],
+					gesture.handL * handPulse,
+					0.18,
 				);
 				addModelParameter(
 					model,
-					["ParamShoulderLUpDown", "ParamLeftShoulderUp", "ParamLeftShoulderUpDown"],
-					Math.abs(gesture.armL) * 0.08 * pulse,
-					0.32,
-				);
-				addModelParameter(
-					model,
-					["ParamShoulderRUpDown", "ParamRightShoulderUp", "ParamRightShoulderUpDown"],
-					Math.abs(gesture.armR) * 0.08 * pulse,
-					0.32,
-				);
-				addModelParameter(
-					model,
-					["ParamLeftHandGrip", "ParamRightHandGrip"],
-					(profile.mood === "annoyed" ? 0.2 : 0.12) * pulse,
-					0.25,
+					["ParamRightHandGrip"],
+					gesture.handR * handPulse,
+					0.18,
 				);
 			}
 
