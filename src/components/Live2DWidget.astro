@@ -84,8 +84,8 @@ const modelData = modelOptions.map((model) => ({
 		left: max(0.75rem, env(safe-area-inset-left));
 		bottom: max(0.75rem, env(safe-area-inset-bottom));
 		z-index: 60;
-		width: clamp(140px, 14.5vw, 220px);
-		height: clamp(205px, 23vw, 315px);
+		width: clamp(150px, 15vw, 230px);
+		height: clamp(225px, 24.5vw, 345px);
 		pointer-events: none;
 		opacity: 0.78;
 		transform: translateY(0.75rem);
@@ -325,7 +325,13 @@ const modelData = modelOptions.map((model) => ({
 		let modelLoadId = 0;
 		let dragState = null;
 		let bubbleTimer = 0;
-		let mouthTimer = 0;
+		let expressionUntil = 0;
+		let blushUntil = 0;
+		let blinkUntil = 0;
+		let nextBlinkAt = performance.now() + 2400;
+		let idleStartedAt = performance.now();
+		let handPartLock = null;
+		let lastInteractionAt = 0;
 
 		const getDefaultPosition = () => ({
 			x: Math.max(12, window.innerWidth * 0.012),
@@ -459,6 +465,7 @@ const modelData = modelOptions.map((model) => ({
 				live2dModel.destroy();
 				live2dModel = null;
 			}
+			handPartLock = null;
 			if (resizeModel) {
 				window.removeEventListener("resize", resizeModel);
 				resizeModel = null;
@@ -494,17 +501,55 @@ const modelData = modelOptions.map((model) => ({
 					resolution: Math.min(window.devicePixelRatio || 1, 2),
 					resizeTo: widget,
 				});
+				const syncExpression = () => {
+					if (!live2dModel) return;
+
+					const now = performance.now();
+					syncLiveliness(live2dModel, now);
+					syncHandPartLock(live2dModel);
+
+					const expressionActive = now < expressionUntil;
+					const blushActive = now < blushUntil;
+					setModelParameter(
+						live2dModel,
+						["ParamMouthOpenY", "PARAM_MOUTH_OPEN_Y"],
+						expressionActive ? 1 : 0,
+					);
+					setModelParameter(
+						live2dModel,
+						["ParamEyeLSmile", "ParamEyeRSmile"],
+						blushActive ? 1 : expressionActive ? 0.4 : 0,
+					);
+					setModelParameter(
+						live2dModel,
+						["ParamCheek"],
+						blushActive ? 1 : 0,
+					);
+					setModelParameter(
+						live2dModel,
+						["ParamMouthForm", "ParamMouthFormScale"],
+						blushActive ? 0.75 : 0,
+					);
+				};
+				live2dApp.ticker.add(
+					syncExpression,
+					undefined,
+					(PIXI.UPDATE_PRIORITY?.LOW ?? 0) - 1,
+				);
 			}
 			return live2dApp;
 		};
 
-		const playTapMotion = () => {
+		const playTapMotion = (event) => {
 			setStatus("Live2D touched");
 			showBubble();
 			widget.classList.remove("live2d-tapped");
 			void widget.offsetWidth;
 			widget.classList.add("live2d-tapped");
 			openModelMouth();
+			if (isUpperModelTap(event)) {
+				blushUntil = performance.now() + 2800;
+			}
 			window.setTimeout(() => {
 				if (widget.classList.contains("live2d-ready")) {
 					setStatus("Live2D ready");
@@ -512,42 +557,237 @@ const modelData = modelOptions.map((model) => ({
 			}, 900);
 		};
 
+		const resolveCubismId = (id) => {
+			try {
+				const framework =
+					window.Live2DCubismFramework?.CubismFramework ??
+					window.live2dcubismframework?.CubismFramework;
+				return framework?.getIdManager?.().getId?.(id) ?? id;
+			} catch {
+				return id;
+			}
+		};
+
+		const getCoreModel = (model) => model.internalModel?.coreModel;
+
 		const setModelParameter = (model, parameterIds, value) => {
+			const coreModel = getCoreModel(model);
 			for (const id of parameterIds) {
+				const cubismId = resolveCubismId(id);
 				try {
-					model.internalModel.coreModel.setParameterValueById(id, value);
+					coreModel.setParameterValueById(cubismId, value);
+					continue;
+				} catch {
+					// Fall back to the low-level Cubism Core arrays below.
+				}
+
+				try {
+					const rawModel = coreModel?._model ?? coreModel?.model;
+					const ids = rawModel?.parameters?.ids ?? coreModel?._parameterIds;
+					const values =
+						rawModel?.parameters?.values ?? coreModel?._parameterValues;
+					const index = findCubismIdIndex(ids, id);
+					if (index >= 0 && values) values[index] = value;
 				} catch {
 					// Some models use a different parameter set.
 				}
 			}
 		};
 
+		const addModelParameter = (model, parameterIds, value, weight = 1) => {
+			const coreModel = getCoreModel(model);
+			for (const id of parameterIds) {
+				try {
+					coreModel.addParameterValueById(resolveCubismId(id), value, weight);
+				} catch {
+					// Additive liveliness is optional for models without this parameter.
+				}
+			}
+		};
+
+		const getCubismIdValue = (id) =>
+			String(id?._id ?? id?.id ?? id?._s ?? id?.s ?? id);
+
+		const findCubismIdIndex = (ids, targetId) => {
+			if (!ids) return -1;
+			return Array.from(ids).findIndex((id) => getCubismIdValue(id) === targetId);
+		};
+
+		const setModelPartOpacity = (model, partId, value) => {
+			const coreModel = getCoreModel(model);
+			const cubismId = resolveCubismId(partId);
+			try {
+				coreModel.setPartOpacityById(cubismId, value);
+				return;
+			} catch {
+				// Fall back to direct Cubism Core part opacity arrays.
+			}
+
+			try {
+				const rawModel = coreModel?._model ?? coreModel?.model;
+				const ids = rawModel?.parts?.ids ?? coreModel?._partIds;
+				const opacities = rawModel?.parts?.opacities ?? coreModel?._partOpacities;
+				const index = findCubismIdIndex(ids, partId);
+				if (index >= 0 && opacities) opacities[index] = value;
+			} catch {
+				// Leave the part untouched if this runtime does not expose it.
+			}
+		};
+
+		const syncHandPartLock = (model) => {
+			if (!handPartLock) return;
+			for (const [partId, opacity] of handPartLock) {
+				setModelPartOpacity(model, partId, opacity);
+			}
+		};
+
+		const syncLiveliness = (model, now) => {
+			const t = (now - idleStartedAt) / 1000;
+			setModelParameter(model, ["ParamBreath"], 0.55 + Math.sin(t * 2.1) * 0.28);
+			addModelParameter(model, ["ParamBodyAngleY"], Math.sin(t * 0.9) * 1.4, 0.5);
+			addModelParameter(model, ["ParamBodyAngleZ"], Math.sin(t * 1.15) * 1.0, 0.45);
+			addModelParameter(model, ["ParamAngleZ"], Math.sin(t * 1.05) * 1.1, 0.35);
+
+			if (now > nextBlinkAt) {
+				blinkUntil = now + 140;
+				nextBlinkAt = now + 2400 + Math.random() * 3200;
+			}
+			if (now < blinkUntil) {
+				setModelParameter(model, ["ParamEyeLOpen", "ParamEyeROpen", "ParamEyeOpen"], 0.08);
+			}
+		};
+
 		const openModelMouth = () => {
 			if (!live2dModel) return;
 
-			window.clearTimeout(mouthTimer);
+			expressionUntil = performance.now() + 900;
 			setModelParameter(live2dModel, ["ParamMouthOpenY", "PARAM_MOUTH_OPEN_Y"], 1);
-			mouthTimer = window.setTimeout(() => {
-				if (live2dModel) {
-					setModelParameter(
-						live2dModel,
-						["ParamMouthOpenY", "PARAM_MOUTH_OPEN_Y"],
-						0,
-					);
-				}
-			}, 750);
+			setModelParameter(live2dModel, ["ParamEyeLSmile", "ParamEyeRSmile"], 1);
 		};
 
-		const startSinglePoseMotion = (model) => {
-			const motions = model.internalModel?.settings?.motions;
+		const selectPoseMotion = (motions) => {
 			const firstGroup = motions && Object.keys(motions)[0];
-			if (!firstGroup) return;
+			if (firstGroup == null) return null;
+			const motionList = Array.isArray(motions[firstGroup])
+				? motions[firstGroup]
+				: [];
+			if (!motionList.length) return null;
+			const poseIndex = motionList.findIndex((motion) => {
+				const file = String(motion?.File ?? motion?.file ?? "");
+				const match = file.match(/_(\d+)\.motion3\.json$/i);
+				return !match || Number(match[1]) >= 10;
+			});
+			const index = poseIndex >= 0 ? poseIndex : 0;
+			return {
+				group: firstGroup,
+				index,
+				motion: motionList[index],
+			};
+		};
 
+		const startSinglePoseMotion = (model, selectedMotion = null) => {
+			const motion =
+				selectedMotion ?? selectPoseMotion(model.internalModel?.settings?.motions);
+			if (!motion) return null;
 			try {
-				model.motion(firstGroup, 0);
+				model.motion(motion.group, motion.index);
 			} catch {
 				// Keep the static pose if the runtime rejects this motion group.
 			}
+			return motion;
+		};
+
+		const getHandSide = (partId) => {
+			const normalized = partId.replace(/[_-]/g, "").toLowerCase();
+			if (normalized.includes("lefthand") || normalized.includes("handl")) {
+				return "left";
+			}
+			if (normalized.includes("righthand") || normalized.includes("handr")) {
+				return "right";
+			}
+			return null;
+		};
+
+		const getCurveStartValue = (curve) => {
+			const value = Number(curve?.Segments?.[1]);
+			return Number.isFinite(value) ? value : 0;
+		};
+
+		const createHandPartLock = (motionJson) => {
+			const handsBySide = new Map();
+			const visibleBySide = new Map();
+			for (const curve of motionJson?.Curves ?? []) {
+				if (curve?.Target !== "PartOpacity" || typeof curve.Id !== "string") {
+					continue;
+				}
+				const side = getHandSide(curve.Id);
+				if (!side) continue;
+
+				if (!handsBySide.has(side)) handsBySide.set(side, []);
+				handsBySide.get(side).push(curve.Id);
+
+				const value = getCurveStartValue(curve);
+				const current = visibleBySide.get(side);
+				if (value > 0.001 && (!current || value > current.value)) {
+					visibleBySide.set(side, { id: curve.Id, value });
+				}
+			}
+
+			const opacityMap = new Map();
+			for (const [side, partIds] of handsBySide) {
+				const visibleId = visibleBySide.get(side)?.id ?? partIds[0];
+				for (const partId of partIds) {
+					opacityMap.set(partId, partId === visibleId ? 1 : 0);
+				}
+			}
+			return opacityMap.size ? opacityMap : null;
+		};
+
+		const loadHandPartLock = async (model) => {
+			try {
+				const settingsResponse = await fetch(model.path);
+				if (!settingsResponse.ok) return null;
+				const settings = await settingsResponse.json();
+				const selectedMotion = selectPoseMotion(settings.FileReferences?.Motions);
+				const file = selectedMotion?.motion?.File ?? selectedMotion?.motion?.file;
+				if (!file) return null;
+
+				const motionUrl = new URL(file, new URL(model.path, window.location.href));
+				const motionResponse = await fetch(motionUrl);
+				if (!motionResponse.ok) return null;
+				const motionJson = await motionResponse.json();
+				return {
+					lock: createHandPartLock(motionJson),
+					motion: selectedMotion,
+				};
+			} catch (error) {
+				console.debug("Live2D hand pose lock failed:", error);
+				return null;
+			}
+		};
+
+		const getInteractionEvent = (event) => event?.data?.originalEvent ?? event;
+
+		const getClientPoint = (event) => {
+			const source = getInteractionEvent(event);
+			if (typeof source?.clientX === "number" && typeof source?.clientY === "number") {
+				return {
+					x: source.clientX,
+					y: source.clientY,
+				};
+			}
+			return null;
+		};
+
+		const isUpperModelTap = (event) => {
+			const point = getClientPoint(event);
+			if (!point) return false;
+			const rect = canvas.getBoundingClientRect();
+			if (!rect.width || !rect.height) return false;
+
+			const xRatio = (point.x - rect.left) / rect.width;
+			const yRatio = (point.y - rect.top) / rect.height;
+			return xRatio > 0.22 && xRatio < 0.78 && yRatio > 0.05 && yRatio < 0.46;
 		};
 
 		const fitModelToWidget = (model, app) => {
@@ -560,8 +800,8 @@ const modelData = modelOptions.map((model) => ({
 			const modelWidth = Math.max(bounds.width, 1);
 			const modelHeight = Math.max(bounds.height, 1);
 			const scale = Math.min(
-				(screenWidth * 0.92) / modelWidth,
-				(screenHeight * 0.95) / modelHeight,
+				(screenWidth * 0.94) / modelWidth,
+				(screenHeight * 0.97) / modelHeight,
 			);
 
 			model.scale.set(scale);
@@ -571,21 +811,28 @@ const modelData = modelOptions.map((model) => ({
 			);
 		};
 
-		const triggerLive2DInteraction = () => {
+		const triggerLive2DInteraction = (event) => {
+			const now = performance.now();
+			if (now - lastInteractionAt < 120) return;
+			lastInteractionAt = now;
 			if (live2dModel) {
-				playTapMotion();
+				playTapMotion(event);
 			} else {
 				showBubble();
 			}
 		};
 
 		canvas.addEventListener("click", triggerLive2DInteraction);
+		window.addEventListener("pointermove", (event) => {
+			live2dModel?.focus?.(event.clientX, event.clientY);
+		});
 
 		const loadModel = async (model = getSelectedModel(), forceReload = false) => {
 			const loadId = ++modelLoadId;
 			if (live2dLoaded && !forceReload) return;
 			live2dLoading = true;
 			if (forceReload) disposeModel();
+			const handPartLockPromise = loadHandPartLock(model);
 			widget.classList.remove("live2d-error");
 			widget.classList.remove("live2d-ready");
 			setStatus("Live2D loading");
@@ -602,7 +849,7 @@ const modelData = modelOptions.map((model) => ({
 			let loadedModel = null;
 			try {
 				loadedModel = await PIXI.live2d.Live2DModel.from(model.path, {
-					autoInteract: true,
+					autoInteract: false,
 				});
 				console.debug("Live2D model loaded:", model.path);
 			} catch (error) {
@@ -622,15 +869,27 @@ const modelData = modelOptions.map((model) => ({
 				return;
 			}
 
+			const handPose = await handPartLockPromise;
+			if (loadId !== modelLoadId) {
+				loadedModel.destroy();
+				return;
+			}
 			disposeModel();
-			fitModelToWidget(loadedModel, app);
+			handPartLock = handPose?.lock ?? null;
+			idleStartedAt = performance.now();
+			blushUntil = 0;
+			expressionUntil = 0;
 			loadedModel.interactive = true;
 			loadedModel.buttonMode = true;
-			loadedModel.on("hit", () => playTapMotion());
-			loadedModel.on("pointertap", () => playTapMotion());
+			loadedModel.on("hit", triggerLive2DInteraction);
+			loadedModel.on("pointertap", triggerLive2DInteraction);
 			app.stage.addChild(loadedModel);
 			widget.classList.add("live2d-ready");
 			live2dModel = loadedModel;
+			startSinglePoseMotion(loadedModel, handPose?.motion);
+			syncHandPartLock(loadedModel);
+			fitModelToWidget(loadedModel, app);
+			window.requestAnimationFrame(() => fitModelToWidget(loadedModel, app));
 
 			resizeModel = () => {
 				fitModelToWidget(loadedModel, app);
@@ -701,7 +960,7 @@ const modelData = modelOptions.map((model) => ({
 				// Pointer capture may already be released by the browser.
 			}
 			if (wasTap && !event.target.closest("button, a, select")) {
-				triggerLive2DInteraction();
+				triggerLive2DInteraction(event);
 			}
 		};
 
