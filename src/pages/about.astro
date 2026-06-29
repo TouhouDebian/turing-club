@@ -1,0 +1,99 @@
+---
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+---
+
+<MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+        <div class="card-base z-10 px-9 py-6 relative w-full ">
+            <article class="prose dark:prose-invert prose-base !max-w-none custom-md mt-2">
+                <div class="lang-zh">
+                    <h1>关于天一中学图灵社</h1>
+                    <p>
+                        天一中学图灵社，英文名 Turing Club，是一个面向计算机科学、编程、网络安全和数据思维的校园技术社团。我们相信技术不应该有高高的门槛，真正重要的是好奇心、持续练习和愿意解决问题的行动力。
+                    </p>
+                    <h2>我们是谁</h2>
+                    <p>
+                        社团以计算机科学先驱 Alan Turing 命名，延续“用计算解决问题”的精神。我们的使命是让技术对每一位初学者都可达：没有先修要求，没有入门壁垒，只要你愿意思考、愿意尝试，就可以从这里开始。
+                    </p>
+                    <h2>我们做什么</h2>
+                    <ul>
+                        <li>网络安全：讲解基础概念、真实案例与攻防思维，帮助同学建立安全意识，并走向安全实践。</li>
+                        <li>编程基础：从 Python、Java 到数据结构与算法，用分层学习照顾不同基础的同学。</li>
+                        <li>数据思维：把计算、分析与表达连接起来，为项目研究、竞赛训练和长期成长打基础。</li>
+                    </ul>
+                    <h2>社团活动与成果</h2>
+                    <ul>
+                        <li>编程学习：Python、Java、数据结构与算法，按不同基础分层推进。</li>
+                        <li>网络安全：讲解基础知识、真实案例和安全意识，帮助同学理解攻防思维。</li>
+                        <li>竞赛训练：社团成员曾在 OSCC 全国中学生信息安全竞赛中获奖，实现学校在相关赛事上的首次突破。</li>
+                        <li>技术活动：Turing Talks、技术圆桌、项目开放日，让同学展示作品、交流想法。</li>
+                    </ul>
+                    <h2>未来计划</h2>
+                    <ul>
+                        <li>课程升级：建设 AP CSP 与 AP CSA 学习路径，强调大学层级的计算思维，而不只是考试技巧。</li>
+                        <li>活动升级：持续举办 Turing Talks、技术圆桌和项目开放日，让想法被讨论，让作品被看见。</li>
+                        <li>竞赛升级：以 OSCC 全国中学生信息安全竞赛获奖为起点，继续组织训练、复盘和队伍建设。</li>
+                        <li>传承升级：沉淀资源库和导师制度，让新成员可以长期、清晰、可持续地成长。</li>
+                    </ul>
+                    <h2>我们的愿景</h2>
+                    <p>
+                        图灵社不只是一个技术社团，更是一个思考与成长的平台。我们希望更多同学在这里看见计算机科学的魅力，也在一次次练习、分享和合作中形成自己的创造力。
+                    </p>
+                    <h2>联系方式</h2>
+                    <p>
+                        社团官方 Q 群：<code>1058173473</code>
+                    </p>
+                    <ul>
+                        <li><a href="https://space.bilibili.com/631731585" target="_blank" rel="noopener noreferrer">2023 首任社长 B 站</a></li>
+                        <li><a href="https://space.bilibili.com/513026513" target="_blank" rel="noopener noreferrer">2024 副社长 B 站</a></li>
+                    </ul>
+                </div>
+
+                <div class="lang-en">
+                    <h1>About Turing Club</h1>
+                    <p>
+                        Turing Club of Tianyi High School is a campus technology club focused on computer science, programming, cybersecurity, and data thinking. We believe technology should be accessible to every curious beginner.
+                    </p>
+                    <h2>Who We Are</h2>
+                    <p>
+                        Named after Alan Turing, a pioneer of computer science, the club carries the spirit of solving problems through computing. There are no prerequisites and no barriers, only curiosity and the willingness to build.
+                    </p>
+                    <h2>What We Do</h2>
+                    <ul>
+                        <li>Cybersecurity: core concepts, real cases, and defensive thinking that turn awareness into practice.</li>
+                        <li>Programming: Python, Java, data structures, and algorithms through tiered learning paths.</li>
+                        <li>Data thinking: connecting computing, analysis, and communication for projects and competitions.</li>
+                    </ul>
+                    <h2>Activities and Achievements</h2>
+                    <ul>
+                        <li>Programming: Python, Java, data structures, and algorithms through tiered learning.</li>
+                        <li>Cybersecurity: foundational knowledge, real cases, and security awareness.</li>
+                        <li>Competition: members won an OSCC National High School Information Security Competition award, the first breakthrough of its kind for our school.</li>
+                        <li>Events: Turing Talks, tech roundtables, and project open days for sharing ideas and work.</li>
+                    </ul>
+                    <h2>Future Plans</h2>
+                    <ul>
+                        <li>Curriculum: build AP CSP and AP CSA tracks that emphasize college-level computational thinking, not only exam preparation.</li>
+                        <li>Events: host Turing Talks, tech roundtables, and project open days so ideas can be discussed and projects can be seen.</li>
+                        <li>Competition: starting from our OSCC award, keep training, reviewing, and improving as a team.</li>
+                        <li>Sustainability: build a resource library and mentor system so new members can grow clearly and sustainably.</li>
+                    </ul>
+                    <h2>Our Vision</h2>
+                    <p>
+                        Turing Club is more than a technology club. It is a platform for thinking and growth, where students discover computer science and build creativity through practice, sharing, and collaboration.
+                    </p>
+                    <h2>Contact</h2>
+                    <p>
+                        Official QQ group: <code>1058173473</code>
+                    </p>
+                    <ul>
+                        <li><a href="https://space.bilibili.com/631731585" target="_blank" rel="noopener noreferrer">2023 Founding President on Bilibili</a></li>
+                        <li><a href="https://space.bilibili.com/513026513" target="_blank" rel="noopener noreferrer">2024 Vice President on Bilibili</a></li>
+                    </ul>
+                </div>
+            </article>
+        </div>
+    </div>
+</MainGridLayout>

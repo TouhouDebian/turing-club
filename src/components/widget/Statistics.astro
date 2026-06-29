@@ -1,0 +1,83 @@
+---
+import { Icon } from "astro-icon/components";
+import {
+	getCategoryList,
+	getSortedPosts,
+	getTagList,
+} from "../../utils/content-utils";
+import WidgetLayout from "./WidgetLayout.astro";
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+
+const className = Astro.props.class;
+const style = Astro.props.style;
+
+const siteStartDate = new Date("2023-09-01T00:00:00+08:00");
+const now = new Date();
+const runningDays = Math.max(
+	0,
+	Math.floor((now.getTime() - siteStartDate.getTime()) / 86_400_000),
+);
+
+const posts = await getSortedPosts();
+const categories = await getCategoryList();
+const tags = await getTagList();
+const renderedPosts = await Promise.all(posts.map((post) => post.render()));
+const totalWords = renderedPosts.reduce(
+	(sum, post) => sum + (post.remarkPluginFrontmatter?.words ?? 0),
+	0,
+);
+
+const stats = [
+	{
+		icon: "material-symbols:article-outline-rounded",
+		zhLabel: "文章数",
+		enLabel: "Posts",
+		value: String(posts.length),
+	},
+	{
+		icon: "material-symbols:folder-open-outline-rounded",
+		zhLabel: "分类数",
+		enLabel: "Categories",
+		value: String(categories.length),
+	},
+	{
+		icon: "material-symbols:tag-rounded",
+		zhLabel: "标签数",
+		enLabel: "Tags",
+		value: String(tags.length),
+	},
+	{
+		icon: "material-symbols:match-word-rounded",
+		zhLabel: "总字数",
+		enLabel: "Words",
+		value: totalWords.toLocaleString("en-US"),
+	},
+	{
+		icon: "material-symbols:calendar-clock-outline-rounded",
+		zhLabel: "运营时长",
+		enLabel: "Running",
+		value: `${runningDays.toLocaleString("en-US")}d`,
+	},
+];
+---
+
+<WidgetLayout name="状态" id="statistics" class={className} style={style}>
+    <div class="flex flex-col gap-1">
+        {stats.map((item) => (
+            <div class="flex items-center justify-between h-7 px-2 text-neutral-700 dark:text-neutral-300">
+                <div class="flex items-center min-w-0">
+                    <Icon name={item.icon} class="text-[1.4rem] mr-2 shrink-0"></Icon>
+                    <span class="truncate">
+                        <span class="lang-zh">{item.zhLabel}</span>
+                        <span class="lang-en">{item.enLabel}</span>
+                    </span>
+                </div>
+                <span class="font-semibold text-[var(--primary)] tabular-nums">{item.value}</span>
+            </div>
+        ))}
+    </div>
+</WidgetLayout>
