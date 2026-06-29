@@ -21,6 +21,9 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
+# local Live2D source archives
+/model/
+
 .vercel
 
 package-lock.json
