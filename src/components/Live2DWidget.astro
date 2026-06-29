@@ -84,8 +84,8 @@ const modelData = modelOptions.map((model) => ({
 		left: max(0.75rem, env(safe-area-inset-left));
 		bottom: max(0.75rem, env(safe-area-inset-bottom));
 		z-index: 60;
-		width: clamp(120px, 13vw, 190px);
-		height: clamp(170px, 20vw, 270px);
+		width: clamp(140px, 14.5vw, 220px);
+		height: clamp(205px, 23vw, 315px);
 		pointer-events: none;
 		opacity: 0.78;
 		transform: translateY(0.75rem);
@@ -325,6 +325,7 @@ const modelData = modelOptions.map((model) => ({
 		let modelLoadId = 0;
 		let dragState = null;
 		let bubbleTimer = 0;
+		let mouthTimer = 0;
 
 		const getDefaultPosition = () => ({
 			x: Math.max(12, window.innerWidth * 0.012),
@@ -503,11 +504,50 @@ const modelData = modelOptions.map((model) => ({
 			widget.classList.remove("live2d-tapped");
 			void widget.offsetWidth;
 			widget.classList.add("live2d-tapped");
+			openModelMouth();
 			window.setTimeout(() => {
 				if (widget.classList.contains("live2d-ready")) {
 					setStatus("Live2D ready");
 				}
 			}, 900);
+		};
+
+		const setModelParameter = (model, parameterIds, value) => {
+			for (const id of parameterIds) {
+				try {
+					model.internalModel.coreModel.setParameterValueById(id, value);
+				} catch {
+					// Some models use a different parameter set.
+				}
+			}
+		};
+
+		const openModelMouth = () => {
+			if (!live2dModel) return;
+
+			window.clearTimeout(mouthTimer);
+			setModelParameter(live2dModel, ["ParamMouthOpenY", "PARAM_MOUTH_OPEN_Y"], 1);
+			mouthTimer = window.setTimeout(() => {
+				if (live2dModel) {
+					setModelParameter(
+						live2dModel,
+						["ParamMouthOpenY", "PARAM_MOUTH_OPEN_Y"],
+						0,
+					);
+				}
+			}, 750);
+		};
+
+		const startSinglePoseMotion = (model) => {
+			const motions = model.internalModel?.settings?.motions;
+			const firstGroup = motions && Object.keys(motions)[0];
+			if (!firstGroup) return;
+
+			try {
+				model.motion(firstGroup, 0);
+			} catch {
+				// Keep the static pose if the runtime rejects this motion group.
+			}
 		};
 
 		const fitModelToWidget = (model, app) => {
@@ -520,8 +560,8 @@ const modelData = modelOptions.map((model) => ({
 			const modelWidth = Math.max(bounds.width, 1);
 			const modelHeight = Math.max(bounds.height, 1);
 			const scale = Math.min(
-				(screenWidth * 0.88) / modelWidth,
-				(screenHeight * 0.92) / modelHeight,
+				(screenWidth * 0.92) / modelWidth,
+				(screenHeight * 0.95) / modelHeight,
 			);
 
 			model.scale.set(scale);
