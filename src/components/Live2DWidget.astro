@@ -4,8 +4,12 @@ const modelBase =
 const modelCandidates = [
 	`${modelBase}/Remilia%20(Event).model3.json`,
 	`${modelBase}/Remilia.model3.json`,
+	`${modelBase}/Remilia_Event.model3.json`,
+	`${modelBase}/RemiliaEvent.model3.json`,
+	`${modelBase}/remilia_event.model3.json`,
 	`${modelBase}/remilia.model3.json`,
 	`${modelBase}/model.model3.json`,
+	`${modelBase}/model3.json`,
 	`${modelBase}/index.model3.json`,
 ];
 ---
@@ -15,6 +19,7 @@ const modelCandidates = [
 		<span aria-hidden="true">×</span>
 	</button>
 	<canvas id="live2d-canvas"></canvas>
+	<div id="live2d-status" aria-live="polite">Live2D loading</div>
 	<a
 		id="live2d-credit"
 		href="https://github.com/n0099/TouhouCannonBall-Live2d-Models/tree/main/Remilia%20(Event)"
@@ -34,7 +39,7 @@ const modelCandidates = [
 		width: clamp(120px, 13vw, 190px);
 		height: clamp(170px, 20vw, 270px);
 		pointer-events: none;
-		opacity: 0;
+		opacity: 0.78;
 		transform: translateY(0.75rem);
 		transition:
 			opacity 0.35s ease,
@@ -43,6 +48,13 @@ const modelCandidates = [
 
 	#live2d-widget.live2d-ready {
 		opacity: 0.92;
+		transform: translateY(0);
+	}
+
+	#live2d-widget.live2d-error {
+		width: 8.5rem;
+		height: 3rem;
+		opacity: 0.82;
 		transform: translateY(0);
 	}
 
@@ -60,6 +72,24 @@ const modelCandidates = [
 		pointer-events: auto;
 	}
 
+	#live2d-status {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.42);
+		padding: 0.25rem 0.625rem;
+		color: rgba(255, 255, 255, 0.84);
+		font-size: 0.68rem;
+		white-space: nowrap;
+		pointer-events: none;
+	}
+
+	#live2d-widget.live2d-ready #live2d-status {
+		display: none;
+	}
+
 	#live2d-toggle,
 	#live2d-credit {
 		position: absolute;
@@ -74,6 +104,7 @@ const modelCandidates = [
 	}
 
 	#live2d-widget.live2d-hidden #live2d-canvas,
+	#live2d-widget.live2d-hidden #live2d-status,
 	#live2d-widget.live2d-hidden #live2d-credit {
 		display: none;
 	}
@@ -129,8 +160,9 @@ const modelCandidates = [
 		const widget = document.getElementById("live2d-widget");
 		const canvas = document.getElementById("live2d-canvas");
 		const toggle = document.getElementById("live2d-toggle");
+		const status = document.getElementById("live2d-status");
 
-		if (!widget || !canvas || !toggle || window.matchMedia("(max-width: 1023px)").matches) {
+		if (!widget || !canvas || !toggle || !status || window.matchMedia("(max-width: 1023px)").matches) {
 			return;
 		}
 
@@ -144,6 +176,10 @@ const modelCandidates = [
 				hidden ? "Show Live2D model" : "Hide Live2D model",
 			);
 			localStorage.setItem("live2d-hidden", hidden ? "true" : "false");
+		};
+
+		const setStatus = (message) => {
+			status.textContent = message;
 		};
 
 		const loadScript = (src) =>
@@ -170,9 +206,19 @@ const modelCandidates = [
 		const loadModel = async () => {
 			if (live2dLoaded || live2dLoading) return;
 			live2dLoading = true;
-			await loadScript("https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js");
-			await loadScript("https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js");
-			await loadScript("https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js");
+			widget.classList.remove("live2d-error");
+			setStatus("Live2D loading");
+			try {
+				await loadScript("https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js");
+				await loadScript("https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js");
+				await loadScript("https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js");
+			} catch (error) {
+				live2dLoading = false;
+				widget.classList.add("live2d-error");
+				setStatus("Live2D CDN failed");
+				console.error("Live2D SDK failed to load:", error);
+				return;
+			}
 
 			const app = new PIXI.Application({
 				view: canvas,
@@ -188,6 +234,7 @@ const modelCandidates = [
 					model = await PIXI.live2d.Live2DModel.from(candidate, {
 						autoInteract: false,
 					});
+					console.debug("Live2D model loaded:", candidate);
 					break;
 				} catch (error) {
 					console.debug("Live2D model candidate failed:", candidate, error);
@@ -195,7 +242,11 @@ const modelCandidates = [
 			}
 
 			if (!model) {
-				throw new Error("No Live2D model candidate could be loaded.");
+				live2dLoading = false;
+				widget.classList.add("live2d-error");
+				setStatus("Live2D model failed");
+				console.error("No Live2D model candidate could be loaded.", modelCandidates);
+				return;
 			}
 
 			model.anchor.set(0.5, 1);
@@ -213,6 +264,7 @@ const modelCandidates = [
 			};
 			window.addEventListener("resize", resizeModel);
 			live2dLoaded = true;
+			live2dLoading = false;
 		};
 
 		toggle.addEventListener("click", () => {
