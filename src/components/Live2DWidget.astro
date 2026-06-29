@@ -106,6 +106,10 @@ const modelData = modelOptions.map((model) => ({
 		transition: opacity 0.2s ease;
 	}
 
+	#live2d-widget.live2d-tapped {
+		animation: live2d-tap-pulse 0.26s ease;
+	}
+
 	#live2d-widget.live2d-error {
 		width: 8.5rem;
 		height: 3rem;
@@ -272,6 +276,20 @@ const modelData = modelOptions.map((model) => ({
 			display: none;
 		}
 	}
+
+	@keyframes live2d-tap-pulse {
+		0% {
+			filter: brightness(1);
+		}
+
+		50% {
+			filter: brightness(1.12);
+		}
+
+		100% {
+			filter: brightness(1);
+		}
+	}
 </style>
 
 <script
@@ -304,6 +322,7 @@ const modelData = modelOptions.map((model) => ({
 		let live2dApp = null;
 		let live2dModel = null;
 		let resizeModel = null;
+		let modelLoadId = 0;
 		let dragState = null;
 		let bubbleTimer = 0;
 
@@ -478,45 +497,43 @@ const modelData = modelOptions.map((model) => ({
 			return live2dApp;
 		};
 
-		const playTapMotion = (model) => {
+		const playTapMotion = () => {
 			setStatus("Live2D touched");
 			showBubble();
+			widget.classList.remove("live2d-tapped");
+			void widget.offsetWidth;
+			widget.classList.add("live2d-tapped");
 			window.setTimeout(() => {
 				if (widget.classList.contains("live2d-ready")) {
 					setStatus("Live2D ready");
 				}
 			}, 900);
-
-			for (const motionGroup of ["TapBody", "tap_body", ""]) {
-				try {
-					const result = model.motion(motionGroup);
-					if (result) return;
-				} catch {
-					// Try the next common motion group.
-				}
-			}
 		};
 
 		const fitModelToWidget = (model, app) => {
 			model.scale.set(1);
-			model.anchor?.set?.(0.5, 0.5);
+			model.position.set(0, 0);
 
 			const screenWidth = app.screen.width;
 			const screenHeight = app.screen.height;
-			const modelWidth = Math.max(model.width, 1);
-			const modelHeight = Math.max(model.height, 1);
+			const bounds = model.getLocalBounds();
+			const modelWidth = Math.max(bounds.width, 1);
+			const modelHeight = Math.max(bounds.height, 1);
 			const scale = Math.min(
 				(screenWidth * 0.88) / modelWidth,
 				(screenHeight * 0.92) / modelHeight,
 			);
 
 			model.scale.set(scale);
-			model.position.set(screenWidth / 2, screenHeight / 2);
+			model.position.set(
+				screenWidth / 2 - (bounds.x + bounds.width / 2) * scale,
+				screenHeight / 2 - (bounds.y + bounds.height / 2) * scale,
+			);
 		};
 
 		const triggerLive2DInteraction = () => {
 			if (live2dModel) {
-				playTapMotion(live2dModel);
+				playTapMotion();
 			} else {
 				showBubble();
 			}
@@ -525,7 +542,7 @@ const modelData = modelOptions.map((model) => ({
 		canvas.addEventListener("click", triggerLive2DInteraction);
 
 		const loadModel = async (model = getSelectedModel(), forceReload = false) => {
-			if (live2dLoading) return;
+			const loadId = ++modelLoadId;
 			if (live2dLoaded && !forceReload) return;
 			live2dLoading = true;
 			if (forceReload) disposeModel();
@@ -534,7 +551,9 @@ const modelData = modelOptions.map((model) => ({
 			setStatus("Live2D loading");
 			const runtimeReady = await prepareRuntime();
 			if (!runtimeReady) {
-				live2dLoading = false;
+				if (loadId === modelLoadId) {
+					live2dLoading = false;
+				}
 				return;
 			}
 
@@ -550,6 +569,11 @@ const modelData = modelOptions.map((model) => ({
 				console.debug("Live2D model failed:", model.path, error);
 			}
 
+			if (loadId !== modelLoadId) {
+				loadedModel?.destroy?.();
+				return;
+			}
+
 			if (!loadedModel) {
 				live2dLoading = false;
 				widget.classList.add("live2d-error");
@@ -562,8 +586,8 @@ const modelData = modelOptions.map((model) => ({
 			fitModelToWidget(loadedModel, app);
 			loadedModel.interactive = true;
 			loadedModel.buttonMode = true;
-			loadedModel.on("hit", () => playTapMotion(loadedModel));
-			loadedModel.on("pointertap", () => playTapMotion(loadedModel));
+			loadedModel.on("hit", () => playTapMotion());
+			loadedModel.on("pointertap", () => playTapMotion());
 			app.stage.addChild(loadedModel);
 			widget.classList.add("live2d-ready");
 			live2dModel = loadedModel;
@@ -648,6 +672,41 @@ const modelData = modelOptions.map((model) => ({
 			const rect = widget.getBoundingClientRect();
 			setPosition(rect.left, rect.top, false);
 		});
+
+		const recoverLive2D = () => {
+			if (widget.classList.contains("live2d-hidden")) return;
+
+			if (live2dModel && live2dApp) {
+				live2dApp.ticker.start();
+				fitModelToWidget(live2dModel, live2dApp);
+				widget.classList.add("live2d-ready");
+				widget.classList.remove("live2d-error");
+				return;
+			}
+
+			if (!live2dLoading) {
+				loadModel(getSelectedModel(), true);
+			}
+		};
+
+		window.addEventListener("pageshow", recoverLive2D);
+		document.addEventListener("visibilitychange", () => {
+			if (!document.hidden) {
+				recoverLive2D();
+			}
+		});
+
+		const registerSwupRecovery = () => {
+			window.swup?.hooks?.on?.("page:view", recoverLive2D);
+		};
+
+		if (window.swup?.hooks) {
+			registerSwupRecovery();
+		} else {
+			document.addEventListener("swup:enable", registerSwupRecovery, {
+				once: true,
+			});
+		}
 
 		restorePosition();
 		syncModelSelect();
