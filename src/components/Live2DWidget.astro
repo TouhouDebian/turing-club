@@ -263,8 +263,10 @@ const modelData = modelOptions.map((model) => ({
 		const modelsById = new Map(modelData.map((model) => [model.id, model]));
 		let live2dLoaded = false;
 		let live2dLoading = false;
+		let live2dRuntimeReady = false;
 		let live2dApp = null;
 		let live2dModel = null;
+		let resizeModel = null;
 		let dragState = null;
 
 		const getDefaultPosition = () => ({
@@ -359,6 +361,7 @@ const modelData = modelOptions.map((model) => ({
 
 		const disposeModel = () => {
 			if (live2dModel) {
+				live2dApp?.stage.removeChild(live2dModel);
 				live2dModel.destroy({
 					children: true,
 					texture: true,
@@ -366,55 +369,81 @@ const modelData = modelOptions.map((model) => ({
 				});
 				live2dModel = null;
 			}
-			if (live2dApp) {
-				live2dApp.destroy(false, {
-					children: true,
-					texture: true,
-					baseTexture: true,
-				});
-				live2dApp = null;
+			if (resizeModel) {
+				window.removeEventListener("resize", resizeModel);
+				resizeModel = null;
 			}
 			live2dLoaded = false;
-			canvas.replaceWith(canvas.cloneNode(false));
 		};
 
-		const getCanvas = () => document.getElementById("live2d-canvas");
+		const prepareRuntime = async () => {
+			if (live2dRuntimeReady) return true;
+			try {
+				await loadScript("https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js");
+				window.PIXI = PIXI;
+				await loadScript("https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js");
+				await loadScript("https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js");
+				live2dRuntimeReady = true;
+				return true;
+			} catch (error) {
+				widget.classList.add("live2d-error");
+				setStatus("Live2D CDN failed");
+				console.error("Live2D SDK failed to load:", error);
+				return false;
+			}
+		};
+
+		const getApp = () => {
+			if (!live2dApp) {
+				live2dApp = new PIXI.Application({
+					view: canvas,
+					autoStart: true,
+					backgroundAlpha: 0,
+					antialias: true,
+					resizeTo: widget,
+				});
+			}
+			return live2dApp;
+		};
+
+		const playTapMotion = (model) => {
+			setStatus("Live2D touched");
+			window.setTimeout(() => {
+				if (widget.classList.contains("live2d-ready")) {
+					setStatus("Live2D ready");
+				}
+			}, 900);
+
+			for (const motionGroup of ["TapBody", "tap_body", ""]) {
+				try {
+					const result = model.motion(motionGroup);
+					if (result) return;
+				} catch {
+					// Try the next common motion group.
+				}
+			}
+		};
 
 		const loadModel = async (model = getSelectedModel(), forceReload = false) => {
 			if (live2dLoading) return;
 			if (live2dLoaded && !forceReload) return;
 			live2dLoading = true;
 			if (forceReload) disposeModel();
-			const currentCanvas = getCanvas();
-			if (!currentCanvas) return;
 			widget.classList.remove("live2d-error");
 			widget.classList.remove("live2d-ready");
 			setStatus("Live2D loading");
-			try {
-				await loadScript("https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js");
-				window.PIXI = PIXI;
-				await loadScript("https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js");
-				await loadScript("https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js");
-			} catch (error) {
+			const runtimeReady = await prepareRuntime();
+			if (!runtimeReady) {
 				live2dLoading = false;
-				widget.classList.add("live2d-error");
-				setStatus("Live2D CDN failed");
-				console.error("Live2D SDK failed to load:", error);
 				return;
 			}
 
-			const app = new PIXI.Application({
-				view: currentCanvas,
-				autoStart: true,
-				backgroundAlpha: 0,
-				antialias: true,
-				resizeTo: widget,
-			});
+			const app = getApp();
 
 			let loadedModel = null;
 			try {
 				loadedModel = await PIXI.live2d.Live2DModel.from(model.path, {
-					autoInteract: false,
+					autoInteract: true,
 				});
 				console.debug("Live2D model loaded:", model.path);
 			} catch (error) {
@@ -429,6 +458,7 @@ const modelData = modelOptions.map((model) => ({
 				return;
 			}
 
+			disposeModel();
 			loadedModel.anchor.set(0.5, 1);
 			loadedModel.position.set(app.renderer.width / 2, app.renderer.height);
 			const scale = Math.min(
@@ -436,12 +466,15 @@ const modelData = modelOptions.map((model) => ({
 				app.renderer.height / loadedModel.height,
 			) * 1.18;
 			loadedModel.scale.set(scale);
+			loadedModel.interactive = true;
+			loadedModel.buttonMode = true;
+			loadedModel.on("hit", () => playTapMotion(loadedModel));
+			loadedModel.on("pointertap", () => playTapMotion(loadedModel));
 			app.stage.addChild(loadedModel);
 			widget.classList.add("live2d-ready");
-			live2dApp = app;
 			live2dModel = loadedModel;
 
-			const resizeModel = () => {
+			resizeModel = () => {
 				loadedModel.position.set(app.renderer.width / 2, app.renderer.height);
 			};
 			window.addEventListener("resize", resizeModel);
