@@ -83,7 +83,7 @@ const modelData = modelOptions.map((model) => ({
 		position: fixed;
 		left: max(0.75rem, env(safe-area-inset-left));
 		bottom: max(0.75rem, env(safe-area-inset-bottom));
-		z-index: 35;
+		z-index: 60;
 		width: clamp(120px, 13vw, 190px);
 		height: clamp(170px, 20vw, 270px);
 		pointer-events: none;
@@ -153,7 +153,7 @@ const modelData = modelOptions.map((model) => ({
 	#live2d-bubble {
 		position: absolute;
 		left: 0.25rem;
-		bottom: calc(100% - 1rem);
+		bottom: calc(100% + 0.35rem);
 		max-width: min(15rem, 80vw);
 		border: 1px solid rgba(255, 255, 255, 0.28);
 		border-radius: 0.75rem;
@@ -170,7 +170,7 @@ const modelData = modelOptions.map((model) => ({
 			opacity 0.2s ease,
 			transform 0.2s ease;
 		width: max-content;
-		z-index: 2;
+		z-index: 80;
 	}
 
 	:global(.dark) #live2d-bubble {
@@ -477,6 +477,12 @@ const modelData = modelOptions.map((model) => ({
 			}
 		};
 
+		canvas.addEventListener("click", () => {
+			if (live2dModel) {
+				playTapMotion(live2dModel);
+			}
+		});
+
 		const loadModel = async (model = getSelectedModel(), forceReload = false) => {
 			if (live2dLoading) return;
 			if (live2dLoaded && !forceReload) return;
@@ -517,7 +523,7 @@ const modelData = modelOptions.map((model) => ({
 			const scale = Math.min(
 				app.renderer.width / loadedModel.width,
 				app.renderer.height / loadedModel.height,
-			) * 1.18;
+			) * 0.92;
 			loadedModel.scale.set(scale);
 			loadedModel.interactive = true;
 			loadedModel.buttonMode = true;
