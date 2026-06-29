@@ -69,8 +69,13 @@ const bannerOffsetByPosition = {
 	center: `${BANNER_HEIGHT_EXTEND / 2}vh`,
 	bottom: "0",
 };
+const bannerPosition = siteConfig.banner.position || "center";
 const bannerOffset =
-	bannerOffsetByPosition[siteConfig.banner.position || "center"];
+	bannerPosition in bannerOffsetByPosition
+		? bannerOffsetByPosition[
+				bannerPosition as keyof typeof bannerOffsetByPosition
+			]
+		: bannerOffsetByPosition.center;
 ---
 
 <!DOCTYPE html>
