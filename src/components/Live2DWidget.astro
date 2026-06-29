@@ -1,0 +1,233 @@
+---
+const modelBase =
+	"https://cdn.jsdelivr.net/gh/n0099/TouhouCannonBall-Live2d-Models@main/Remilia%20(Event)";
+const modelCandidates = [
+	`${modelBase}/Remilia%20(Event).model3.json`,
+	`${modelBase}/Remilia.model3.json`,
+	`${modelBase}/remilia.model3.json`,
+	`${modelBase}/model.model3.json`,
+	`${modelBase}/index.model3.json`,
+];
+---
+
+<div id="live2d-widget" aria-label="Live2D model">
+	<button id="live2d-toggle" type="button" aria-label="Hide Live2D model">
+		<span aria-hidden="true">×</span>
+	</button>
+	<canvas id="live2d-canvas"></canvas>
+	<a
+		id="live2d-credit"
+		href="https://github.com/n0099/TouhouCannonBall-Live2d-Models/tree/main/Remilia%20(Event)"
+		target="_blank"
+		rel="noopener"
+	>
+		Live2D
+	</a>
+</div>
+
+<style>
+	#live2d-widget {
+		position: fixed;
+		left: max(0.75rem, env(safe-area-inset-left));
+		bottom: max(0.75rem, env(safe-area-inset-bottom));
+		z-index: 35;
+		width: clamp(120px, 13vw, 190px);
+		height: clamp(170px, 20vw, 270px);
+		pointer-events: none;
+		opacity: 0;
+		transform: translateY(0.75rem);
+		transition:
+			opacity 0.35s ease,
+			transform 0.35s ease;
+	}
+
+	#live2d-widget.live2d-ready {
+		opacity: 0.92;
+		transform: translateY(0);
+	}
+
+	#live2d-widget.live2d-hidden {
+		width: 2.5rem;
+		height: 2.5rem;
+		opacity: 0.72;
+		transform: translateY(0);
+	}
+
+	#live2d-canvas {
+		display: block;
+		width: 100%;
+		height: 100%;
+		pointer-events: auto;
+	}
+
+	#live2d-toggle,
+	#live2d-credit {
+		position: absolute;
+		pointer-events: auto;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+
+	#live2d-widget:hover #live2d-toggle,
+	#live2d-widget:hover #live2d-credit {
+		opacity: 1;
+	}
+
+	#live2d-widget.live2d-hidden #live2d-canvas,
+	#live2d-widget.live2d-hidden #live2d-credit {
+		display: none;
+	}
+
+	#live2d-widget.live2d-hidden #live2d-toggle {
+		top: 0;
+		right: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 1;
+		font-size: 0.72rem;
+		font-weight: 700;
+	}
+
+	#live2d-toggle {
+		top: 0.25rem;
+		right: 0.25rem;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.45);
+		color: white;
+		font-size: 1.1rem;
+		line-height: 1;
+	}
+
+	#live2d-credit {
+		left: 50%;
+		bottom: 0;
+		transform: translateX(-50%);
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.42);
+		padding: 0.125rem 0.5rem;
+		color: rgba(255, 255, 255, 0.82);
+		font-size: 0.68rem;
+		text-decoration: none;
+	}
+
+	@media (max-width: 1023px) {
+		#live2d-widget {
+			display: none;
+		}
+	}
+</style>
+
+<script
+	is:inline
+	define:vars={{
+		modelCandidates,
+	}}
+>
+	(() => {
+		const widget = document.getElementById("live2d-widget");
+		const canvas = document.getElementById("live2d-canvas");
+		const toggle = document.getElementById("live2d-toggle");
+
+		if (!widget || !canvas || !toggle || window.matchMedia("(max-width: 1023px)").matches) {
+			return;
+		}
+
+		let live2dLoaded = false;
+		let live2dLoading = false;
+		const setHidden = (hidden) => {
+			widget.classList.toggle("live2d-hidden", hidden);
+			toggle.textContent = hidden ? "L2D" : "×";
+			toggle.setAttribute(
+				"aria-label",
+				hidden ? "Show Live2D model" : "Hide Live2D model",
+			);
+			localStorage.setItem("live2d-hidden", hidden ? "true" : "false");
+		};
+
+		const loadScript = (src) =>
+			new Promise((resolve, reject) => {
+				const existing = document.querySelector(`script[src="${src}"]`);
+				if (existing) {
+					existing.addEventListener("load", resolve, { once: true });
+					existing.addEventListener("error", reject, { once: true });
+					if (existing.dataset.loaded === "true") resolve();
+					return;
+				}
+
+				const script = document.createElement("script");
+				script.src = src;
+				script.async = true;
+				script.onload = () => {
+					script.dataset.loaded = "true";
+					resolve();
+				};
+				script.onerror = reject;
+				document.head.appendChild(script);
+			});
+
+		const loadModel = async () => {
+			if (live2dLoaded || live2dLoading) return;
+			live2dLoading = true;
+			await loadScript("https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js");
+			await loadScript("https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js");
+			await loadScript("https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js");
+
+			const app = new PIXI.Application({
+				view: canvas,
+				autoStart: true,
+				backgroundAlpha: 0,
+				antialias: true,
+				resizeTo: widget,
+			});
+
+			let model = null;
+			for (const candidate of modelCandidates) {
+				try {
+					model = await PIXI.live2d.Live2DModel.from(candidate, {
+						autoInteract: false,
+					});
+					break;
+				} catch (error) {
+					console.debug("Live2D model candidate failed:", candidate, error);
+				}
+			}
+
+			if (!model) {
+				throw new Error("No Live2D model candidate could be loaded.");
+			}
+
+			model.anchor.set(0.5, 1);
+			model.position.set(app.renderer.width / 2, app.renderer.height);
+			const scale = Math.min(
+				app.renderer.width / model.width,
+				app.renderer.height / model.height,
+			) * 1.18;
+			model.scale.set(scale);
+			app.stage.addChild(model);
+			widget.classList.add("live2d-ready");
+
+			const resizeModel = () => {
+				model.position.set(app.renderer.width / 2, app.renderer.height);
+			};
+			window.addEventListener("resize", resizeModel);
+			live2dLoaded = true;
+		};
+
+		toggle.addEventListener("click", () => {
+			const shouldShow = widget.classList.contains("live2d-hidden");
+			setHidden(!shouldShow);
+			if (shouldShow) loadModel();
+		});
+
+		if (localStorage.getItem("live2d-hidden") === "true") {
+			setHidden(true);
+			return;
+		}
+
+		window.addEventListener("load", () => {
+			window.requestIdleCallback?.(loadModel) ?? window.setTimeout(loadModel, 800);
+		});
+	})();
+</script>
