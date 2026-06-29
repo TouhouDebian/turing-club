@@ -2,8 +2,10 @@
 import { url } from "../utils/url-utils";
 
 const modelCandidates = [
-	url(
-		"/model/Remilia (Event)/object_live2d_010_501.asset/object_live2d_010_501.asset.model3.json",
+	encodeURI(
+		url(
+			"/model/Remilia (Event)/object_live2d_010_501.asset/object_live2d_010_501.asset.model3.json",
+		),
 	),
 ];
 ---
@@ -203,9 +205,10 @@ const modelCandidates = [
 			widget.classList.remove("live2d-error");
 			setStatus("Live2D loading");
 			try {
-				await loadScript("https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js");
 				await loadScript("https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js");
-				await loadScript("https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js");
+				window.PIXI = PIXI;
+				await loadScript("https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js");
+				await loadScript("https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js");
 			} catch (error) {
 				live2dLoading = false;
 				widget.classList.add("live2d-error");
