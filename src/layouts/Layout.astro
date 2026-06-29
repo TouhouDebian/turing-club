@@ -189,6 +189,9 @@ const bannerOffset =
 	.enable-banner #banner {
 		@apply h-[var(--banner-height-home)] translate-y-[var(--bannerOffset)]
 	}
+	.enable-banner:not(.lg\:is-home) #banner img {
+		object-position: center 66% !important;
+	}
 	.enable-banner.is-home #main-grid {
 		@apply translate-y-[var(--banner-height-extend)];
 	}
