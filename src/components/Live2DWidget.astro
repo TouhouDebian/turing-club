@@ -1,19 +1,69 @@
 ---
 import { url } from "../utils/url-utils";
 
-const modelCandidates = [
-	encodeURI(
-		url(
-			"/model/Remilia (Event)/object_live2d_010_501.asset/object_live2d_010_501.asset.model3.json",
-		),
-	),
+const modelOptions = [
+	{
+		id: "remilia-event",
+		name: "Remilia (Event)",
+		path: "/model/Remilia (Event)/object_live2d_010_501.asset/object_live2d_010_501.asset.model3.json",
+	},
+	{
+		id: "remilia",
+		name: "Remilia",
+		path: "/model/Remilia/object_live2d_010_101.asset/object_live2d_010_101.asset.model3.json",
+	},
+	{
+		id: "flandre-event",
+		name: "Flandre (Event)",
+		path: "/model/Flandre (Event)/object_live2d_011_501.asset/object_live2d_011_501.asset.model3.json",
+	},
+	{
+		id: "flandre",
+		name: "Flandre",
+		path: "/model/Flandre/object_live2d_011_101.asset/object_live2d_011_101.asset.model3.json",
+	},
+	{
+		id: "cirno-event",
+		name: "Cirno (Event)",
+		path: "/model/Cirno (Event)/object_live2d_005_501.asset/object_live2d_005_501.asset.model3.json",
+	},
+	{
+		id: "cirno",
+		name: "Cirno",
+		path: "/model/Cirno/object_live2d_005_101.asset/object_live2d_005_101.asset.model3.json",
+	},
+	{
+		id: "koishi",
+		name: "Koishi",
+		path: "/model/Koishi/object_live2d_054_101.asset/object_live2d_054_101.asset.model3.json",
+	},
+	{
+		id: "mystia",
+		name: "Mystia",
+		path: "/model/Mystia/object_live2d_025_101.asset/object_live2d_025_101.asset.model3.json",
+	},
 ];
+
+const modelData = modelOptions.map((model) => ({
+	...model,
+	path: encodeURI(url(model.path)),
+}));
 ---
 
 <div id="live2d-widget" aria-label="Live2D model">
 	<button id="live2d-toggle" type="button" aria-label="Hide Live2D model">
 		<span aria-hidden="true">×</span>
 	</button>
+	<button id="live2d-reset" type="button" aria-label="Reset Live2D position">
+		R
+	</button>
+	<select id="live2d-model-select" aria-label="Select Live2D model">
+		{modelOptions.map((model) => (
+			<option value={model.id} selected={model.id === "remilia-event"}>
+				{model.name}
+			</option>
+		))}
+	</select>
 	<canvas id="live2d-canvas"></canvas>
 	<div id="live2d-status" aria-live="polite">Live2D loading</div>
 	<a
@@ -37,14 +87,21 @@ const modelCandidates = [
 		pointer-events: none;
 		opacity: 0.78;
 		transform: translateY(0.75rem);
+		touch-action: none;
+		user-select: none;
 		transition:
 			opacity 0.35s ease,
 			transform 0.35s ease;
 	}
 
+	#live2d-widget.live2d-dragging,
 	#live2d-widget.live2d-ready {
 		opacity: 0.92;
 		transform: translateY(0);
+	}
+
+	#live2d-widget.live2d-dragging {
+		transition: opacity 0.2s ease;
 	}
 
 	#live2d-widget.live2d-error {
@@ -66,6 +123,11 @@ const modelCandidates = [
 		width: 100%;
 		height: 100%;
 		pointer-events: auto;
+		cursor: grab;
+	}
+
+	#live2d-widget.live2d-dragging #live2d-canvas {
+		cursor: grabbing;
 	}
 
 	#live2d-status {
@@ -87,6 +149,8 @@ const modelCandidates = [
 	}
 
 	#live2d-toggle,
+	#live2d-reset,
+	#live2d-model-select,
 	#live2d-credit {
 		position: absolute;
 		pointer-events: auto;
@@ -95,12 +159,16 @@ const modelCandidates = [
 	}
 
 	#live2d-widget:hover #live2d-toggle,
+	#live2d-widget:hover #live2d-reset,
+	#live2d-widget:hover #live2d-model-select,
 	#live2d-widget:hover #live2d-credit {
 		opacity: 1;
 	}
 
 	#live2d-widget.live2d-hidden #live2d-canvas,
 	#live2d-widget.live2d-hidden #live2d-status,
+	#live2d-widget.live2d-hidden #live2d-reset,
+	#live2d-widget.live2d-hidden #live2d-model-select,
 	#live2d-widget.live2d-hidden #live2d-credit {
 		display: none;
 	}
@@ -118,12 +186,37 @@ const modelCandidates = [
 	#live2d-toggle {
 		top: 0.25rem;
 		right: 0.25rem;
+	}
+
+	#live2d-reset {
+		top: 0.25rem;
+		right: 2.1rem;
+	}
+
+	#live2d-model-select {
+		top: 2.1rem;
+		right: 0.25rem;
+		max-width: min(8.5rem, calc(100% - 0.5rem));
+		border-radius: 999px;
+		border: 0;
+		background: rgba(0, 0, 0, 0.45);
+		color: white;
+		font-size: 0.68rem;
+		padding: 0.25rem 1.4rem 0.25rem 0.55rem;
+	}
+
+	#live2d-model-select option {
+		color: black;
+	}
+
+	#live2d-toggle,
+	#live2d-reset {
 		width: 1.6rem;
 		height: 1.6rem;
 		border-radius: 999px;
 		background: rgba(0, 0, 0, 0.45);
 		color: white;
-		font-size: 1.1rem;
+		font-size: 0.85rem;
 		line-height: 1;
 	}
 
@@ -149,21 +242,75 @@ const modelCandidates = [
 <script
 	is:inline
 	define:vars={{
-		modelCandidates,
+		modelData,
 	}}
 >
 	(() => {
 		const widget = document.getElementById("live2d-widget");
 		const canvas = document.getElementById("live2d-canvas");
 		const toggle = document.getElementById("live2d-toggle");
+		const reset = document.getElementById("live2d-reset");
+		const select = document.getElementById("live2d-model-select");
 		const status = document.getElementById("live2d-status");
 
-		if (!widget || !canvas || !toggle || !status || window.matchMedia("(max-width: 1023px)").matches) {
+		if (!widget || !canvas || !toggle || !reset || !select || !status || window.matchMedia("(max-width: 1023px)").matches) {
 			return;
 		}
 
+		const positionStorageKey = "live2d-position";
+		const modelStorageKey = "live2d-model";
+		const defaultModelId = "remilia-event";
+		const modelsById = new Map(modelData.map((model) => [model.id, model]));
 		let live2dLoaded = false;
 		let live2dLoading = false;
+		let live2dApp = null;
+		let live2dModel = null;
+		let dragState = null;
+
+		const getDefaultPosition = () => ({
+			x: Math.max(12, window.innerWidth * 0.012),
+			y: Math.max(12, window.innerHeight - widget.offsetHeight - 12),
+		});
+
+		const clampPosition = (x, y) => {
+			const margin = 8;
+			const maxX = Math.max(margin, window.innerWidth - widget.offsetWidth - margin);
+			const maxY = Math.max(margin, window.innerHeight - widget.offsetHeight - margin);
+			return {
+				x: Math.min(Math.max(x, margin), maxX),
+				y: Math.min(Math.max(y, margin), maxY),
+			};
+		};
+
+		const setPosition = (x, y, shouldStore = true) => {
+			const position = clampPosition(x, y);
+			widget.style.left = `${position.x}px`;
+			widget.style.top = `${position.y}px`;
+			widget.style.right = "auto";
+			widget.style.bottom = "auto";
+			if (shouldStore) {
+				localStorage.setItem(positionStorageKey, JSON.stringify(position));
+			}
+		};
+
+		const restorePosition = () => {
+			try {
+				const stored = JSON.parse(localStorage.getItem(positionStorageKey) || "null");
+				if (
+					stored &&
+					typeof stored.x === "number" &&
+					typeof stored.y === "number"
+				) {
+					setPosition(stored.x, stored.y, false);
+					return;
+				}
+			} catch {
+				localStorage.removeItem(positionStorageKey);
+			}
+			const position = getDefaultPosition();
+			setPosition(position.x, position.y, false);
+		};
+
 		const setHidden = (hidden) => {
 			widget.classList.toggle("live2d-hidden", hidden);
 			toggle.textContent = hidden ? "L2D" : "×";
@@ -172,10 +319,21 @@ const modelCandidates = [
 				hidden ? "Show Live2D model" : "Hide Live2D model",
 			);
 			localStorage.setItem("live2d-hidden", hidden ? "true" : "false");
+			restorePosition();
 		};
 
 		const setStatus = (message) => {
 			status.textContent = message;
+		};
+
+		const getSelectedModel = () => {
+			const storedModelId = localStorage.getItem(modelStorageKey);
+			return modelsById.get(storedModelId) ?? modelsById.get(defaultModelId) ?? modelData[0];
+		};
+
+		const syncModelSelect = () => {
+			const selectedModel = getSelectedModel();
+			select.value = selectedModel.id;
 		};
 
 		const loadScript = (src) =>
@@ -199,10 +357,38 @@ const modelCandidates = [
 				document.head.appendChild(script);
 			});
 
-		const loadModel = async () => {
-			if (live2dLoaded || live2dLoading) return;
+		const disposeModel = () => {
+			if (live2dModel) {
+				live2dModel.destroy({
+					children: true,
+					texture: true,
+					baseTexture: true,
+				});
+				live2dModel = null;
+			}
+			if (live2dApp) {
+				live2dApp.destroy(false, {
+					children: true,
+					texture: true,
+					baseTexture: true,
+				});
+				live2dApp = null;
+			}
+			live2dLoaded = false;
+			canvas.replaceWith(canvas.cloneNode(false));
+		};
+
+		const getCanvas = () => document.getElementById("live2d-canvas");
+
+		const loadModel = async (model = getSelectedModel(), forceReload = false) => {
+			if (live2dLoading) return;
+			if (live2dLoaded && !forceReload) return;
 			live2dLoading = true;
+			if (forceReload) disposeModel();
+			const currentCanvas = getCanvas();
+			if (!currentCanvas) return;
 			widget.classList.remove("live2d-error");
+			widget.classList.remove("live2d-ready");
 			setStatus("Live2D loading");
 			try {
 				await loadScript("https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js");
@@ -218,46 +404,45 @@ const modelCandidates = [
 			}
 
 			const app = new PIXI.Application({
-				view: canvas,
+				view: currentCanvas,
 				autoStart: true,
 				backgroundAlpha: 0,
 				antialias: true,
 				resizeTo: widget,
 			});
 
-			let model = null;
-			for (const candidate of modelCandidates) {
-				try {
-					model = await PIXI.live2d.Live2DModel.from(candidate, {
-						autoInteract: false,
-					});
-					console.debug("Live2D model loaded:", candidate);
-					break;
-				} catch (error) {
-					console.debug("Live2D model candidate failed:", candidate, error);
-				}
+			let loadedModel = null;
+			try {
+				loadedModel = await PIXI.live2d.Live2DModel.from(model.path, {
+					autoInteract: false,
+				});
+				console.debug("Live2D model loaded:", model.path);
+			} catch (error) {
+				console.debug("Live2D model failed:", model.path, error);
 			}
 
-			if (!model) {
+			if (!loadedModel) {
 				live2dLoading = false;
 				widget.classList.add("live2d-error");
 				setStatus("Live2D model failed");
-				console.error("No Live2D model candidate could be loaded.", modelCandidates);
+				console.error("Live2D model could not be loaded.", model);
 				return;
 			}
 
-			model.anchor.set(0.5, 1);
-			model.position.set(app.renderer.width / 2, app.renderer.height);
+			loadedModel.anchor.set(0.5, 1);
+			loadedModel.position.set(app.renderer.width / 2, app.renderer.height);
 			const scale = Math.min(
-				app.renderer.width / model.width,
-				app.renderer.height / model.height,
+				app.renderer.width / loadedModel.width,
+				app.renderer.height / loadedModel.height,
 			) * 1.18;
-			model.scale.set(scale);
-			app.stage.addChild(model);
+			loadedModel.scale.set(scale);
+			app.stage.addChild(loadedModel);
 			widget.classList.add("live2d-ready");
+			live2dApp = app;
+			live2dModel = loadedModel;
 
 			const resizeModel = () => {
-				model.position.set(app.renderer.width / 2, app.renderer.height);
+				loadedModel.position.set(app.renderer.width / 2, app.renderer.height);
 			};
 			window.addEventListener("resize", resizeModel);
 			live2dLoaded = true;
@@ -269,6 +454,62 @@ const modelCandidates = [
 			setHidden(!shouldShow);
 			if (shouldShow) loadModel();
 		});
+
+		reset.addEventListener("click", () => {
+			localStorage.removeItem(positionStorageKey);
+			const position = getDefaultPosition();
+			setPosition(position.x, position.y, false);
+		});
+
+		select.addEventListener("change", () => {
+			const selectedModel = modelsById.get(select.value) ?? modelsById.get(defaultModelId);
+			if (!selectedModel) return;
+			localStorage.setItem(modelStorageKey, selectedModel.id);
+			if (!widget.classList.contains("live2d-hidden")) {
+				loadModel(selectedModel, true);
+			}
+		});
+
+		widget.addEventListener("pointerdown", (event) => {
+			if (event.target.closest("button, a, select")) return;
+
+			const rect = widget.getBoundingClientRect();
+			dragState = {
+				pointerId: event.pointerId,
+				offsetX: event.clientX - rect.left,
+				offsetY: event.clientY - rect.top,
+			};
+			widget.classList.add("live2d-dragging");
+			widget.setPointerCapture(event.pointerId);
+		});
+
+		widget.addEventListener("pointermove", (event) => {
+			if (!dragState || dragState.pointerId !== event.pointerId) return;
+			event.preventDefault();
+			setPosition(event.clientX - dragState.offsetX, event.clientY - dragState.offsetY);
+		});
+
+		const endDrag = (event) => {
+			if (!dragState || dragState.pointerId !== event.pointerId) return;
+			dragState = null;
+			widget.classList.remove("live2d-dragging");
+			try {
+				widget.releasePointerCapture(event.pointerId);
+			} catch {
+				// Pointer capture may already be released by the browser.
+			}
+		};
+
+		widget.addEventListener("pointerup", endDrag);
+		widget.addEventListener("pointercancel", endDrag);
+
+		window.addEventListener("resize", () => {
+			const rect = widget.getBoundingClientRect();
+			setPosition(rect.left, rect.top, false);
+		});
+
+		restorePosition();
+		syncModelSelect();
 
 		if (localStorage.getItem("live2d-hidden") === "true") {
 			setHidden(true);
