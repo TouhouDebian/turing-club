@@ -1,4 +1,5 @@
 ---
+import live2dMessages from "../live2d/messages/messages.json";
 import { url } from "../utils/url-utils";
 
 const modelOptions = [
@@ -66,6 +67,7 @@ const modelData = modelOptions.map((model) => ({
 	</select>
 	<canvas id="live2d-canvas"></canvas>
 	<div id="live2d-status" aria-live="polite">Live2D loading</div>
+	<div id="live2d-bubble" aria-live="polite"></div>
 	<a
 		id="live2d-credit"
 		href="https://github.com/n0099/TouhouCannonBall-Live2d-Models/tree/main/Remilia%20(Event)"
@@ -148,6 +150,38 @@ const modelData = modelOptions.map((model) => ({
 		display: none;
 	}
 
+	#live2d-bubble {
+		position: absolute;
+		left: 0.25rem;
+		bottom: calc(100% - 1rem);
+		max-width: min(15rem, 80vw);
+		border: 1px solid rgba(255, 255, 255, 0.28);
+		border-radius: 0.75rem;
+		background: color-mix(in oklch, var(--card-bg) 86%, transparent);
+		box-shadow: 0 0.5rem 1.75rem rgba(0, 0, 0, 0.18);
+		color: rgba(0, 0, 0, 0.9);
+		font-size: 0.78rem;
+		line-height: 1.45;
+		opacity: 0;
+		padding: 0.55rem 0.75rem;
+		pointer-events: none;
+		transform: translateY(0.4rem);
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease;
+		width: max-content;
+		z-index: 2;
+	}
+
+	:global(.dark) #live2d-bubble {
+		color: rgba(255, 255, 255, 0.9);
+	}
+
+	#live2d-bubble.live2d-bubble-active {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
 	#live2d-toggle,
 	#live2d-reset,
 	#live2d-model-select,
@@ -167,6 +201,7 @@ const modelData = modelOptions.map((model) => ({
 
 	#live2d-widget.live2d-hidden #live2d-canvas,
 	#live2d-widget.live2d-hidden #live2d-status,
+	#live2d-widget.live2d-hidden #live2d-bubble,
 	#live2d-widget.live2d-hidden #live2d-reset,
 	#live2d-widget.live2d-hidden #live2d-model-select,
 	#live2d-widget.live2d-hidden #live2d-credit {
@@ -242,6 +277,7 @@ const modelData = modelOptions.map((model) => ({
 <script
 	is:inline
 	define:vars={{
+		live2dMessages,
 		modelData,
 	}}
 >
@@ -252,8 +288,9 @@ const modelData = modelOptions.map((model) => ({
 		const reset = document.getElementById("live2d-reset");
 		const select = document.getElementById("live2d-model-select");
 		const status = document.getElementById("live2d-status");
+		const bubble = document.getElementById("live2d-bubble");
 
-		if (!widget || !canvas || !toggle || !reset || !select || !status || window.matchMedia("(max-width: 1023px)").matches) {
+		if (!widget || !canvas || !toggle || !reset || !select || !status || !bubble || window.matchMedia("(max-width: 1023px)").matches) {
 			return;
 		}
 
@@ -268,6 +305,7 @@ const modelData = modelOptions.map((model) => ({
 		let live2dModel = null;
 		let resizeModel = null;
 		let dragState = null;
+		let bubbleTimer = 0;
 
 		const getDefaultPosition = () => ({
 			x: Math.max(12, window.innerWidth * 0.012),
@@ -328,6 +366,22 @@ const modelData = modelOptions.map((model) => ({
 			status.textContent = message;
 		};
 
+		const getCurrentLanguage = () =>
+			document.documentElement.dataset.language === "en" ? "en" : "zh";
+
+		const showBubble = () => {
+			const message =
+				live2dMessages[Math.floor(Math.random() * live2dMessages.length)];
+			if (!message) return;
+
+			bubble.textContent = message[getCurrentLanguage()] || message.zh;
+			bubble.classList.add("live2d-bubble-active");
+			window.clearTimeout(bubbleTimer);
+			bubbleTimer = window.setTimeout(() => {
+				bubble.classList.remove("live2d-bubble-active");
+			}, 3600);
+		};
+
 		const getSelectedModel = () => {
 			const storedModelId = localStorage.getItem(modelStorageKey);
 			return modelsById.get(storedModelId) ?? modelsById.get(defaultModelId) ?? modelData[0];
@@ -362,11 +416,7 @@ const modelData = modelOptions.map((model) => ({
 		const disposeModel = () => {
 			if (live2dModel) {
 				live2dApp?.stage.removeChild(live2dModel);
-				live2dModel.destroy({
-					children: true,
-					texture: true,
-					baseTexture: true,
-				});
+				live2dModel.destroy();
 				live2dModel = null;
 			}
 			if (resizeModel) {
@@ -400,6 +450,8 @@ const modelData = modelOptions.map((model) => ({
 					autoStart: true,
 					backgroundAlpha: 0,
 					antialias: true,
+					autoDensity: true,
+					resolution: Math.min(window.devicePixelRatio || 1, 2),
 					resizeTo: widget,
 				});
 			}
@@ -408,6 +460,7 @@ const modelData = modelOptions.map((model) => ({
 
 		const playTapMotion = (model) => {
 			setStatus("Live2D touched");
+			showBubble();
 			window.setTimeout(() => {
 				if (widget.classList.contains("live2d-ready")) {
 					setStatus("Live2D ready");
