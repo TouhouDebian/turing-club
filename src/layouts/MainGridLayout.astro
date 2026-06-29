@@ -57,6 +57,7 @@ const mainPanelTop = siteConfig.banner.enable
                   src={siteConfig.banner.src} position={siteConfig.banner.position}
     >
     </ImageWrapper>
+    <div id="banner-bottom-fade" aria-hidden="true"></div>
 </div>}
 
 <!-- Main content -->
@@ -123,3 +124,21 @@ const mainPanelTop = siteConfig.banner.enable
     </div>
 </div>
 </Layout>
+
+<style>
+    #banner-bottom-fade {
+        position: absolute;
+        inset-inline: 0;
+        bottom: -1px;
+        height: 52%;
+        pointer-events: none;
+        background:
+            linear-gradient(
+                to bottom,
+                transparent 0%,
+                color-mix(in oklch, var(--page-bg) 12%, transparent) 42%,
+                color-mix(in oklch, var(--page-bg) 78%, transparent) 78%,
+                var(--page-bg) 100%
+            );
+    }
+</style>

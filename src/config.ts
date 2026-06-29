@@ -18,7 +18,7 @@ export const siteConfig: SiteConfig = {
 	banner: {
 		enable: true,
 		src: "/banner/89596288_p0.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
-		position: "center", // Equivalent to object-position, only supports 'top', 'center', 'bottom'. 'center' by default
+		position: "center 58%", // Equivalent to object-position. 'center' by default
 		credit: {
 			enable: true, // Display the credit text of the banner image
 			text: "顶部图片出处 / Header image source", // Credit text to be displayed
