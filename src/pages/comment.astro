@@ -77,7 +77,7 @@ const giscusConfigured = Boolean(
 					<Icon name="material-symbols:settings-outline-rounded" class="text-[1.8rem]" />
 					<div>
 						<p class="lang-zh">
-							留言区已经预留。当前仓库还没有可用的 GitHub Discussions 分类，开启后即可接入 giscus。
+							留言区已经预留。当前仓库还没有可用的 GitHub Discussions 分类，创建分类后即可接入 giscus。
 						</p>
 						<p class="lang-en">
 							The guestbook area is ready. GitHub Discussions needs a category before giscus can be enabled.
@@ -103,7 +103,14 @@ const giscusConfigured = Boolean(
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr);
 		align-items: center;
+		color: rgba(0, 0, 0, 0.9);
 		gap: 1.1rem;
+	}
+
+	:global(.dark) .comment-hero,
+	:global(.dark) .comment-panel,
+	:global(.dark) .giscus-pending {
+		color: rgba(255, 255, 255, 0.9);
 	}
 
 	.comment-hero-icon {
@@ -133,14 +140,20 @@ const giscusConfigured = Boolean(
 	}
 
 	.comment-hero p {
-		color: var(--text-50);
+		color: rgba(0, 0, 0, 0.58);
 		font-weight: 650;
 		margin: 0.7rem 0 0;
+	}
+
+	:global(.dark) .comment-hero p,
+	:global(.dark) .giscus-pending p {
+		color: rgba(255, 255, 255, 0.62);
 	}
 
 	.comment-panel-head {
 		display: flex;
 		align-items: center;
+		color: rgba(0, 0, 0, 0.9);
 		justify-content: space-between;
 		gap: 1rem;
 		margin-bottom: 1.1rem;
@@ -177,7 +190,7 @@ const giscusConfigured = Boolean(
 		border: 1px solid color-mix(in oklch, var(--primary) 22%, transparent);
 		border-radius: 0.9rem;
 		background: color-mix(in oklch, var(--primary) 8%, transparent);
-		color: var(--text-50);
+		color: rgba(0, 0, 0, 0.72);
 		font-weight: 650;
 		padding: 1.15rem;
 	}

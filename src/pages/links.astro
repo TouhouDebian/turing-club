@@ -22,6 +22,8 @@ const friendLinks = [
 		icon: "material-symbols:travel-explore-rounded",
 	},
 ];
+
+const randomFriendUrls = friendLinks.map((link) => link.url);
 ---
 
 <MainGridLayout title="友链" description="友情链接">
@@ -44,15 +46,29 @@ const friendLinks = [
 					A small collection of school and club-related sites for quick access.
 				</p>
 			</div>
-			<a
-				href="/comment/"
-				class="message-button"
-				aria-label="Go to guestbook"
-			>
-				<Icon name="material-symbols:chat-outline-rounded" class="text-[1.25rem]" />
-				<span class="lang-zh">去留言</span>
-				<span class="lang-en">Guestbook</span>
-			</a>
+			<div class="link-actions">
+				<a
+					href="https://www.tyzx.com.cn/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="action-button"
+					aria-label="Open school website"
+				>
+					<Icon name="material-symbols:school-outline-rounded" class="text-[1.25rem]" />
+					<span class="lang-zh">学校官网</span>
+					<span class="lang-en">School Website</span>
+				</a>
+				<button
+					id="random-friend-link"
+					type="button"
+					class="action-button"
+					aria-label="Open a random link"
+				>
+					<Icon name="material-symbols:shuffle-rounded" class="text-[1.25rem]" />
+					<span class="lang-zh">随机一个友链</span>
+					<span class="lang-en">Random Link</span>
+				</button>
+			</div>
 		</section>
 
 		<div class="friend-grid">
@@ -90,7 +106,13 @@ const friendLinks = [
 		align-items: center;
 		justify-content: space-between;
 		gap: 1.25rem;
+		color: rgba(0, 0, 0, 0.9);
 		padding: 2rem;
+	}
+
+	:global(.dark) .link-hero,
+	:global(.dark) .friend-card {
+		color: rgba(255, 255, 255, 0.9);
 	}
 
 	.section-label {
@@ -110,27 +132,43 @@ const friendLinks = [
 	}
 
 	.link-hero p {
-		color: var(--text-50);
+		color: rgba(0, 0, 0, 0.58);
 		font-weight: 600;
 		margin: 0.7rem 0 0;
 	}
 
-	.message-button {
+	:global(.dark) .link-hero p,
+	:global(.dark) .friend-copy p {
+		color: rgba(255, 255, 255, 0.62);
+	}
+
+	.link-actions {
+		display: grid;
+		gap: 0.65rem;
+		min-width: 11.5rem;
+	}
+
+	.action-button {
 		display: inline-flex;
 		align-items: center;
+		justify-content: center;
 		gap: 0.45rem;
+		border: 0;
 		border-radius: 0.75rem;
 		background: color-mix(in oklch, var(--primary) 20%, var(--card-bg));
 		color: var(--primary);
+		cursor: pointer;
 		font-weight: 800;
 		padding: 0.85rem 1rem;
+		text-align: center;
+		text-decoration: none;
 		white-space: nowrap;
 		transition:
 			background 0.2s ease,
 			transform 0.2s ease;
 	}
 
-	.message-button:hover {
+	.action-button:hover {
 		background: color-mix(in oklch, var(--primary) 28%, var(--card-bg));
 		transform: translateY(-1px);
 	}
@@ -145,6 +183,7 @@ const friendLinks = [
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr) auto;
 		align-items: center;
+		color: rgba(0, 0, 0, 0.9);
 		gap: 1rem;
 		padding: 1.25rem;
 		text-decoration: none;
@@ -184,7 +223,7 @@ const friendLinks = [
 	}
 
 	.friend-copy p {
-		color: var(--text-50);
+		color: rgba(0, 0, 0, 0.58);
 		font-weight: 650;
 		line-height: 1.45;
 		margin: 0.35rem 0 0;
@@ -204,6 +243,10 @@ const friendLinks = [
 			padding: 1.4rem;
 		}
 
+		.link-actions {
+			width: 100%;
+		}
+
 		.friend-grid {
 			grid-template-columns: 1fr;
 		}
@@ -217,3 +260,12 @@ const friendLinks = [
 		}
 	}
 </style>
+
+<script is:inline define:vars={{ randomFriendUrls }}>
+	const randomFriendButton = document.getElementById("random-friend-link");
+	randomFriendButton?.addEventListener("click", () => {
+		if (!Array.isArray(randomFriendUrls) || randomFriendUrls.length === 0) return;
+		const index = Math.floor(Math.random() * randomFriendUrls.length);
+		window.open(randomFriendUrls[index], "_blank", "noopener,noreferrer");
+	});
+</script>

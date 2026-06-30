@@ -40,7 +40,6 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		LinkPreset.Archive,
-		LinkPreset.About,
 		{
 			name: "友链",
 			url: "/links/",
@@ -49,6 +48,7 @@ export const navBarConfig: NavBarConfig = {
 			name: "留言",
 			url: "/comment/",
 		},
+		LinkPreset.About,
 		{
 			name: "GitHub",
 			url: "https://github.com/TouhouDebian/turing-club", // Internal links should not include the base path, as it is automatically added
