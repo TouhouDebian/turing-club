@@ -375,24 +375,52 @@ const modelData = modelOptions.map((model) => ({
 		const modelStorageKey = "live2d-model";
 		const defaultModelId = "remilia-event";
 		const modelsById = new Map(modelData.map((model) => [model.id, model]));
-		const characterPoseMotionPreferences = {
-			akyuu: [40, 41, 42, 43, 44, 45],
-			alice: [20, 21, 22, 23, 24, 25],
-			flandre: [50, 51, 52, 53, 54, 55],
-			"flandre-event": [20, 21, 22, 23, 24, 25],
-			koishi: [40, 41, 42, 43, 44, 45],
-			marisa: [40, 41, 42, 43, 44, 45],
-			mystia: [30, 31, 32, 33, 34, 35],
-			reimu: [30, 31, 32, 33, 34, 35],
-			reisen: [50, 51, 52, 53, 54, 55],
-			"reisen-event": [50, 51, 52, 53, 54, 55],
-			remilia: [50, 51, 52, 53, 54, 55],
-			"remilia-event": [40, 41, 42, 43, 44, 45],
-			suika: [30, 31, 32, 33, 34, 35],
-			youmu: [30, 31, 32, 33, 34, 35],
-			"youmu-event": [50, 51, 52, 53, 54, 55],
-			yuyuko: [50, 51, 52, 53, 54, 55],
-		};
+			const preservedDefaultPoseModelIds = new Set([
+				"akyuu",
+				"cirno",
+				"cirno-event",
+				"koishi",
+				"marisa",
+				"reimu",
+				"reisen",
+				"reisen-event",
+				"youmu-event",
+				"yuyuko",
+			]);
+			const characterPoseMotionPreferences = {
+				alice: [
+					[20, 21, 22, 23, 24, 25],
+					[40, 41, 42, 43, 44, 45],
+					[50, 51, 52, 53, 54, 55],
+				],
+				flandre: [
+					[50, 51, 52, 53, 54, 55],
+					[20, 21, 22, 23, 24, 25],
+					[40, 41, 42, 43, 44, 45],
+				],
+				"flandre-event": [
+					[20, 21, 22, 23, 24, 25],
+					[40, 41, 42, 43, 44, 45],
+					[50, 51, 52, 53, 54, 55],
+				],
+				mystia: [
+					[30, 31, 32, 33, 34, 35],
+					[40, 41, 42, 43, 44, 45],
+					[20, 21, 22, 23, 24, 25],
+				],
+				remilia: [[50, 51, 52, 53, 54, 55]],
+				"remilia-event": [[40, 41, 42, 43, 44, 45]],
+				suika: [
+					[30, 31, 32, 33, 34, 35],
+					[20, 21, 22, 23, 24, 25],
+					[10, 11, 12, 13, 14, 15],
+				],
+				youmu: [
+					[30, 31, 32, 33, 34, 35],
+					[40, 41, 42, 43, 44, 45],
+					[20, 21, 22, 23, 24, 25],
+				],
+			};
 		const characterIdleProfiles = {
 			akyuu: {
 				bodyY: -0.08,
@@ -630,15 +658,25 @@ const modelData = modelOptions.map((model) => ({
 		let blushUntil = 0;
 		let blinkUntil = 0;
 		let nextBlinkAt = performance.now() + 2400;
-		let idleStartedAt = performance.now();
-		let handPartLock = null;
-		let poseParameterLock = null;
-		let lastInteractionAt = 0;
-		let activeSpeechProfile = null;
-		let speechProfileUntil = 0;
-		let speechProfileStartedAt = 0;
-		let gestureSeed = 0;
-		let currentModelId = defaultModelId;
+			let idleStartedAt = performance.now();
+			let handPartLock = null;
+			let neutralHandPartLock = null;
+			let poseParameterLock = null;
+			let neutralPoseParameterLock = null;
+			let poseStartedAt = performance.now();
+			let lastInteractionAt = 0;
+			let activeSpeechProfile = null;
+			let speechProfileUntil = 0;
+			let speechProfileStartedAt = 0;
+			let gestureSeed = 0;
+			let currentModelId = defaultModelId;
+			const pointerFocus = {
+				x: 0,
+				y: 0,
+				targetX: 0,
+				targetY: 0,
+				lastAt: 0,
+			};
 
 		const bottomOffset = 12;
 
@@ -813,12 +851,14 @@ const modelData = modelOptions.map((model) => ({
 				live2dApp?.stage.removeChild(live2dModel);
 				live2dModel.destroy();
 				live2dModel = null;
-			}
-			handPartLock = null;
-			poseParameterLock = null;
-			if (resizeModel) {
-				window.removeEventListener("resize", resizeModel);
-				resizeModel = null;
+				}
+				handPartLock = null;
+				neutralHandPartLock = null;
+				poseParameterLock = null;
+				neutralPoseParameterLock = null;
+				if (resizeModel) {
+					window.removeEventListener("resize", resizeModel);
+					resizeModel = null;
 			}
 			live2dLoaded = false;
 		};
@@ -982,19 +1022,46 @@ const modelData = modelOptions.map((model) => ({
 			}
 		};
 
-		const syncHandPartLock = (model) => {
-			if (!handPartLock) return;
-			for (const [partId, opacity] of handPartLock) {
-				setModelPartOpacity(model, partId, opacity);
-			}
-		};
+			const easeInOut = (value) => {
+				const clamped = Math.min(1, Math.max(0, value));
+				return clamped * clamped * (3 - clamped * 2);
+			};
 
-		const syncPoseParameterLock = (model) => {
-			if (!poseParameterLock) return;
-			for (const [parameterId, value] of poseParameterLock) {
-				setModelParameter(model, [parameterId], value);
-			}
-		};
+			const getPoseBlend = (now = performance.now()) => {
+				const holdMs = 2100;
+				const transitionMs = 1100;
+				return easeInOut((now - poseStartedAt - holdMs) / transitionMs);
+			};
+
+			const syncHandPartLock = (model) => {
+				const poseBlend = getPoseBlend();
+				const activeHandPartLock =
+					poseBlend < 0.65 && neutralHandPartLock
+						? neutralHandPartLock
+						: handPartLock ?? neutralHandPartLock;
+				if (!activeHandPartLock) return;
+				for (const [partId, opacity] of activeHandPartLock) {
+					setModelPartOpacity(model, partId, opacity);
+				}
+			};
+
+			const syncPoseParameterLock = (model) => {
+				if (!poseParameterLock && !neutralPoseParameterLock) return;
+				const poseBlend = getPoseBlend();
+				const parameterIds = new Set([
+					...(neutralPoseParameterLock?.keys() ?? []),
+					...(poseParameterLock?.keys() ?? []),
+				]);
+				for (const parameterId of parameterIds) {
+					const neutralValue = neutralPoseParameterLock?.get(parameterId) ?? 0;
+					const poseValue = poseParameterLock?.get(parameterId) ?? neutralValue;
+					setModelParameter(
+						model,
+						[parameterId],
+						neutralValue + (poseValue - neutralValue) * poseBlend,
+					);
+				}
+			};
 
 		const getSpeechEase = (now) => {
 			if (!activeSpeechProfile || now >= speechProfileUntil) return 0;
@@ -1354,15 +1421,54 @@ const modelData = modelOptions.map((model) => ({
 			return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
 		};
 
-		const selectPoseMotion = (motions) => {
-			const motionEntries = getMotionEntries(motions);
-			if (!motionEntries.length) return null;
+			const shuffleNumbers = (numbers) => {
+				const result = [...numbers];
+				for (let index = result.length - 1; index > 0; index -= 1) {
+					const randomIndex = Math.floor(Math.random() * (index + 1));
+					[result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+				}
+				return result;
+			};
 
-			const preferredNumbers = [
-				...(characterPoseMotionPreferences[currentModelId] ?? []),
-				1,
-				10,
-				20,
+			const selectMotionByNumbers = (motionEntries, motionNumbers) => {
+				for (const motionNumber of motionNumbers) {
+					const entry = motionEntries.find(
+						(entry) => getMotionNumber(entry.motion) === motionNumber,
+					);
+					if (entry) return entry;
+				}
+				return null;
+			};
+
+			const selectPoseMotion = (motions) => {
+				const motionEntries = getMotionEntries(motions);
+				if (!motionEntries.length) return null;
+
+				const preferenceGroups = preservedDefaultPoseModelIds.has(currentModelId)
+					? null
+					: characterPoseMotionPreferences[currentModelId];
+				if (Array.isArray(preferenceGroups) && preferenceGroups.length) {
+					const availableGroups = preferenceGroups
+						.map((group) =>
+							group.filter((motionNumber) =>
+								motionEntries.some(
+									(entry) => getMotionNumber(entry.motion) === motionNumber,
+								),
+							),
+						)
+						.filter((group) => group.length);
+					const selectedGroup =
+						availableGroups[Math.floor(Math.random() * availableGroups.length)];
+					const selectedMotion = selectedGroup
+						? selectMotionByNumbers(motionEntries, shuffleNumbers(selectedGroup))
+						: null;
+					if (selectedMotion) return selectedMotion;
+				}
+
+				const preferredNumbers = [
+					1,
+					10,
+					20,
 				21,
 				22,
 				23,
@@ -1385,23 +1491,29 @@ const modelData = modelOptions.map((model) => ({
 				52,
 				53,
 				54,
-				55,
-			];
-			for (const motionNumber of preferredNumbers) {
-				const entry = motionEntries.find(
-					(entry) => getMotionNumber(entry.motion) === motionNumber,
-				);
-				if (entry) return entry;
-			}
+					55,
+				];
+				const preferredMotion = selectMotionByNumbers(motionEntries, preferredNumbers);
+				if (preferredMotion) return preferredMotion;
 
-			return motionEntries
-				.filter((entry) => getMotionNumber(entry.motion) < 40)
+				return motionEntries
+					.filter((entry) => getMotionNumber(entry.motion) < 40)
 				.sort(
 					(a, b) =>
 						Math.abs(getMotionNumber(a.motion) - 20) -
 						Math.abs(getMotionNumber(b.motion) - 20),
-				)[0] ?? motionEntries[0];
-		};
+					)[0] ?? motionEntries[0];
+			};
+
+			const selectNeutralMotion = (motions) => {
+				const motionEntries = getMotionEntries(motions);
+				if (!motionEntries.length) return null;
+				return (
+					selectMotionByNumbers(motionEntries, [1, 2, 3, 4, 5, 6, 7, 8]) ??
+					selectMotionByNumbers(motionEntries, [10, 11, 12, 13, 14, 15]) ??
+					motionEntries[0]
+				);
+			};
 
 		const getHandSide = (partId) => {
 			const normalized = partId.replace(/[_-]/g, "").toLowerCase();
@@ -1454,12 +1566,13 @@ const modelData = modelOptions.map((model) => ({
 				collectCurve(curve, side, true);
 			}
 
-			const opacityMap = new Map();
-			for (const [side, partIds] of handsBySide) {
-				const visibleId = visibleBySide.get(side)?.id ?? partIds[0];
-				for (const partId of partIds) {
-					opacityMap.set(partId, partId === visibleId ? 1 : 0);
-				}
+				const opacityMap = new Map();
+				for (const [side, partIds] of handsBySide) {
+					const visibleId = visibleBySide.get(side)?.id;
+					if (!visibleId) continue;
+					for (const partId of partIds) {
+						opacityMap.set(partId, partId === visibleId ? 1 : 0);
+					}
 			}
 			return opacityMap.size ? opacityMap : null;
 		};
