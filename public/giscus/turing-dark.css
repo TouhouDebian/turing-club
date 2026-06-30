@@ -118,3 +118,77 @@ main {
 	background: rgba(23, 30, 39, 0.78);
 	border: 1px solid rgba(122, 172, 232, 0.18);
 }
+
+main {
+	--color-btn-text: white;
+	--color-btn-bg: oklch(0.33 0.035 var(--giscus-hue, 250));
+	--color-btn-hover-bg: oklch(0.38 0.04 var(--giscus-hue, 250));
+	--color-btn-active-bg: oklch(0.43 0.045 var(--giscus-hue, 250));
+	--color-btn-selected-bg: oklch(0.43 0.045 var(--giscus-hue, 250));
+	--color-btn-primary-bg: oklch(0.75 0.14 var(--giscus-hue, 250));
+	--color-btn-primary-hover-bg: oklch(0.7 0.16 var(--giscus-hue, 250));
+	--color-fg-default: white;
+	--color-fg-muted: oklch(0.75 0.03 var(--giscus-hue, 250));
+	--color-fg-subtle: oklch(0.7 0.03 var(--giscus-hue, 250));
+	--color-canvas-default: oklch(0.23 0.015 var(--giscus-hue, 250));
+	--color-canvas-overlay: oklch(0.23 0.015 var(--giscus-hue, 250));
+	--color-canvas-inset: oklch(0.17 0.015 var(--giscus-hue, 250));
+	--color-canvas-subtle: rgba(255, 255, 255, 0.05);
+	--color-border-default: rgba(255, 255, 255, 0.1);
+	--color-border-muted: rgba(255, 255, 255, 0.08);
+	--color-neutral-muted: rgba(255, 255, 255, 0.1);
+	--color-accent-fg: oklch(0.75 0.14 var(--giscus-hue, 250));
+	--color-accent-emphasis: oklch(0.75 0.14 var(--giscus-hue, 250));
+	--color-accent-muted: oklch(0.65 0.08 var(--giscus-hue, 250) / 0.4);
+	--color-accent-subtle: oklch(0.3 0.025 var(--giscus-hue, 250));
+	--color-action-list-item-default-hover-bg: oklch(
+		0.3 0.035 var(--giscus-hue, 250)
+	);
+	--color-segmented-control-bg: oklch(0.33 0.035 var(--giscus-hue, 250));
+	--color-segmented-control-button-bg: oklch(0.23 0.015 var(--giscus-hue, 250));
+	--color-segmented-control-button-selected-border: oklch(
+		0.75 0.14 var(--giscus-hue, 250)
+	);
+	--color-scale-gray-1: oklch(0.33 0.035 var(--giscus-hue, 250));
+	--color-scale-blue-1: oklch(0.4 0.05 var(--giscus-hue, 250));
+	--color-social-reaction-bg-hover: oklch(0.38 0.04 var(--giscus-hue, 250));
+	--color-social-reaction-bg-reacted-hover: oklch(
+		0.45 0.07 var(--giscus-hue, 250)
+	);
+}
+
+.gsc-main {
+	gap: 1rem !important;
+}
+
+.gsc-comments {
+	gap: 1rem !important;
+}
+
+.gsc-comments .gsc-header {
+	padding-left: 0.5rem !important;
+	padding-right: 0.5rem !important;
+}
+
+.gsc-comments .gsc-comment > div {
+	border: none !important;
+	border-radius: 1rem !important;
+	background-color: var(--color-canvas-inset);
+	padding: 1rem !important;
+}
+
+.gsc-replies {
+	border: none !important;
+	border-radius: 0.5rem !important;
+	background-color: var(--color-canvas-default);
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.75rem !important;
+	padding-top: 0 !important;
+}
+
+.gsc-reply-box,
+.gsc-comment-box {
+	border: none !important;
+	border-radius: 0.75rem !important;
+	overflow: hidden;
+}

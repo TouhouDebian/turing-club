@@ -79,28 +79,73 @@ const giscusThemePaths = {
 					<script is:inline define:vars={{ giscusThemePaths }}>
 						(() => {
 							const giscusOrigin = "https://giscus.app";
+							const cssCache = new Map();
 
-							const getThemeUrl = () => {
+							const getHue = () => {
+								const hue = getComputedStyle(document.documentElement)
+									.getPropertyValue("--hue")
+									.trim();
+								return Number.parseInt(hue, 10) || 250;
+							};
+
+							const encodeCss = (css) => {
+								const bytes = new TextEncoder().encode(css);
+								let binary = "";
+								for (const byte of bytes) {
+									binary += String.fromCharCode(byte);
+								}
+								return window.btoa(binary);
+							};
+
+							const loadThemeCss = async (themePath) => {
+								if (cssCache.has(themePath)) return cssCache.get(themePath);
+
+								const response = await fetch(themePath);
+								if (!response.ok) throw new Error("Failed to load giscus theme");
+								const css = await response.text();
+								cssCache.set(themePath, css);
+								return css;
+							};
+
+							const getThemeValue = async () => {
 								const themePath = document.documentElement.classList.contains("dark")
 									? giscusThemePaths.dark
 									: giscusThemePaths.light;
-								return new URL(themePath, window.location.href).href;
+								const css = await loadThemeCss(themePath);
+								const hueStyle = `main { --giscus-hue: ${getHue()}; }`;
+								return `data:text/css;base64,${encodeCss(`${hueStyle}\n${css}`)}`;
 							};
 
-							const syncGiscusTheme = () => {
+							const syncGiscusTheme = async () => {
 								const frame = document.querySelector("iframe.giscus-frame");
 								if (!frame?.contentWindow) return;
 
-								frame.contentWindow.postMessage(
-									{
-										giscus: {
-											setConfig: {
-												theme: getThemeUrl(),
+								try {
+									frame.contentWindow.postMessage(
+										{
+											giscus: {
+												setConfig: {
+													theme: await getThemeValue(),
+												},
 											},
 										},
-									},
-									giscusOrigin,
-								);
+										giscusOrigin,
+									);
+								} catch {
+									const fallbackTheme = document.documentElement.classList.contains("dark")
+										? "dark"
+										: "light";
+									frame.contentWindow.postMessage(
+										{
+											giscus: {
+												setConfig: {
+													theme: fallbackTheme,
+												},
+											},
+										},
+										giscusOrigin,
+									);
+								}
 							};
 
 							window.addEventListener("message", (event) => {
@@ -112,7 +157,7 @@ const giscusThemePaths = {
 							const observer = new MutationObserver(syncGiscusTheme);
 							observer.observe(document.documentElement, {
 								attributes: true,
-								attributeFilter: ["class"],
+								attributeFilter: ["class", "style"],
 							});
 
 							window.setTimeout(syncGiscusTheme, 800);

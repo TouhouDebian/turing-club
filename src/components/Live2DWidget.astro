@@ -375,6 +375,158 @@ const modelData = modelOptions.map((model) => ({
 		const modelStorageKey = "live2d-model";
 		const defaultModelId = "remilia-event";
 		const modelsById = new Map(modelData.map((model) => [model.id, model]));
+		const characterIdleProfiles = {
+			akyuu: {
+				bodyY: -0.08,
+				bodyZ: 0.04,
+				angleZ: 0.02,
+				eyeSmile: 0.06,
+				mouthForm: 0.03,
+				accessoryScale: 0.7,
+			},
+			alice: {
+				bodyY: -0.1,
+				bodyZ: 0.06,
+				angleZ: -0.04,
+				mouthForm: 0.04,
+				dollScale: 1.18,
+				accessoryScale: 0.85,
+			},
+			cirno: {
+				bodyY: 0.16,
+				bodyZ: -0.08,
+				angleZ: -0.08,
+				eyeSmile: 0.12,
+				mouthForm: 0.18,
+				wingScale: 0.9,
+			},
+			"cirno-event": {
+				bodyY: 0.16,
+				bodyZ: -0.08,
+				angleZ: -0.08,
+				eyeSmile: 0.12,
+				mouthForm: 0.18,
+				wingScale: 0.9,
+			},
+			flandre: {
+				bodyY: 0.12,
+				bodyZ: 0.12,
+				angleZ: 0.08,
+				eyeSmile: 0.18,
+				cheek: 0.04,
+				mouthForm: 0.14,
+				wingScale: 1.12,
+			},
+			"flandre-event": {
+				bodyY: 0.12,
+				bodyZ: 0.12,
+				angleZ: 0.08,
+				eyeSmile: 0.18,
+				cheek: 0.04,
+				mouthForm: 0.14,
+				wingScale: 1.12,
+			},
+			koishi: {
+				bodyX: 0.05,
+				bodyY: 0.08,
+				bodyZ: 0.1,
+				angleZ: 0.08,
+				eyeSmile: 0.14,
+				mouthForm: 0.1,
+				accessoryScale: 0.82,
+			},
+			marisa: {
+				bodyY: 0.18,
+				bodyZ: -0.1,
+				angleZ: -0.06,
+				eyeSmile: 0.1,
+				mouthForm: 0.18,
+				accessoryScale: 0.9,
+			},
+			mystia: {
+				bodyY: 0.08,
+				bodyZ: 0.06,
+				eyeSmile: 0.1,
+				mouthForm: 0.14,
+				earScale: 1.08,
+				wingScale: 1.02,
+			},
+			reimu: {
+				bodyY: -0.08,
+				bodyZ: 0.04,
+				angleZ: 0.02,
+				eyeSmile: 0.08,
+				mouthForm: 0.04,
+				accessoryScale: 0.75,
+			},
+			reisen: {
+				bodyY: -0.06,
+				bodyZ: 0.05,
+				angleZ: 0.03,
+				cheek: 0.03,
+				mouthForm: -0.02,
+				earScale: 1.18,
+				accessoryScale: 0.75,
+			},
+			"reisen-event": {
+				bodyY: -0.06,
+				bodyZ: 0.05,
+				angleZ: 0.03,
+				cheek: 0.03,
+				mouthForm: -0.02,
+				earScale: 1.18,
+				accessoryScale: 0.75,
+			},
+			remilia: {
+				bodyY: 0.14,
+				bodyZ: -0.1,
+				angleZ: -0.04,
+				eyeSmile: 0.08,
+				mouthForm: 0.15,
+				wingScale: 1.05,
+			},
+			"remilia-event": {
+				bodyY: 0.14,
+				bodyZ: -0.1,
+				angleZ: -0.04,
+				eyeSmile: 0.08,
+				mouthForm: 0.15,
+				wingScale: 1.05,
+			},
+			suika: {
+				bodyY: 0.04,
+				bodyZ: 0.16,
+				angleZ: 0.1,
+				eyeSmile: 0.16,
+				mouthForm: 0.2,
+				accessoryScale: 1.05,
+			},
+			youmu: {
+				bodyX: -0.05,
+				bodyY: -0.02,
+				bodyZ: -0.03,
+				angleZ: -0.02,
+				mouthForm: 0.02,
+				accessoryScale: 0.7,
+			},
+			"youmu-event": {
+				bodyX: -0.05,
+				bodyY: -0.02,
+				bodyZ: -0.03,
+				angleZ: -0.02,
+				mouthForm: 0.02,
+				accessoryScale: 0.7,
+			},
+			yuyuko: {
+				bodyY: 0.04,
+				bodyZ: 0.07,
+				angleZ: 0.04,
+				eyeSmile: 0.14,
+				mouthForm: 0.08,
+				wispScale: 1.12,
+				accessoryScale: 0.9,
+			},
+		};
 		const speechProfiles = [
 			{
 				mood: "curious",
@@ -468,6 +620,7 @@ const modelData = modelOptions.map((model) => ({
 		let speechProfileUntil = 0;
 		let speechProfileStartedAt = 0;
 		let gestureSeed = 0;
+		let currentModelId = defaultModelId;
 
 		const bottomOffset = 12;
 
@@ -785,6 +938,11 @@ const modelData = modelOptions.map((model) => ({
 			return Array.from(ids).findIndex((id) => getCubismIdValue(id) === targetId);
 		};
 
+		const getIdleProfile = () =>
+			characterIdleProfiles[currentModelId] ??
+			characterIdleProfiles[defaultModelId] ??
+			{};
+
 		const setModelPartOpacity = (model, partId, value) => {
 			const coreModel = getCoreModel(model);
 			const cubismId = resolveCubismId(partId);
@@ -840,45 +998,64 @@ const modelData = modelOptions.map((model) => ({
 				expressionActive ? 0.95 : 0,
 				profile ? profile.mouthOpen * ease : 0,
 			);
+			const idleProfile = getIdleProfile();
+			const idleExpressionWeight = profile ? Math.max(0, 1 - ease) : 1;
 			const eyeSmile = Math.max(
 				blushActive ? 0.85 : 0,
 				expressionActive ? 0.35 : 0,
 				profile ? profile.eyeSmile * ease : 0,
+				(idleProfile.eyeSmile ?? 0) * idleExpressionWeight,
 			);
 			const cheek = Math.max(
 				blushActive ? 1 : 0,
 				profile ? profile.cheek * ease : 0,
+				(idleProfile.cheek ?? 0) * idleExpressionWeight,
 			);
-			const mouthForm = profile ? profile.mouthForm * ease : 0;
+			const mouthForm =
+				(profile ? profile.mouthForm * ease : 0) +
+				(idleProfile.mouthForm ?? 0) * idleExpressionWeight;
 			const brows = profile?.brows;
+			const idleBrows = idleProfile.brows;
 
 			setModelParameter(model, ["ParamMouthOpenY", "PARAM_MOUTH_OPEN_Y"], mouthOpen);
 			setModelParameter(model, ["ParamEyeLSmile", "ParamEyeRSmile"], eyeSmile);
 			setModelParameter(model, ["ParamCheek"], cheek);
 			setModelParameter(model, ["ParamMouthForm", "ParamMouthFormScale"], mouthForm);
-			setModelParameter(model, ["ParamBrowLY", "ParamBrowRY"], (brows?.y ?? 0) * ease);
+			setModelParameter(
+				model,
+				["ParamBrowLY", "ParamBrowRY"],
+				(brows?.y ?? 0) * ease +
+					(idleBrows?.y ?? 0) * idleExpressionWeight,
+			);
 			setModelParameter(
 				model,
 				["ParamBrowLForm", "ParamBrowRForm"],
-				(brows?.form ?? 0) * ease,
+				(brows?.form ?? 0) * ease +
+					(idleBrows?.form ?? 0) * idleExpressionWeight,
 			);
 			setModelParameter(
 				model,
 				["ParamBrowLAngle", "ParamBrowRAngle"],
-				(brows?.angle ?? 0) * ease,
+				(brows?.angle ?? 0) * ease +
+					(idleBrows?.angle ?? 0) * idleExpressionWeight,
 			);
 		};
 
-		const syncAccessoryBreathing = (model, t) => {
+		const syncAccessoryBreathing = (model, t, idleProfile) => {
+			const accessoryScale = idleProfile.accessoryScale ?? 1;
+			const dollScale = idleProfile.dollScale ?? accessoryScale;
+			const wingScale = idleProfile.wingScale ?? accessoryScale;
+			const earScale = idleProfile.earScale ?? accessoryScale;
+			const wispScale = idleProfile.wispScale ?? accessoryScale;
 			const soft = Math.sin(t * 0.64);
 			const slow = Math.sin(t * 0.42 + 0.6);
 			const offset = Math.sin(t * 0.78 + 1.1);
 			const tiny = Math.sin(t * 1.05 + 0.35);
 
-			addModelParameter(model, ["ParamDollX"], soft * 0.48, 0.18);
-			addModelParameter(model, ["ParamDollY"], offset * 0.55, 0.18);
-			addModelParameter(model, ["ParamDollAngleX"], slow * 0.85, 0.2);
-			addModelParameter(model, ["ParamDollAngleY"], soft * 0.75, 0.18);
+			addModelParameter(model, ["ParamDollX"], soft * 0.48 * dollScale, 0.18);
+			addModelParameter(model, ["ParamDollY"], offset * 0.55 * dollScale, 0.18);
+			addModelParameter(model, ["ParamDollAngleX"], slow * 0.85 * dollScale, 0.2);
+			addModelParameter(model, ["ParamDollAngleY"], soft * 0.75 * dollScale, 0.18);
 
 			const idleWing = Math.sin(t * 0.78) * 0.15 + Math.sin(t * 0.42) * 0.06;
 			addModelParameter(
@@ -890,7 +1067,7 @@ const modelData = modelOptions.map((model) => ({
 					"ParamWingLRotation",
 					"ParamWingLOpen",
 				],
-				idleWing,
+				idleWing * wingScale,
 				0.11,
 			);
 			addModelParameter(
@@ -902,13 +1079,18 @@ const modelData = modelOptions.map((model) => ({
 					"ParamWingRRotation",
 					"ParamWingROpen",
 				],
-				idleWing,
+				idleWing * wingScale,
 				0.11,
 			);
-			addModelParameter(model, ["ParamWingRotation"], slow * 0.11, 0.09);
+			addModelParameter(model, ["ParamWingRotation"], slow * 0.11 * wingScale, 0.09);
 
-			addModelParameter(model, ["ParamEarL", "ParamEarRAngleZ"], tiny * 0.48, 0.1);
-			addModelParameter(model, ["ParamEarR"], -tiny * 0.48, 0.1);
+			addModelParameter(
+				model,
+				["ParamEarL", "ParamEarRAngleZ"],
+				tiny * 0.48 * earScale,
+				0.1,
+			);
+			addModelParameter(model, ["ParamEarR"], -tiny * 0.48 * earScale, 0.1);
 
 			addModelParameter(
 				model,
@@ -922,9 +1104,8 @@ const modelData = modelOptions.map((model) => ({
 					"ParamSleeveLeftOpen",
 					"ParamSleeveMoveL",
 					"ParamSleeveZL",
-					"ParamLeftHandFrill",
 				],
-				soft * 0.1,
+				soft * 0.1 * accessoryScale,
 				0.06,
 			);
 			addModelParameter(
@@ -939,38 +1120,43 @@ const modelData = modelOptions.map((model) => ({
 					"ParamSleeveRightOpen",
 					"ParamSleeveMoveR",
 					"ParamSleeveZR",
-					"ParamRightHandFrill",
 				],
-				-slow * 0.1,
+				-slow * 0.1 * accessoryScale,
 				0.06,
 			);
 			addModelParameter(
 				model,
 				["ParamSleeveLeftFrontAndBack", "ParamSleeveRightFrontAndBack"],
-				offset * 0.09,
+				offset * 0.09 * accessoryScale,
 				0.05,
 			);
 
-			addModelParameter(model, ["ParamChainLShake"], soft * 0.34, 0.1);
-			addModelParameter(model, ["ParamChainRShake"], slow * 0.34, 0.1);
+			addModelParameter(model, ["ParamChainLShake"], soft * 0.34 * accessoryScale, 0.1);
+			addModelParameter(model, ["ParamChainRShake"], slow * 0.34 * accessoryScale, 0.1);
 
-			addModelParameter(model, ["ParamWillOTheWhisp1X"], soft * 0.58, 0.12);
-			addModelParameter(model, ["ParamWillOTheWhisp1Y"], offset * 0.48, 0.12);
-			addModelParameter(model, ["ParamWillOTheWhisp2X"], -slow * 0.54, 0.12);
-			addModelParameter(model, ["ParamWillOTheWhisp2Y"], soft * 0.42, 0.12);
-			addModelParameter(model, ["ParamWillOTheWhisp3X"], offset * 0.52, 0.12);
-			addModelParameter(model, ["ParamWillOTheWhisp3Y"], -slow * 0.45, 0.12);
+			addModelParameter(model, ["ParamWillOTheWhisp1X"], soft * 0.58 * wispScale, 0.12);
+			addModelParameter(model, ["ParamWillOTheWhisp1Y"], offset * 0.48 * wispScale, 0.12);
+			addModelParameter(model, ["ParamWillOTheWhisp2X"], -slow * 0.54 * wispScale, 0.12);
+			addModelParameter(model, ["ParamWillOTheWhisp2Y"], soft * 0.42 * wispScale, 0.12);
+			addModelParameter(model, ["ParamWillOTheWhisp3X"], offset * 0.52 * wispScale, 0.12);
+			addModelParameter(model, ["ParamWillOTheWhisp3Y"], -slow * 0.45 * wispScale, 0.12);
 
-			addModelParameter(model, ["ParamEyeHiLightShake"], tiny * 0.1, 0.05);
+			addModelParameter(model, ["ParamEyeHiLightShake"], tiny * 0.1 * accessoryScale, 0.05);
 		};
 
 		const syncLiveliness = (model, now, profile, speechEase) => {
 			const t = (now - idleStartedAt) / 1000;
+			const idleProfile = getIdleProfile();
+			const idlePoseWeight = Math.max(0.28, 1 - speechEase * 0.72);
 			setModelParameter(model, ["ParamBreath"], 0.5 + Math.sin(t * 1.25) * 0.18);
+			addModelParameter(model, ["ParamBodyAngleX"], (idleProfile.bodyX ?? 0) * idlePoseWeight, 0.22);
+			addModelParameter(model, ["ParamBodyAngleY"], (idleProfile.bodyY ?? 0) * idlePoseWeight, 0.22);
+			addModelParameter(model, ["ParamBodyAngleZ"], (idleProfile.bodyZ ?? 0) * idlePoseWeight, 0.22);
+			addModelParameter(model, ["ParamAngleZ"], (idleProfile.angleZ ?? 0) * idlePoseWeight, 0.2);
 			addModelParameter(model, ["ParamBodyAngleY"], Math.sin(t * 0.52) * 0.82, 0.38);
 			addModelParameter(model, ["ParamBodyAngleZ"], Math.sin(t * 0.68) * 0.6, 0.34);
 			addModelParameter(model, ["ParamAngleZ"], Math.sin(t * 0.62) * 0.62, 0.26);
-			syncAccessoryBreathing(model, t);
+			syncAccessoryBreathing(model, t, idleProfile);
 			if (profile) {
 				const wave =
 					Math.sin((now - speechProfileStartedAt) / 130 + gestureSeed) * 0.5 +
@@ -1030,7 +1216,6 @@ const modelData = modelOptions.map((model) => ({
 						"ParamSleeveMoveL",
 						"ParamSleeveZL",
 						"ParamLeftArmShake",
-						"ParamLeftHandFrill",
 					],
 					leftArmValue,
 					0.08,
@@ -1049,7 +1234,6 @@ const modelData = modelOptions.map((model) => ({
 						"ParamSleeveMoveR",
 						"ParamSleeveZR",
 						"ParamRighttArmShake",
-						"ParamRightHandFrill",
 					],
 					rightArmValue,
 					0.08,
@@ -1138,13 +1322,16 @@ const modelData = modelOptions.map((model) => ({
 			setModelParameter(live2dModel, ["ParamEyeLSmile", "ParamEyeRSmile"], 1);
 		};
 
-		const selectPoseMotion = (motions) => {
-			const motionEntries = Object.entries(motions ?? {}).flatMap(
+		const getMotionEntries = (motions) =>
+			Object.entries(motions ?? {}).flatMap(
 				([group, motionList]) =>
 					Array.isArray(motionList)
 						? motionList.map((motion, index) => ({ group, index, motion }))
 						: [],
 			);
+
+		const selectPoseMotion = (motions) => {
+			const motionEntries = getMotionEntries(motions);
 			if (!motionEntries.length) return null;
 
 			const getMotionNumber = (motion) => {
@@ -1190,24 +1377,35 @@ const modelData = modelOptions.map((model) => ({
 			return Number.isFinite(value) ? value : 0;
 		};
 
-		const createHandPartLock = (motionJson) => {
+		const createHandPartLock = (selectedMotionJson, allMotionJsons = []) => {
 			const handsBySide = new Map();
 			const visibleBySide = new Map();
-			for (const curve of motionJson?.Curves ?? []) {
-				if (curve?.Target !== "PartOpacity" || typeof curve.Id !== "string") {
-					continue;
-				}
-				const side = getHandSide(curve.Id);
-				if (!side) continue;
+			const collectCurve = (curve, side, shouldUseVisibleValue) => {
+				if (curve?.Target !== "PartOpacity" || typeof curve.Id !== "string") return;
 
 				if (!handsBySide.has(side)) handsBySide.set(side, []);
-				handsBySide.get(side).push(curve.Id);
+				const sideParts = handsBySide.get(side);
+				if (!sideParts.includes(curve.Id)) sideParts.push(curve.Id);
 
 				const value = getCurveStartValue(curve);
 				const current = visibleBySide.get(side);
-				if (value > 0.001 && (!current || value > current.value)) {
+				if (shouldUseVisibleValue && value > 0.001 && (!current || value > current.value)) {
 					visibleBySide.set(side, { id: curve.Id, value });
 				}
+			};
+
+			for (const motionJson of allMotionJsons) {
+				for (const curve of motionJson?.Curves ?? []) {
+					const side = getHandSide(curve?.Id ?? "");
+					if (!side) continue;
+					collectCurve(curve, side, false);
+				}
+			}
+
+			for (const curve of selectedMotionJson?.Curves ?? []) {
+				const side = getHandSide(curve?.Id ?? "");
+				if (!side) continue;
+				collectCurve(curve, side, true);
 			}
 
 			const opacityMap = new Map();
@@ -1244,7 +1442,9 @@ const modelData = modelOptions.map((model) => ({
 				const settingsResponse = await fetch(model.path);
 				if (!settingsResponse.ok) return null;
 				const settings = await settingsResponse.json();
-				const selectedMotion = selectPoseMotion(settings.FileReferences?.Motions);
+				const motions = settings.FileReferences?.Motions;
+				const motionEntries = getMotionEntries(motions);
+				const selectedMotion = selectPoseMotion(motions);
 				const file = selectedMotion?.motion?.File ?? selectedMotion?.motion?.file;
 				if (!file) return null;
 
@@ -1252,8 +1452,26 @@ const modelData = modelOptions.map((model) => ({
 				const motionResponse = await fetch(motionUrl);
 				if (!motionResponse.ok) return null;
 				const motionJson = await motionResponse.json();
+				const allMotionJsons = (
+					await Promise.all(
+						motionEntries.map(async (entry) => {
+							try {
+								const entryFile = entry.motion?.File ?? entry.motion?.file;
+								if (!entryFile) return null;
+								const entryUrl = new URL(
+									entryFile,
+									new URL(model.path, window.location.href),
+								);
+								const response = await fetch(entryUrl);
+								return response.ok ? response.json() : null;
+							} catch {
+								return null;
+							}
+						}),
+					)
+				).filter(Boolean);
 				return {
-					lock: createHandPartLock(motionJson),
+					lock: createHandPartLock(motionJson, allMotionJsons),
 					parameterLock: createPoseParameterLock(motionJson),
 					motion: selectedMotion,
 				};
@@ -1328,6 +1546,7 @@ const modelData = modelOptions.map((model) => ({
 			if (!model?.path) {
 				model = getSelectedModel();
 			}
+			currentModelId = model.id ?? defaultModelId;
 			const loadId = ++modelLoadId;
 			if (live2dLoaded && !forceReload) return;
 			live2dLoading = true;
