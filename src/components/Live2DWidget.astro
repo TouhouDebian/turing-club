@@ -375,6 +375,24 @@ const modelData = modelOptions.map((model) => ({
 		const modelStorageKey = "live2d-model";
 		const defaultModelId = "remilia-event";
 		const modelsById = new Map(modelData.map((model) => [model.id, model]));
+		const characterPoseMotionPreferences = {
+			akyuu: [40, 41, 42, 43, 44, 45],
+			alice: [20, 21, 22, 23, 24, 25],
+			flandre: [50, 51, 52, 53, 54, 55],
+			"flandre-event": [20, 21, 22, 23, 24, 25],
+			koishi: [40, 41, 42, 43, 44, 45],
+			marisa: [40, 41, 42, 43, 44, 45],
+			mystia: [30, 31, 32, 33, 34, 35],
+			reimu: [30, 31, 32, 33, 34, 35],
+			reisen: [50, 51, 52, 53, 54, 55],
+			"reisen-event": [50, 51, 52, 53, 54, 55],
+			remilia: [50, 51, 52, 53, 54, 55],
+			"remilia-event": [40, 41, 42, 43, 44, 45],
+			suika: [30, 31, 32, 33, 34, 35],
+			youmu: [30, 31, 32, 33, 34, 35],
+			"youmu-event": [50, 51, 52, 53, 54, 55],
+			yuyuko: [50, 51, 52, 53, 54, 55],
+		};
 		const characterIdleProfiles = {
 			akyuu: {
 				bodyY: -0.08,
@@ -1330,17 +1348,45 @@ const modelData = modelOptions.map((model) => ({
 						: [],
 			);
 
+		const getMotionNumber = (motion) => {
+			const file = String(motion?.File ?? motion?.file ?? "");
+			const match = file.match(/_(\d+)\.motion3\.json$/i);
+			return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+		};
+
 		const selectPoseMotion = (motions) => {
 			const motionEntries = getMotionEntries(motions);
 			if (!motionEntries.length) return null;
 
-			const getMotionNumber = (motion) => {
-				const file = String(motion?.File ?? motion?.file ?? "");
-				const match = file.match(/_(\d+)\.motion3\.json$/i);
-				return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
-			};
-
-			const preferredNumbers = [1, 10, 20, 21, 22, 23, 24, 25, 30, 31, 32, 33, 34, 35];
+			const preferredNumbers = [
+				...(characterPoseMotionPreferences[currentModelId] ?? []),
+				1,
+				10,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+			];
 			for (const motionNumber of preferredNumbers) {
 				const entry = motionEntries.find(
 					(entry) => getMotionNumber(entry.motion) === motionNumber,
@@ -1419,7 +1465,7 @@ const modelData = modelOptions.map((model) => ({
 		};
 
 		const isPoseParameterId = (id) =>
-			/(arm|hand|shoulder|wrist|sleeve|wing)/i.test(id) &&
+			/(arm|shoulder|wrist|sleeve|wing|doll|ear|chain|whisp)/i.test(id) &&
 			!/order|drawing/i.test(id);
 
 		const createPoseParameterLock = (motionJson) => {
