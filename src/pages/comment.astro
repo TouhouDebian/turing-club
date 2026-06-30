@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { url } from "../utils/url-utils";
 
 const giscusConfig = {
 	repo: "TouhouDebian/turing-club",
@@ -12,6 +13,10 @@ const giscusConfig = {
 const giscusConfigured = Boolean(
 	giscusConfig.repoId && giscusConfig.category && giscusConfig.categoryId,
 );
+const giscusThemePaths = {
+	light: url("/giscus/turing-light.css"),
+	dark: url("/giscus/turing-dark.css"),
+};
 ---
 
 <MainGridLayout title="留言" description="留言板">
@@ -65,12 +70,55 @@ const giscusConfigured = Boolean(
 						data-reactions-enabled="1"
 						data-emit-metadata="0"
 						data-input-position="bottom"
-						data-theme="preferred_color_scheme"
+						data-theme="light"
 						data-lang="zh-CN"
 						data-loading="lazy"
 						crossorigin="anonymous"
 						async
 					></script>
+					<script is:inline define:vars={{ giscusThemePaths }}>
+						(() => {
+							const giscusOrigin = "https://giscus.app";
+
+							const getThemeUrl = () => {
+								const themePath = document.documentElement.classList.contains("dark")
+									? giscusThemePaths.dark
+									: giscusThemePaths.light;
+								return new URL(themePath, window.location.href).href;
+							};
+
+							const syncGiscusTheme = () => {
+								const frame = document.querySelector("iframe.giscus-frame");
+								if (!frame?.contentWindow) return;
+
+								frame.contentWindow.postMessage(
+									{
+										giscus: {
+											setConfig: {
+												theme: getThemeUrl(),
+											},
+										},
+									},
+									giscusOrigin,
+								);
+							};
+
+							window.addEventListener("message", (event) => {
+								if (event.origin === giscusOrigin && event.data?.giscus) {
+									syncGiscusTheme();
+								}
+							});
+
+							const observer = new MutationObserver(syncGiscusTheme);
+							observer.observe(document.documentElement, {
+								attributes: true,
+								attributeFilter: ["class"],
+							});
+
+							window.setTimeout(syncGiscusTheme, 800);
+							window.setTimeout(syncGiscusTheme, 1800);
+						})();
+					</script>
 				</div>
 			) : (
 				<div class="giscus-pending">

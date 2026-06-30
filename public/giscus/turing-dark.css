@@ -1,0 +1,120 @@
+main {
+	--color-prettylights-syntax-comment: rgba(255, 255, 255, 0.46);
+	--color-prettylights-syntax-constant: #79b8ff;
+	--color-prettylights-syntax-entity: #79b8ff;
+	--color-prettylights-syntax-storage-modifier-import: rgba(
+		255,
+		255,
+		255,
+		0.88
+	);
+	--color-prettylights-syntax-entity-tag: #7ee787;
+	--color-prettylights-syntax-keyword: #d2a8ff;
+	--color-prettylights-syntax-string: #a5d6ff;
+	--color-prettylights-syntax-variable: #ffa657;
+	--color-prettylights-syntax-brackethighlighter-unmatched: #ff7b72;
+	--color-prettylights-syntax-invalid-illegal-text: #ffffff;
+	--color-prettylights-syntax-invalid-illegal-bg: #8e1519;
+	--color-prettylights-syntax-carriage-return-text: #ffffff;
+	--color-prettylights-syntax-carriage-return-bg: #b62324;
+	--color-prettylights-syntax-string-regexp: #7ee787;
+	--color-prettylights-syntax-markup-list: #f2cc60;
+	--color-prettylights-syntax-markup-heading: #4da1ff;
+	--color-prettylights-syntax-markup-italic: rgba(255, 255, 255, 0.88);
+	--color-prettylights-syntax-markup-bold: rgba(255, 255, 255, 0.88);
+	--color-prettylights-syntax-markup-deleted-text: #ffdcd7;
+	--color-prettylights-syntax-markup-deleted-bg: #67060c;
+	--color-prettylights-syntax-markup-inserted-text: #aff5b4;
+	--color-prettylights-syntax-markup-inserted-bg: #033a16;
+	--color-prettylights-syntax-markup-changed-text: #ffdfb6;
+	--color-prettylights-syntax-markup-changed-bg: #5a1e02;
+	--color-prettylights-syntax-markup-ignored-text: rgba(255, 255, 255, 0.8);
+	--color-prettylights-syntax-markup-ignored-bg: #1158c7;
+	--color-prettylights-syntax-meta-diff-range: #d2a8ff;
+	--color-prettylights-syntax-brackethighlighter-angle: rgba(
+		255,
+		255,
+		255,
+		0.54
+	);
+	--color-prettylights-syntax-sublimelinter-gutter-mark: rgba(
+		255,
+		255,
+		255,
+		0.44
+	);
+	--color-prettylights-syntax-constant-other-reference-link: #a5d6ff;
+	--color-fg-default: rgba(255, 255, 255, 0.9);
+	--color-fg-muted: rgba(255, 255, 255, 0.64);
+	--color-fg-subtle: rgba(255, 255, 255, 0.46);
+	--color-canvas-default: transparent;
+	--color-canvas-overlay: #171e27;
+	--color-canvas-inset: rgba(77, 161, 255, 0.08);
+	--color-canvas-subtle: rgba(77, 161, 255, 0.08);
+	--color-border-default: rgba(122, 172, 232, 0.22);
+	--color-border-muted: rgba(122, 172, 232, 0.14);
+	--color-neutral-muted: rgba(122, 172, 232, 0.14);
+	--color-accent-fg: #67b2ff;
+	--color-accent-emphasis: #4da1ff;
+	--color-accent-muted: rgba(77, 161, 255, 0.36);
+	--color-accent-subtle: rgba(77, 161, 255, 0.13);
+	--color-success-fg: #7ee787;
+	--color-attention-fg: #d29922;
+	--color-danger-fg: #ff7b72;
+	--color-primer-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+	--color-btn-text: rgba(255, 255, 255, 0.86);
+	--color-btn-bg: rgba(86, 146, 220, 0.2);
+	--color-btn-border: rgba(122, 172, 232, 0.2);
+	--color-btn-shadow: none;
+	--color-btn-inset-shadow: none;
+	--color-btn-hover-bg: rgba(86, 146, 220, 0.28);
+	--color-btn-hover-border: rgba(122, 172, 232, 0.32);
+	--color-btn-active-bg: rgba(86, 146, 220, 0.34);
+	--color-btn-selected-bg: rgba(86, 146, 220, 0.3);
+	--color-btn-primary-text: #ffffff;
+	--color-btn-primary-bg: #3d91ee;
+	--color-btn-primary-border: rgba(77, 161, 255, 0.5);
+	--color-btn-primary-shadow: none;
+	--color-btn-primary-inset-shadow: none;
+	--color-btn-primary-hover-bg: #4da1ff;
+	--color-btn-primary-hover-border: rgba(77, 161, 255, 0.7);
+	--color-btn-primary-selected-bg: #2f7fd8;
+	--color-input-bg: rgba(13, 18, 24, 0.72);
+	--color-input-contrast-bg: #0d1218;
+	--color-input-border: rgba(122, 172, 232, 0.22);
+	--color-input-shadow: none;
+	--color-social-reaction-bg-hover: rgba(77, 161, 255, 0.14);
+	--color-social-reaction-bg-reacted-hover: rgba(77, 161, 255, 0.18);
+	--color-avatar-bg: rgba(86, 146, 220, 0.16);
+	--color-header-bg: transparent;
+	--color-header-text: rgba(255, 255, 255, 0.72);
+	--color-timeline-badge-bg: rgba(86, 146, 220, 0.16);
+	--color-state-focus-border: #4da1ff;
+	--color-state-focus-shadow: 0 0 0 3px rgba(77, 161, 255, 0.22);
+	--color-markdown-code-bg: rgba(86, 146, 220, 0.16);
+	--color-hidden-text-expander-bg: rgba(86, 146, 220, 0.16);
+	--color-label-border: rgba(122, 172, 232, 0.24);
+	--color-topic-tag-bg: rgba(77, 161, 255, 0.14);
+	--color-topic-tag-hover-bg: rgba(77, 161, 255, 0.2);
+	--color-scrollbar-thumb: rgba(122, 172, 232, 0.32);
+}
+
+.gsc-main,
+.gsc-comment-box,
+.gsc-comments > .gsc-comment {
+	font-family:
+		Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui,
+		sans-serif;
+}
+
+.gsc-comment-box,
+.gsc-comments > .gsc-comment,
+.gsc-timeline {
+	border-radius: 0.9rem;
+}
+
+.gsc-comment-box,
+.gsc-comments > .gsc-comment {
+	background: rgba(23, 30, 39, 0.78);
+	border: 1px solid rgba(122, 172, 232, 0.18);
+}
