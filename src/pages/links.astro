@@ -1,0 +1,219 @@
+---
+import { Icon } from "astro-icon/components";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+const friendLinks = [
+	{
+		titleZh: "学校官网",
+		titleEn: "School Website",
+		descriptionZh: "天一中学官方信息发布入口。",
+		descriptionEn: "The official information portal of Tianyi High School.",
+		url: "https://www.tyzx.com.cn/",
+		displayUrl: "www.tyzx.com.cn",
+		icon: "material-symbols:school-outline-rounded",
+	},
+	{
+		titleZh: "学校非官方维基",
+		titleEn: "Unofficial School Wiki",
+		descriptionZh: "由同学共同维护的非官方知识库。",
+		descriptionEn: "An unofficial knowledge base maintained by students.",
+		url: "https://tyapwiki.cc.cd/",
+		displayUrl: "tyapwiki.cc.cd",
+		icon: "material-symbols:travel-explore-rounded",
+	},
+];
+---
+
+<MainGridLayout title="友链" description="友情链接">
+	<div class="space-y-4">
+		<section class="card-base link-hero">
+			<div>
+				<div class="section-label">
+					<Icon name="material-symbols:link-rounded" class="text-[1.2rem]" />
+					<span class="lang-zh">友链</span>
+					<span class="lang-en">Links</span>
+				</div>
+				<h1>
+					<span class="lang-zh">感谢一路相伴</span>
+					<span class="lang-en">Thanks for being here</span>
+				</h1>
+				<p class="lang-zh">
+					这里收录与学校、社团资料相关的站点，方便同学快速前往。
+				</p>
+				<p class="lang-en">
+					A small collection of school and club-related sites for quick access.
+				</p>
+			</div>
+			<a
+				href="/comment/"
+				class="message-button"
+				aria-label="Go to guestbook"
+			>
+				<Icon name="material-symbols:chat-outline-rounded" class="text-[1.25rem]" />
+				<span class="lang-zh">去留言</span>
+				<span class="lang-en">Guestbook</span>
+			</a>
+		</section>
+
+		<div class="friend-grid">
+			{friendLinks.map((link) => (
+				<a
+					class="card-base friend-card"
+					href={link.url}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<div class="friend-icon">
+						<Icon name={link.icon} class="text-[2rem]" />
+					</div>
+					<div class="friend-copy">
+						<h2>
+							<span class="lang-zh">{link.titleZh}</span>
+							<span class="lang-en">{link.titleEn}</span>
+						</h2>
+						<p class="lang-zh">{link.descriptionZh}</p>
+						<p class="lang-en">{link.descriptionEn}</p>
+						<div class="friend-url">{link.displayUrl}</div>
+					</div>
+					<div class="friend-arrow" aria-hidden="true">
+						<Icon name="material-symbols:chevron-right-rounded" class="text-[1.7rem]" />
+					</div>
+				</a>
+			))}
+		</div>
+	</div>
+</MainGridLayout>
+
+<style>
+	.link-hero {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.25rem;
+		padding: 2rem;
+	}
+
+	.section-label {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: var(--primary);
+		font-weight: 700;
+		margin-bottom: 0.8rem;
+	}
+
+	.link-hero h1 {
+		font-size: clamp(1.75rem, 4vw, 2.55rem);
+		font-weight: 800;
+		line-height: 1.15;
+		margin: 0;
+	}
+
+	.link-hero p {
+		color: var(--text-50);
+		font-weight: 600;
+		margin: 0.7rem 0 0;
+	}
+
+	.message-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		border-radius: 0.75rem;
+		background: color-mix(in oklch, var(--primary) 20%, var(--card-bg));
+		color: var(--primary);
+		font-weight: 800;
+		padding: 0.85rem 1rem;
+		white-space: nowrap;
+		transition:
+			background 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.message-button:hover {
+		background: color-mix(in oklch, var(--primary) 28%, var(--card-bg));
+		transform: translateY(-1px);
+	}
+
+	.friend-grid {
+		display: grid;
+		gap: 1rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.friend-card {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 1rem;
+		padding: 1.25rem;
+		text-decoration: none;
+		transition:
+			transform 0.22s ease,
+			background 0.22s ease;
+	}
+
+	.friend-card:hover {
+		background: color-mix(in oklch, var(--card-bg) 88%, var(--primary) 12%);
+		transform: translateY(-2px);
+	}
+
+	.friend-icon,
+	.friend-arrow {
+		display: grid;
+		place-items: center;
+		border-radius: 0.75rem;
+		background: color-mix(in oklch, var(--primary) 18%, transparent);
+		color: var(--primary);
+	}
+
+	.friend-icon {
+		width: 4.8rem;
+		aspect-ratio: 1;
+	}
+
+	.friend-arrow {
+		width: 2.8rem;
+		height: 4.8rem;
+	}
+
+	.friend-copy h2 {
+		font-size: 1.2rem;
+		font-weight: 800;
+		margin: 0;
+	}
+
+	.friend-copy p {
+		color: var(--text-50);
+		font-weight: 650;
+		line-height: 1.45;
+		margin: 0.35rem 0 0;
+	}
+
+	.friend-url {
+		color: var(--primary);
+		font-size: 0.86rem;
+		font-weight: 700;
+		margin-top: 0.55rem;
+	}
+
+	@media (max-width: 768px) {
+		.link-hero {
+			align-items: flex-start;
+			flex-direction: column;
+			padding: 1.4rem;
+		}
+
+		.friend-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.friend-card {
+			grid-template-columns: auto minmax(0, 1fr);
+		}
+
+		.friend-arrow {
+			display: none;
+		}
+	}
+</style>

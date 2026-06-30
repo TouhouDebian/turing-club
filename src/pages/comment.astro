@@ -1,0 +1,204 @@
+---
+import { Icon } from "astro-icon/components";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+const giscusConfig = {
+	repo: "TouhouDebian/turing-club",
+	repoId: "R_kgDOTIIqkA",
+	category: "",
+	categoryId: "",
+};
+
+const giscusConfigured = Boolean(
+	giscusConfig.repoId && giscusConfig.category && giscusConfig.categoryId,
+);
+---
+
+<MainGridLayout title="留言" description="留言板">
+	<div class="space-y-4">
+		<section class="card-base comment-hero">
+			<div class="comment-hero-icon" aria-hidden="true">
+				<Icon name="material-symbols:forum-outline-rounded" class="text-[2rem]" />
+			</div>
+			<div>
+				<div class="section-label">
+					<Icon name="material-symbols:chat-outline-rounded" class="text-[1.2rem]" />
+					<span class="lang-zh">留言</span>
+					<span class="lang-en">Guestbook</span>
+				</div>
+				<h1>
+					<span class="lang-zh">有话就写在这里吧</span>
+					<span class="lang-en">Leave a message here</span>
+				</h1>
+				<p class="lang-zh">
+					欢迎留下建议、问题、想法，或只是来打个招呼。
+				</p>
+				<p class="lang-en">
+					Share suggestions, questions, ideas, or simply say hello.
+				</p>
+			</div>
+		</section>
+
+		<section class="card-base comment-panel">
+			<div class="comment-panel-head">
+				<h2>
+					<span class="lang-zh">留言区</span>
+					<span class="lang-en">Comments</span>
+				</h2>
+				<a href="https://giscus.app/zh-CN" target="_blank" rel="noopener noreferrer">
+					<Icon name="fa6-brands:github" class="text-[1.1rem]" />
+					<span>Giscus</span>
+				</a>
+			</div>
+
+			{giscusConfigured ? (
+				<div class="giscus-shell">
+					<script
+						is:inline
+						src="https://giscus.app/client.js"
+						data-repo={giscusConfig.repo}
+						data-repo-id={giscusConfig.repoId}
+						data-category={giscusConfig.category}
+						data-category-id={giscusConfig.categoryId}
+						data-mapping="pathname"
+						data-strict="0"
+						data-reactions-enabled="1"
+						data-emit-metadata="0"
+						data-input-position="top"
+						data-theme="preferred_color_scheme"
+						data-lang="zh-CN"
+						data-loading="lazy"
+						crossorigin="anonymous"
+						async
+					></script>
+				</div>
+			) : (
+				<div class="giscus-pending">
+					<Icon name="material-symbols:settings-outline-rounded" class="text-[1.8rem]" />
+					<div>
+						<p class="lang-zh">
+							留言区已经预留。当前仓库还没有可用的 GitHub Discussions 分类，开启后即可接入 giscus。
+						</p>
+						<p class="lang-en">
+							The guestbook area is ready. GitHub Discussions needs a category before giscus can be enabled.
+						</p>
+						<a href="https://github.com/TouhouDebian/turing-club/settings" target="_blank" rel="noopener noreferrer">
+							<span class="lang-zh">打开仓库设置</span>
+							<span class="lang-en">Open repository settings</span>
+						</a>
+					</div>
+				</div>
+			)}
+		</section>
+	</div>
+</MainGridLayout>
+
+<style>
+	.comment-hero,
+	.comment-panel {
+		padding: 1.65rem;
+	}
+
+	.comment-hero {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: 1.1rem;
+	}
+
+	.comment-hero-icon {
+		display: grid;
+		place-items: center;
+		width: 5rem;
+		aspect-ratio: 1;
+		border-radius: 0.85rem;
+		background: color-mix(in oklch, var(--primary) 18%, transparent);
+		color: var(--primary);
+	}
+
+	.section-label {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: var(--primary);
+		font-weight: 700;
+		margin-bottom: 0.65rem;
+	}
+
+	.comment-hero h1 {
+		font-size: clamp(1.6rem, 4vw, 2.35rem);
+		font-weight: 800;
+		line-height: 1.15;
+		margin: 0;
+	}
+
+	.comment-hero p {
+		color: var(--text-50);
+		font-weight: 650;
+		margin: 0.7rem 0 0;
+	}
+
+	.comment-panel-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 1.1rem;
+	}
+
+	.comment-panel-head h2 {
+		font-size: 1.35rem;
+		font-weight: 800;
+		margin: 0;
+	}
+
+	.comment-panel-head a,
+	.giscus-pending a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		border-radius: 0.75rem;
+		background: color-mix(in oklch, var(--primary) 18%, var(--card-bg));
+		color: var(--primary);
+		font-weight: 800;
+		padding: 0.7rem 0.9rem;
+		text-decoration: none;
+	}
+
+	.giscus-shell {
+		min-height: 18rem;
+	}
+
+	.giscus-pending {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		gap: 1rem;
+		border: 1px solid color-mix(in oklch, var(--primary) 22%, transparent);
+		border-radius: 0.9rem;
+		background: color-mix(in oklch, var(--primary) 8%, transparent);
+		color: var(--text-50);
+		font-weight: 650;
+		padding: 1.15rem;
+	}
+
+	.giscus-pending > svg {
+		color: var(--primary);
+	}
+
+	.giscus-pending p {
+		margin: 0 0 0.8rem;
+	}
+
+	@media (max-width: 640px) {
+		.comment-hero,
+		.giscus-pending {
+			grid-template-columns: 1fr;
+		}
+
+		.comment-panel-head {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+	}
+</style>

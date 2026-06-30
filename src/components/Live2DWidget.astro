@@ -418,27 +418,32 @@ const modelData = modelOptions.map((model) => ({
 		let speechProfileStartedAt = 0;
 		let gestureSeed = 0;
 
+		const bottomOffset = 12;
+
 		const getDefaultPosition = () => ({
 			x: Math.max(12, window.innerWidth * 0.012),
-			y: Math.max(12, window.innerHeight - widget.offsetHeight - 12),
+			bottom: bottomOffset,
 		});
 
-		const clampPosition = (x, y) => {
+		const clampPosition = (x, bottom = bottomOffset) => {
 			const margin = 8;
 			const maxX = Math.max(margin, window.innerWidth - widget.offsetWidth - margin);
-			const maxY = Math.max(margin, window.innerHeight - widget.offsetHeight - margin);
+			const maxBottom = Math.max(
+				margin,
+				window.innerHeight - widget.offsetHeight - margin,
+			);
 			return {
 				x: Math.min(Math.max(x, margin), maxX),
-				y: Math.min(Math.max(y, margin), maxY),
+				bottom: Math.min(Math.max(bottom, margin), maxBottom),
 			};
 		};
 
-		const setPosition = (x, y, shouldStore = true) => {
-			const position = clampPosition(x, y);
+		const setPosition = (x, bottom = bottomOffset, shouldStore = true) => {
+			const position = clampPosition(x, bottom);
 			widget.style.left = `${position.x}px`;
-			widget.style.top = `${position.y}px`;
+			widget.style.top = "auto";
 			widget.style.right = "auto";
-			widget.style.bottom = "auto";
+			widget.style.bottom = `${position.bottom}px`;
 			if (shouldStore) {
 				localStorage.setItem(positionStorageKey, JSON.stringify(position));
 			}
@@ -449,17 +454,18 @@ const modelData = modelOptions.map((model) => ({
 				const stored = JSON.parse(localStorage.getItem(positionStorageKey) || "null");
 				if (
 					stored &&
-					typeof stored.x === "number" &&
-					typeof stored.y === "number"
+					typeof stored.x === "number"
 				) {
-					setPosition(stored.x, stored.y, false);
+					const storedBottom =
+						typeof stored.bottom === "number" ? stored.bottom : bottomOffset;
+					setPosition(stored.x, storedBottom, false);
 					return;
 				}
 			} catch {
 				localStorage.removeItem(positionStorageKey);
 			}
 			const position = getDefaultPosition();
-			setPosition(position.x, position.y, false);
+			setPosition(position.x, position.bottom, false);
 		};
 
 		const setHidden = (hidden) => {
@@ -1142,7 +1148,7 @@ const modelData = modelOptions.map((model) => ({
 		reset.addEventListener("click", () => {
 			localStorage.removeItem(positionStorageKey);
 			const position = getDefaultPosition();
-			setPosition(position.x, position.y, false);
+			setPosition(position.x, position.bottom, false);
 		});
 
 		select.addEventListener("change", () => {
@@ -1161,7 +1167,6 @@ const modelData = modelOptions.map((model) => ({
 			dragState = {
 				pointerId: event.pointerId,
 				offsetX: event.clientX - rect.left,
-				offsetY: event.clientY - rect.top,
 				startX: event.clientX,
 				startY: event.clientY,
 				moved: false,
@@ -1180,7 +1185,7 @@ const modelData = modelOptions.map((model) => ({
 			if (distance > 5) {
 				dragState.moved = true;
 			}
-			setPosition(event.clientX - dragState.offsetX, event.clientY - dragState.offsetY);
+			setPosition(event.clientX - dragState.offsetX, bottomOffset);
 		});
 
 		const endDrag = (event) => {
@@ -1203,7 +1208,7 @@ const modelData = modelOptions.map((model) => ({
 
 		window.addEventListener("resize", () => {
 			const rect = widget.getBoundingClientRect();
-			setPosition(rect.left, rect.top, false);
+			setPosition(rect.left, bottomOffset, false);
 		});
 
 		const recoverLive2D = () => {
