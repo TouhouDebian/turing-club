@@ -377,8 +377,6 @@ const modelData = modelOptions.map((model) => ({
 		const modelsById = new Map(modelData.map((model) => [model.id, model]));
 			const preservedDefaultPoseModelIds = new Set([
 				"akyuu",
-				"cirno",
-				"cirno-event",
 				"koishi",
 				"marisa",
 				"reimu",
@@ -390,6 +388,16 @@ const modelData = modelOptions.map((model) => ({
 			const characterPoseMotionPreferences = {
 				alice: [
 					[20, 21, 22, 23, 24, 25],
+					[40, 41, 42, 43, 44, 45],
+					[50, 51, 52, 53, 54, 55],
+				],
+				cirno: [
+					[10, 11, 12, 13, 14, 15],
+					[40, 41, 42, 43, 44, 45],
+					[50, 51, 52, 53, 54, 55],
+				],
+				"cirno-event": [
+					[10, 11, 12, 13, 14, 15],
 					[40, 41, 42, 43, 44, 45],
 					[50, 51, 52, 53, 54, 55],
 				],
@@ -678,9 +686,10 @@ const modelData = modelOptions.map((model) => ({
 				lastAt: 0,
 			};
 
-		const bottomOffset = 12;
+			const bottomOffset = 12;
+			const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
-		const getDefaultPosition = () => ({
+			const getDefaultPosition = () => ({
 			x: Math.max(12, window.innerWidth * 0.012),
 			bottom: bottomOffset,
 		});
@@ -846,11 +855,11 @@ const modelData = modelOptions.map((model) => ({
 				document.head.appendChild(script);
 			});
 
-		const disposeModel = () => {
-			if (live2dModel) {
-				live2dApp?.stage.removeChild(live2dModel);
-				live2dModel.destroy();
-				live2dModel = null;
+			const disposeModel = () => {
+				if (live2dModel) {
+					live2dApp?.stage.removeChild(live2dModel);
+					live2dModel.destroy();
+					live2dModel = null;
 				}
 				handPartLock = null;
 				neutralHandPartLock = null;
@@ -859,9 +868,9 @@ const modelData = modelOptions.map((model) => ({
 				if (resizeModel) {
 					window.removeEventListener("resize", resizeModel);
 					resizeModel = null;
-			}
-			live2dLoaded = false;
-		};
+				}
+				live2dLoaded = false;
+			};
 
 		const prepareRuntime = async () => {
 			if (live2dRuntimeReady) return true;
@@ -1143,31 +1152,32 @@ const modelData = modelOptions.map((model) => ({
 			addModelParameter(model, ["ParamDollAngleY"], soft * 0.75 * dollScale, 0.18);
 
 			const idleWing = Math.sin(t * 0.78) * 0.15 + Math.sin(t * 0.42) * 0.06;
-			addModelParameter(
-				model,
-				[
-					"ParamWingLZ",
-					"ParamWingLEmoRotation",
+				addModelParameter(
+					model,
+					[
+						"ParamWingLZ",
+						"ParamWingLEmoRotation",
 					"ParamWingL",
 					"ParamWingLRotation",
-					"ParamWingLOpen",
-				],
-				idleWing * wingScale,
-				0.11,
-			);
-			addModelParameter(
-				model,
+						"ParamWingLOpen",
+					],
+					idleWing * wingScale,
+					0.16,
+				);
+				addModelParameter(
+					model,
 				[
 					"ParamWingRZ",
 					"ParamWingREmoRotation",
 					"ParamWingR",
 					"ParamWingRRotation",
-					"ParamWingROpen",
-				],
-				idleWing * wingScale,
-				0.11,
-			);
-			addModelParameter(model, ["ParamWingRotation"], slow * 0.11 * wingScale, 0.09);
+						"ParamWingROpen",
+					],
+					idleWing * wingScale,
+					0.16,
+				);
+				addModelParameter(model, ["ParamWingRotation"], slow * 0.16 * wingScale, 0.13);
+				addModelParameter(model, ["ParamWingLY", "ParamWingRY"], offset * 0.18 * wingScale, 0.08);
 
 			addModelParameter(
 				model,
@@ -1230,18 +1240,28 @@ const modelData = modelOptions.map((model) => ({
 		};
 
 		const syncLiveliness = (model, now, profile, speechEase) => {
-			const t = (now - idleStartedAt) / 1000;
-			const idleProfile = getIdleProfile();
-			const idlePoseWeight = Math.max(0.28, 1 - speechEase * 0.72);
-			setModelParameter(model, ["ParamBreath"], 0.5 + Math.sin(t * 1.25) * 0.18);
-			addModelParameter(model, ["ParamBodyAngleX"], (idleProfile.bodyX ?? 0) * idlePoseWeight, 0.22);
-			addModelParameter(model, ["ParamBodyAngleY"], (idleProfile.bodyY ?? 0) * idlePoseWeight, 0.22);
-			addModelParameter(model, ["ParamBodyAngleZ"], (idleProfile.bodyZ ?? 0) * idlePoseWeight, 0.22);
-			addModelParameter(model, ["ParamAngleZ"], (idleProfile.angleZ ?? 0) * idlePoseWeight, 0.2);
-			addModelParameter(model, ["ParamBodyAngleY"], Math.sin(t * 0.52) * 0.82, 0.38);
-			addModelParameter(model, ["ParamBodyAngleZ"], Math.sin(t * 0.68) * 0.6, 0.34);
-			addModelParameter(model, ["ParamAngleZ"], Math.sin(t * 0.62) * 0.62, 0.26);
-			syncAccessoryBreathing(model, t, idleProfile);
+				const t = (now - idleStartedAt) / 1000;
+				const idleProfile = getIdleProfile();
+				const idlePoseWeight = Math.max(0.28, 1 - speechEase * 0.72);
+				const focusIsFresh = now - pointerFocus.lastAt < 2600;
+				const focusTargetX = focusIsFresh ? pointerFocus.targetX : 0;
+				const focusTargetY = focusIsFresh ? pointerFocus.targetY : 0;
+				pointerFocus.x += (focusTargetX - pointerFocus.x) * 0.16;
+				pointerFocus.y += (focusTargetY - pointerFocus.y) * 0.16;
+				const trackingWeight = Math.max(0.35, 1 - speechEase * 0.5);
+				setModelParameter(model, ["ParamBreath"], 0.5 + Math.sin(t * 1.25) * 0.18);
+				addModelParameter(model, ["ParamBodyAngleX"], (idleProfile.bodyX ?? 0) * idlePoseWeight, 0.22);
+				addModelParameter(model, ["ParamBodyAngleY"], (idleProfile.bodyY ?? 0) * idlePoseWeight, 0.22);
+				addModelParameter(model, ["ParamBodyAngleZ"], (idleProfile.bodyZ ?? 0) * idlePoseWeight, 0.22);
+				addModelParameter(model, ["ParamAngleZ"], (idleProfile.angleZ ?? 0) * idlePoseWeight, 0.2);
+				addModelParameter(model, ["ParamBodyAngleY"], Math.sin(t * 0.34) * 0.35, 0.28);
+				addModelParameter(model, ["ParamBodyAngleZ"], Math.sin(t * 0.42) * 0.26, 0.24);
+				addModelParameter(model, ["ParamAngleZ"], Math.sin(t * 0.38) * 0.24, 0.2);
+				addModelParameter(model, ["ParamAngleX"], pointerFocus.x * 9.5 * trackingWeight, 0.48);
+				addModelParameter(model, ["ParamAngleY"], -pointerFocus.y * 6.5 * trackingWeight, 0.44);
+				addModelParameter(model, ["ParamEyeBallX"], pointerFocus.x * 0.68 * trackingWeight, 0.55);
+				addModelParameter(model, ["ParamEyeBallY"], -pointerFocus.y * 0.46 * trackingWeight, 0.48);
+				syncAccessoryBreathing(model, t, idleProfile);
 			if (profile) {
 				const wave =
 					Math.sin((now - speechProfileStartedAt) / 130 + gestureSeed) * 0.5 +
@@ -1279,16 +1299,20 @@ const modelData = modelOptions.map((model) => ({
 					wingPulse,
 					0.28,
 				);
-				addModelParameter(model, ["ParamWingRotation"], -wingPulse * 0.24, 0.2);
-				const handWave =
-					Math.sin((now - speechProfileStartedAt) / 280 + gestureSeed * 0.7) *
-						0.5 +
-					0.5;
-				const handPulse = (0.24 + handWave * 0.12) * speechEase;
-				const leftArmValue = gesture.handL * handPulse;
-				const rightArmValue = gesture.handR * handPulse;
-				addModelParameter(
-					model,
+					addModelParameter(model, ["ParamWingRotation"], -wingPulse * 0.24, 0.2);
+					const handWave =
+						Math.sin((now - speechProfileStartedAt) / 360 + gestureSeed * 0.7) *
+							0.5 +
+						0.5;
+					const handPulse = (1.65 + handWave * 0.95) * speechEase;
+					const wristPulse =
+						Math.sin((now - speechProfileStartedAt) / 210 + gestureSeed) *
+						1.5 *
+						speechEase;
+					const leftArmValue = gesture.handL * handPulse;
+					const rightArmValue = gesture.handR * handPulse;
+					addModelParameter(
+						model,
 					[
 						"ParamLeftArmRotation",
 						"ParamLeftWristRotation",
@@ -1296,17 +1320,17 @@ const modelData = modelOptions.map((model) => ({
 						"ParamLeftSleeveRotation",
 						"ParamLeftFrontSleeveRotation",
 						"ParamLeftSleeveFrontRotation",
-						"ParamLeftSleeveRotationZ",
-						"ParamLeftFrontSleeveRotationZ",
-						"ParamSleeveMoveL",
-						"ParamSleeveZL",
-						"ParamLeftArmShake",
-					],
-					leftArmValue,
-					0.08,
-				);
-				addModelParameter(
-					model,
+							"ParamLeftSleeveRotationZ",
+							"ParamLeftFrontSleeveRotationZ",
+							"ParamSleeveMoveL",
+							"ParamSleeveZL",
+							"ParamLeftArmShake",
+						],
+						leftArmValue,
+						0.16,
+					);
+					addModelParameter(
+						model,
 					[
 						"ParamRightArmRotation",
 						"ParamRightWristRotation",
@@ -1316,60 +1340,84 @@ const modelData = modelOptions.map((model) => ({
 						"ParamRightSleeveFrontRotation",
 						"ParamRightSleeveRotationZ",
 						"ParamRightFrontSleeveRotationZ",
-						"ParamSleeveMoveR",
-						"ParamSleeveZR",
-						"ParamRighttArmShake",
-					],
-					rightArmValue,
-					0.08,
-				);
-				addModelParameter(
-					model,
+							"ParamSleeveMoveR",
+							"ParamSleeveZR",
+							"ParamRighttArmShake",
+						],
+						rightArmValue,
+						0.16,
+					);
+					addModelParameter(
+						model,
 					[
 						"ParamLeftArmFrontRotation",
 						"ParamLeftArmShoulderFrontAndBack",
-						"ParamArmLFrontBack",
-					],
-					leftArmValue * 0.72,
-					0.08,
-				);
-				addModelParameter(
-					model,
+							"ParamArmLFrontBack",
+						],
+						leftArmValue * 0.72,
+						0.13,
+					);
+					addModelParameter(
+						model,
 					[
 						"ParamRightArmFrontRotation",
 						"ParamRightArmShoulderFrontAndBack",
-						"ParamArmRFrontBack",
-					],
-					rightArmValue * 0.72,
-					0.08,
-				);
-				addModelParameter(
-					model,
+							"ParamArmRFrontBack",
+						],
+						rightArmValue * 0.72,
+						0.13,
+					);
+					addModelParameter(
+						model,
 					[
 						"ParamLeftShoulderUp",
 						"ParamLeftShoulderUpDown",
 						"ParamShoulderLUpDown",
 						"ParamShoulderUpDownL",
-						"ParamArmLUp",
-					],
-					leftArmValue * 0.34,
-					0.07,
-				);
-				addModelParameter(
-					model,
+							"ParamArmLUp",
+						],
+						leftArmValue * 0.34,
+						0.12,
+					);
+					addModelParameter(
+						model,
 					[
 						"ParamRightShoulderUp",
 						"ParamRightShoulderUpDown",
 						"ParamShoulderRUpDown",
 						"ParamShoulderUpDownR",
-						"ParamArmRUp",
-					],
-					rightArmValue * 0.34,
-					0.07,
-				);
-				const dollSpeechWave =
-					Math.sin((now - speechProfileStartedAt) / 190 + gestureSeed * 0.4) *
-					speechEase;
+							"ParamArmRUp",
+						],
+						rightArmValue * 0.34,
+						0.12,
+					);
+					addModelParameter(
+						model,
+						["ParamLeftWristRotation", "ParamLeftHandAngle", "ParamHandLAngle"],
+						wristPulse + leftArmValue * 0.62,
+						0.18,
+					);
+					addModelParameter(
+						model,
+						["ParamRightWristRotation", "ParamRightHandAngle", "ParamHandRAngle"],
+						-wristPulse + rightArmValue * 0.62,
+						0.18,
+					);
+					addModelParameter(
+						model,
+						["ParamLeftHandGrip", "ParamHandLOpen", "ParamLeftHandOpen"],
+						(0.24 + handWave * 0.24) * speechEase,
+						0.24,
+					);
+					addModelParameter(
+						model,
+						["ParamRightHandGrip", "ParamHandROpen", "ParamRightHandOpen"],
+						(0.2 + (1 - handWave) * 0.22) * speechEase,
+						0.24,
+					);
+					const dollSpeechWave =
+						Math.sin((now - speechProfileStartedAt) / 190 + gestureSeed * 0.4) *
+						speechEase;
 				addModelParameter(model, ["ParamDollX"], dollSpeechWave * 1.2, 0.28);
 				addModelParameter(
 					model,
@@ -1596,44 +1644,48 @@ const modelData = modelOptions.map((model) => ({
 			return parameterMap.size ? parameterMap : null;
 		};
 
-		const loadHandPartLock = async (model) => {
-			try {
-				const settingsResponse = await fetch(model.path);
-				if (!settingsResponse.ok) return null;
-				const settings = await settingsResponse.json();
-				const motions = settings.FileReferences?.Motions;
-				const motionEntries = getMotionEntries(motions);
-				const selectedMotion = selectPoseMotion(motions);
-				const file = selectedMotion?.motion?.File ?? selectedMotion?.motion?.file;
-				if (!file) return null;
+			const loadHandPartLock = async (model) => {
+				try {
+					const settingsResponse = await fetch(model.path);
+					if (!settingsResponse.ok) return null;
+					const settings = await settingsResponse.json();
+					const motions = settings.FileReferences?.Motions;
+					const motionEntries = getMotionEntries(motions);
+					const selectedMotion = selectPoseMotion(motions);
+					const neutralMotion = selectNeutralMotion(motions);
+					if (!selectedMotion) return null;
 
-				const motionUrl = new URL(file, new URL(model.path, window.location.href));
-				const motionResponse = await fetch(motionUrl);
-				if (!motionResponse.ok) return null;
-				const motionJson = await motionResponse.json();
-				const allMotionJsons = (
-					await Promise.all(
-						motionEntries.map(async (entry) => {
-							try {
-								const entryFile = entry.motion?.File ?? entry.motion?.file;
-								if (!entryFile) return null;
-								const entryUrl = new URL(
-									entryFile,
-									new URL(model.path, window.location.href),
-								);
-								const response = await fetch(entryUrl);
-								return response.ok ? response.json() : null;
-							} catch {
-								return null;
-							}
+					const fetchMotionJson = async (entry) => {
+						const file = entry?.motion?.File ?? entry?.motion?.file;
+						if (!file) return null;
+
+						const motionUrl = new URL(file, new URL(model.path, window.location.href));
+						const motionResponse = await fetch(motionUrl);
+						return motionResponse.ok ? motionResponse.json() : null;
+					};
+
+					const motionJson = await fetchMotionJson(selectedMotion);
+					const neutralMotionJson = await fetchMotionJson(neutralMotion);
+					if (!motionJson) return null;
+					const allMotionJsons = (
+						await Promise.all(
+							motionEntries.map(async (entry) => {
+								try {
+									return fetchMotionJson(entry);
+								} catch {
+									return null;
+								}
 						}),
 					)
 				).filter(Boolean);
-				return {
-					lock: createHandPartLock(motionJson, allMotionJsons),
-					parameterLock: createPoseParameterLock(motionJson),
-					motion: selectedMotion,
-				};
+					return {
+						lock: createHandPartLock(motionJson, allMotionJsons),
+						neutralLock: createHandPartLock(neutralMotionJson, allMotionJsons),
+						parameterLock: createPoseParameterLock(motionJson),
+						neutralParameterLock: createPoseParameterLock(neutralMotionJson),
+						motion: selectedMotion,
+						neutralMotion,
+					};
 			} catch (error) {
 				console.debug("Live2D hand pose lock failed:", error);
 				return null;
@@ -1696,10 +1748,13 @@ const modelData = modelOptions.map((model) => ({
 			}
 		};
 
-		canvas.addEventListener("click", triggerLive2DInteraction);
-		window.addEventListener("pointermove", (event) => {
-			live2dModel?.focus?.(event.clientX, event.clientY);
-		});
+			canvas.addEventListener("click", triggerLive2DInteraction);
+			window.addEventListener("pointermove", (event) => {
+				pointerFocus.targetX = clamp((event.clientX / window.innerWidth - 0.5) * 2, -1, 1);
+				pointerFocus.targetY = clamp((event.clientY / window.innerHeight - 0.5) * 2, -1, 1);
+				pointerFocus.lastAt = performance.now();
+				live2dModel?.focus?.(event.clientX, event.clientY);
+			});
 
 		const loadModel = async (model = getSelectedModel(), forceReload = false) => {
 			if (!model?.path) {
@@ -1739,25 +1794,31 @@ const modelData = modelOptions.map((model) => ({
 				return;
 			}
 
-			if (!loadedModel) {
-				live2dLoading = false;
-				widget.classList.add("live2d-error");
-				setStatus("Live2D model failed");
-				console.error("Live2D model could not be loaded.", model);
-				return;
-			}
+				if (!loadedModel) {
+					live2dLoading = false;
+					widget.classList.add("live2d-error");
+					setStatus("Live2D model failed");
+					console.error("Live2D model could not be loaded.", model);
+					if (!forceReload && loadId === modelLoadId) {
+						window.setTimeout(() => loadModel(model, true), 900);
+					}
+					return;
+				}
 
 			const handPose = await handPartLockPromise;
 			if (loadId !== modelLoadId) {
 				loadedModel.destroy();
 				return;
 			}
-			disposeModel();
-			handPartLock = handPose?.lock ?? null;
-			poseParameterLock = handPose?.parameterLock ?? null;
-			idleStartedAt = performance.now();
-			blushUntil = 0;
-			expressionUntil = 0;
+				disposeModel();
+				handPartLock = handPose?.lock ?? null;
+				neutralHandPartLock = handPose?.neutralLock ?? null;
+				poseParameterLock = handPose?.parameterLock ?? null;
+				neutralPoseParameterLock = handPose?.neutralParameterLock ?? null;
+				idleStartedAt = performance.now();
+				poseStartedAt = performance.now();
+				blushUntil = 0;
+				expressionUntil = 0;
 			loadedModel.interactive = true;
 			loadedModel.buttonMode = true;
 			loadedModel.on("hit", triggerLive2DInteraction);
@@ -1766,9 +1827,11 @@ const modelData = modelOptions.map((model) => ({
 			widget.classList.add("live2d-ready");
 			live2dModel = loadedModel;
 			syncPoseParameterLock(loadedModel);
-			syncHandPartLock(loadedModel);
-			fitModelToWidget(loadedModel, app);
-			window.requestAnimationFrame(() => fitModelToWidget(loadedModel, app));
+				syncHandPartLock(loadedModel);
+				fitModelToWidget(loadedModel, app);
+				window.requestAnimationFrame(() => fitModelToWidget(loadedModel, app));
+				window.setTimeout(() => fitModelToWidget(loadedModel, app), 2600);
+				window.setTimeout(() => fitModelToWidget(loadedModel, app), 3400);
 
 			resizeModel = () => {
 				fitModelToWidget(loadedModel, app);
@@ -1894,14 +1957,10 @@ const modelData = modelOptions.map((model) => ({
 			return;
 		}
 
-		const queueInitialLoad = () => {
-			const startLoad = () => loadModel();
-			if ("requestIdleCallback" in window) {
-				window.requestIdleCallback(startLoad, { timeout: 1200 });
-			} else {
-				window.setTimeout(startLoad, 300);
-			}
-		};
+			const queueInitialLoad = () => {
+				const startLoad = () => loadModel();
+				window.setTimeout(startLoad, 120);
+			};
 
 		if (document.readyState === "complete" || document.readyState === "interactive") {
 			queueInitialLoad();
