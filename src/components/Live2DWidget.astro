@@ -380,18 +380,13 @@ const modelData = modelOptions.map((model) => ({
 				"marisa",
 				"reimu",
 				"reisen",
-				"reisen-event",
 				"youmu-event",
 				"yuyuko",
 			]);
 			const stableSleeveModelIds = new Set(["akyuu"]);
 			const characterPoseMotionPreferences = {
-				akyuu: [[10, 11, 12, 13, 14, 15]],
-				alice: [
-					[20, 21, 22, 23, 24, 25],
-					[40, 41, 42, 43, 44, 45],
-					[50, 51, 52, 53, 54, 55],
-				],
+				akyuu: [[50, 51, 52, 53, 54, 55]],
+				alice: [[30, 31, 32, 33, 34, 35]],
 				cirno: [
 					[10, 11, 12, 13, 14, 15],
 					[40, 41, 42, 43, 44, 45],
@@ -419,6 +414,7 @@ const modelData = modelOptions.map((model) => ({
 				],
 				remilia: [[50, 51, 52, 53, 54, 55]],
 				"remilia-event": [[40, 41, 42, 43, 44, 45]],
+				"reisen-event": [[10, 11, 12, 13, 14, 15]],
 				suika: [
 					[30, 31, 32, 33, 34, 35],
 					[20, 21, 22, 23, 24, 25],
@@ -444,7 +440,8 @@ const modelData = modelOptions.map((model) => ({
 				bodyZ: 0.06,
 				angleZ: -0.04,
 				mouthForm: 0.04,
-				dollScale: 1.18,
+				dollScale: 0.34,
+				dollSpeechScale: 0.36,
 				accessoryScale: 0.85,
 			},
 			cirno: {
@@ -912,7 +909,6 @@ const modelData = modelOptions.map((model) => ({
 					const speechEase = getSpeechEase(now);
 					syncPoseParameterLock(live2dModel);
 					syncLiveliness(live2dModel, now, speechProfile, speechEase);
-					syncHandLayerBias(live2dModel);
 					syncHandPartLock(live2dModel);
 
 					const expressionActive = now < expressionUntil;
@@ -1059,19 +1055,6 @@ const modelData = modelOptions.map((model) => ({
 				for (const [partId, opacity] of activeHandPartLock) {
 					setModelPartOpacity(model, partId, opacity);
 				}
-			};
-
-			const syncHandLayerBias = (model) => {
-				setModelParameter(
-					model,
-					[
-						"ParamLeftHandOrder",
-						"ParamRightHandOrder",
-						"ParamHandLDrawing",
-						"ParamHandRDrawing",
-					],
-					2,
-				);
 			};
 
 			const syncPoseParameterLock = (model) => {
@@ -1327,13 +1310,15 @@ const modelData = modelOptions.map((model) => ({
 					addModelParameter(model, ["ParamWingRotation"], -wingPulse * 0.24, 0.2);
 					const dollSpeechWave =
 						Math.sin((now - speechProfileStartedAt) / 190 + gestureSeed * 0.4) *
-						speechEase;
+						speechEase *
+						(idleProfile.dollSpeechScale ?? 1);
 				addModelParameter(model, ["ParamDollX"], dollSpeechWave * 1.2, 0.28);
 				addModelParameter(
 					model,
 					["ParamDollY"],
 					Math.cos((now - speechProfileStartedAt) / 230 + gestureSeed) *
 						speechEase *
+						(idleProfile.dollSpeechScale ?? 1) *
 						1.0,
 					0.28,
 				);
@@ -1343,6 +1328,7 @@ const modelData = modelOptions.map((model) => ({
 					["ParamDollAngleY"],
 					Math.sin((now - speechProfileStartedAt) / 260 + gestureSeed) *
 						speechEase *
+						(idleProfile.dollSpeechScale ?? 1) *
 						1.8,
 					0.28,
 				);
@@ -1424,31 +1410,35 @@ const modelData = modelOptions.map((model) => ({
 				}
 
 				const preferredNumbers = [
-					1,
 					10,
+					11,
+					12,
+					13,
+					14,
+					15,
+					30,
+					31,
+					32,
+					33,
+					34,
+					35,
 					20,
-				21,
-				22,
-				23,
-				24,
-				25,
-				30,
-				31,
-				32,
-				33,
-				34,
-				35,
-				40,
-				41,
-				42,
-				43,
-				44,
-				45,
-				50,
-				51,
-				52,
-				53,
-				54,
+					21,
+					22,
+					23,
+					24,
+					25,
+					40,
+					41,
+					42,
+					43,
+					44,
+					45,
+					50,
+					51,
+					52,
+					53,
+					54,
 					55,
 				];
 				const preferredMotion = selectMotionByNumbers(motionEntries, preferredNumbers);
@@ -1467,8 +1457,8 @@ const modelData = modelOptions.map((model) => ({
 				const motionEntries = getMotionEntries(motions);
 				if (!motionEntries.length) return null;
 				return (
-					selectMotionByNumbers(motionEntries, [1, 2, 3, 4, 5, 6, 7, 8]) ??
 					selectMotionByNumbers(motionEntries, [10, 11, 12, 13, 14, 15]) ??
+					selectMotionByNumbers(motionEntries, [1, 2, 3, 4, 5, 6, 7, 8]) ??
 					motionEntries[0]
 				);
 			};
@@ -1540,7 +1530,7 @@ const modelData = modelOptions.map((model) => ({
 					/(arm|shoulder|wrist|sleeve|wing)/i.test(id) &&
 					!/drawing/i.test(id);
 				const isHandLayerParameter =
-					/hand(?:grip|open|angle|order|drawing)/i.test(id);
+					/hand(?:grip|open|angle|order)/i.test(id);
 				const isAccessoryLayerParameter =
 					/(doll|chain|whisp|wisp|ear).*order|order.*(doll|chain|whisp|wisp|ear)/i.test(id);
 				return (
@@ -1550,8 +1540,8 @@ const modelData = modelOptions.map((model) => ({
 			};
 
 			const normalizePoseParameterValue = (id, value) => {
-				if (/hand.*(?:order|drawing)|(?:order|drawing).*hand/i.test(id)) {
-					return Math.max(value, 2);
+				if (/hand.*order|order.*hand/i.test(id)) {
+					return Math.max(value, 0.85);
 				}
 				return value;
 			};
