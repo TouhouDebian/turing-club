@@ -1625,9 +1625,14 @@ const modelData = modelOptions.map((model) => ({
 			return opacityMap.size ? opacityMap : null;
 		};
 
-		const isPoseParameterId = (id) =>
-			/(arm|shoulder|wrist|sleeve|wing|doll|ear|chain|whisp)/i.test(id) &&
-			!/order|drawing/i.test(id);
+			const isPoseParameterId = (id) => {
+				const isBodyPoseParameter =
+					/(arm|shoulder|wrist|sleeve|wing|doll|ear|chain|whisp)/i.test(id) &&
+					!/drawing/i.test(id);
+				const isHandLayerParameter =
+					/hand(?:grip|open|angle|order|drawing)/i.test(id);
+				return (isBodyPoseParameter || isHandLayerParameter) && !/frill/i.test(id);
+			};
 
 		const createPoseParameterLock = (motionJson) => {
 			const parameterMap = new Map();
