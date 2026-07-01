@@ -912,6 +912,7 @@ const modelData = modelOptions.map((model) => ({
 					const speechEase = getSpeechEase(now);
 					syncPoseParameterLock(live2dModel);
 					syncLiveliness(live2dModel, now, speechProfile, speechEase);
+					syncHandLayerBias(live2dModel);
 					syncHandPartLock(live2dModel);
 
 					const expressionActive = now < expressionUntil;
@@ -1058,6 +1059,19 @@ const modelData = modelOptions.map((model) => ({
 				for (const [partId, opacity] of activeHandPartLock) {
 					setModelPartOpacity(model, partId, opacity);
 				}
+			};
+
+			const syncHandLayerBias = (model) => {
+				setModelParameter(
+					model,
+					[
+						"ParamLeftHandOrder",
+						"ParamRightHandOrder",
+						"ParamHandLDrawing",
+						"ParamHandRDrawing",
+					],
+					2,
+				);
 			};
 
 			const syncPoseParameterLock = (model) => {
@@ -1263,8 +1277,8 @@ const modelData = modelOptions.map((model) => ({
 					addModelParameter(model, ["ParamBodyAngleY"], (idleProfile.bodyY ?? 0) * idlePoseWeight, 0.22);
 					addModelParameter(model, ["ParamBodyAngleZ"], (idleProfile.bodyZ ?? 0) * idlePoseWeight, 0.22);
 					addModelParameter(model, ["ParamAngleZ"], (idleProfile.angleZ ?? 0) * idlePoseWeight, 0.2);
-					addModelParameter(model, ["ParamBodyAngleX"], facingDirection * 1.6 * idlePoseWeight, 0.2);
-					addModelParameter(model, ["ParamAngleX"], facingDirection * 5.2 * idlePoseWeight, 0.22);
+					addModelParameter(model, ["ParamBodyAngleX"], facingDirection * 4.6 * idlePoseWeight, 0.3);
+					addModelParameter(model, ["ParamAngleX"], facingDirection * 12.5 * idlePoseWeight, 0.36);
 					addModelParameter(model, ["ParamBodyAngleY"], Math.sin(t * 0.34) * 0.35, 0.28);
 				addModelParameter(model, ["ParamBodyAngleZ"], Math.sin(t * 0.42) * 0.26, 0.24);
 				addModelParameter(model, ["ParamAngleZ"], Math.sin(t * 0.38) * 0.24, 0.2);
@@ -1311,45 +1325,6 @@ const modelData = modelOptions.map((model) => ({
 					0.28,
 				);
 					addModelParameter(model, ["ParamWingRotation"], -wingPulse * 0.24, 0.2);
-					const handWave =
-						Math.sin((now - speechProfileStartedAt) / 360 + gestureSeed * 0.7) *
-							0.5 +
-						0.5;
-					const handPulse = (0.22 + handWave * 0.12) * speechEase;
-					const wristPulse =
-						Math.sin((now - speechProfileStartedAt) / 210 + gestureSeed) *
-						0.35 *
-						speechEase;
-					const leftArmValue = gesture.handL * handPulse;
-					const rightArmValue = gesture.handR * handPulse;
-					if (!stableSleeveModelIds.has(currentModelId)) {
-						addModelParameter(model, ["ParamLeftArmShake"], leftArmValue, 0.055);
-						addModelParameter(model, ["ParamRighttArmShake"], rightArmValue, 0.055);
-						addModelParameter(
-							model,
-							["ParamLeftWristRotation", "ParamLeftHandAngle", "ParamHandLAngle"],
-							wristPulse + leftArmValue * 0.62,
-							0.035,
-						);
-						addModelParameter(
-							model,
-							["ParamRightWristRotation", "ParamRightHandAngle", "ParamHandRAngle"],
-							-wristPulse + rightArmValue * 0.62,
-							0.035,
-						);
-						addModelParameter(
-							model,
-							["ParamLeftHandGrip", "ParamHandLOpen", "ParamLeftHandOpen"],
-							(0.24 + handWave * 0.24) * speechEase,
-							0.08,
-						);
-						addModelParameter(
-							model,
-							["ParamRightHandGrip", "ParamHandROpen", "ParamRightHandOpen"],
-							(0.2 + (1 - handWave) * 0.22) * speechEase,
-							0.08,
-						);
-					}
 					const dollSpeechWave =
 						Math.sin((now - speechProfileStartedAt) / 190 + gestureSeed * 0.4) *
 						speechEase;
@@ -1576,7 +1551,7 @@ const modelData = modelOptions.map((model) => ({
 
 			const normalizePoseParameterValue = (id, value) => {
 				if (/hand.*(?:order|drawing)|(?:order|drawing).*hand/i.test(id)) {
-					return Math.max(value, 0.82);
+					return Math.max(value, 2);
 				}
 				return value;
 			};
