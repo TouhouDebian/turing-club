@@ -21,6 +21,11 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
+# local source presentation files
+/Simon/*.ppt
+/Simon/*.pptx
+/Simon/*.pptm
+
 # local Live2D source archives
 /model/
 

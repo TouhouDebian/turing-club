@@ -24,16 +24,8 @@ import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
-const githubRepository = process.env.GITHUB_REPOSITORY ?? "";
-const [githubOwner, githubRepo] = githubRepository.split("/");
-const isGitHubPagesBuild =
-	process.env.GITHUB_ACTIONS === "true" && Boolean(githubOwner && githubRepo);
-const isUserOrOrgPagesRepo = githubRepo === `${githubOwner}.github.io`;
-const site = isGitHubPagesBuild
-	? `https://${githubOwner}.github.io/${isUserOrOrgPagesRepo ? "" : `${githubRepo}/`}`
-	: "https://cyber-club.example.com/";
-const base =
-	isGitHubPagesBuild && !isUserOrOrgPagesRepo ? `/${githubRepo}/` : "/";
+const site = "https://tycybersec.cc.cd/";
+const base = "/";
 
 // https://astro.build/config
 export default defineConfig({

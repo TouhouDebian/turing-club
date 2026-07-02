@@ -1,13 +1,13 @@
 ---
-title: "08-攻击技术简介 / Introduction to Attack Techniques"
+title: "08 攻击技术简介 / Introduction to Attack Techniques"
 published: 2025-12-02
-description: "08-攻击技术简介 / Introduction to Attack Techniques. 2023届 Simon Li / Class of 2023 Simon Li."
-tags: ["Cybersecurity", "Club Course", "Slides"]
+description: "攻击技术简介课用于建立攻防视角：攻击链通常包含信息收集、漏洞利用、权限扩大、维持访问和清理痕迹等环节。学习这些内容的目的，是更好地理解防御重点。 / This lesson introduces attack stages so learners can understand what defenders need to observe and prevent."
+tags: ["Attack Techniques", "Reconnaissance", "Exploitation", "Social Engineering", "Vulnerability", "Defense"]
 category: "Club Course"
 draft: false
 ---
 
-# 08-攻击技术简介
+# 08 攻击技术简介
 
 **English title:** Introduction to Attack Techniques
 
@@ -15,215 +15,81 @@ draft: false
 
 **原 PPT 日期 / Original PPT date:** 2025-12-02
 
-> 本文由社团课程 PPT 转换而来，保留原幻灯片文字与图片，便于网页阅读。
+**关键词 / Keywords:** #Attack-Techniques #Reconnaissance #Exploitation #Social-Engineering #Vulnerability #Defense
+
+> 本文由社团课程 PPT 整理为阅读版讲义：保留原课件图片，并补充课堂讲解、学习目标和练习方向。
 >
-> This article was converted from the club course PowerPoint. Original slide text and images are preserved for web reading.
+> This article turns the original slides into readable course notes while preserving slide images and adding presenter-style explanations.
 
-## 第 1 页 / Slide 1: S
+## 导读 / Overview
 
-### 原文 / Original Text
+攻击技术简介课用于建立攻防视角：攻击链通常包含信息收集、漏洞利用、权限扩大、维持访问和清理痕迹等环节。学习这些内容的目的，是更好地理解防御重点。
 
-- imon Li
-- 攻击技术简介
-- TYcybersec
-- 2025年12月
-- 08
+> English overview: This lesson introduces attack stages so learners can understand what defenders need to observe and prevent.
 
-## 第 2 页 / Slide 2: 目录
+## 学习目标 / Learning Goals
 
-### 原文 / Original Text
+- 认识常见攻击链阶段
+- 理解攻击技术与防御措施的对应关系
+- 强化授权实验和安全伦理
 
-- 01.
-- 简介
-- 02.
-- 攻击技术
-- 03.
-- 后期
-- 04.
-- 未来计划
-- CONTENTS
+## 1. 攻击链不是一个按钮 / An attack chain is not one button
 
-## 第 3 页 / Slide 3: 01.
+真实攻击往往不是单个漏洞决定胜负，而是多个小失误被串联：资产暴露、弱口令、错误配置、过期组件和权限边界松动。
 
-### 原文 / Original Text
+讲者补充：学习攻击技术时要同步问防御问题：这个阶段留下什么日志？管理员怎样更早发现？
 
-- 简介
-- [PART ONE]
-- 第一部分
-- 第二部分
-- 第三部分
-- 第四部分
+> English recap: Attack chains combine small weaknesses. Defenders should map each stage to evidence.
 
-## 第 4 页 / Slide 4: 01.
+### 相关课件图片 / Related Slide Images
 
-### 原文 / Original Text
-
-- 简介
-
-### 图片 / Images
+### 第 4 页配图 / Slide 4 Images
 
 ![Slide 4 image](./images/slide-04-01.jpeg)
 ![Slide 4 image](./images/slide-04-02.png)
 
-## 第 5 页 / Slide 5: 02.
+## 2. 从侦察到利用 / From reconnaissance to exploitation
 
-### 原文 / Original Text
+侦察阶段关注目标信息，利用阶段验证某个弱点是否能造成影响。课堂中应强调验证范围，只在授权靶场或实验环境中操作。
 
-- 攻击技术
-- [PART TWO]
-- 第一部分
-- 第二部分
-- 第三部分
-- 第四部分
+讲者补充：不要把“能跑 payload”当作理解。真正要掌握的是前提条件、触发点、影响范围和修复方式。
 
-## 第 6 页 / Slide 6: 02.
+> English recap: Exploitation must be scoped and authorized. Understand prerequisites and impact.
 
-### 原文 / Original Text
+### 相关课件图片 / Related Slide Images
 
-- 攻击技术
-- 01
-- 02
-- 03
-- 谷歌
-- 黑客
-- Nmap
-- 主机发现与端口发现
-- W
-- eb
-- 应用架构
-- OWASP10
-- 大漏洞
-- 枚举，漏洞发现，利用和利用后
-- 向量投放，密码破解，持久化控制
-- 分为：
-- 主动
-- /
-- 被动信息收集
-- W
-- eb
-- 应用攻击
-- 客户端攻击
-
-### 图片 / Images
+### 第 6 页配图 / Slide 6 Images
 
 ![Slide 6 image](./images/slide-06-03.jpeg)
 
-## 第 7 页 / Slide 7: 02.
-
-### 原文 / Original Text
-
-- 攻击技术
-
-### 图片 / Images
+### 第 7 页配图 / Slide 7 Images
 
 ![Slide 7 image](./images/slide-07-04.jpeg)
 ![Slide 7 image](./images/slide-07-05.jpeg)
 ![Slide 7 image](./images/slide-07-06.png)
 
-## 第 8 页 / Slide 8: 02.
-
-### 原文 / Original Text
-
-- 攻击技术
-
-### 图片 / Images
+### 第 8 页配图 / Slide 8 Images
 
 ![Slide 8 image](./images/slide-08-07.jpeg)
 ![Slide 8 image](./images/slide-08-08.jpeg)
 ![Slide 8 image](./images/slide-08-09.png)
 
-## 第 9 页 / Slide 9: 02-
-
-### 原文 / Original Text
-
-- Ex
-- .
-- 10
-- 大漏洞
-- (2021 ver.)
-- A01:2021 -
-- 访问控制缺失
-- 访问控制漏洞是最常见的安全问题，可能导致未经授权的用户访问敏感数据或功能。解决方法包括严格的权限验证和路径保护。
-- A02:2021 -
-- 加密失败
-- 加密相关的错误可能导致敏感数据泄露或系统被攻破。应确保使用强加密算法并正确管理密钥。
-- A03:2021 -
-- 注入漏洞
-- 注入攻击（如
-- SQL
-- 注入）通过恶意输入破坏应用逻辑。防护措施包括使用参数化查询和输入验证。
-- A04:2021 -
-- 不安全设计
-- 设计缺陷可能导致系统无法抵御潜在威胁。应采用威胁建模和安全设计模式。
-- A05:2021 -
-- 安全配置错误
-- 配置错误（如启用调试模式）可能暴露系统漏洞。应定期审查配置并移除不必要的功能。
-- A06:2021 -
-- 使用含已知漏洞的组件
-- 使用过时或存在漏洞的第三方库可能导致攻击。应及时更新依赖项并移除不必要的组件。
-- A07:2021 -
-- 身份验证和认证失败
-- 身份验证机制的缺陷可能导致账户被盗用。应使用多因素认证和强密码策略。
-- A08:2021 -
-- 软件和数据完整性失败
-- 未验证的更新或数据可能被篡改。应确保软件签名验证和
-- CI/CD
-- 管道的安全性。
-- A09:2021 -
-- 安全日志和监控失败
-- 缺乏日志记录和监控可能导致攻击无法被及时发现。应启用全面的日志记录和告警机制。
-- A10:2021 -
-- 服务端请求伪造（
-- SSRF
-- ）
-- 攻击者通过伪造请求访问内部资源。防护措施包括限制外部请求和验证输入。
-
-### 图片 / Images
+### 第 9 页配图 / Slide 9 Images
 
 ![Slide 9 image](./images/slide-09-10.jpeg)
 ![Slide 9 image](./images/slide-09-11.jpeg)
 
-## 第 10 页 / Slide 10: 03.
+## 3. 权限、维持与防御 / Privilege, persistence, and defense
 
-### 原文 / Original Text
+权限提升和持久化会把一次漏洞变成长期风险。防御侧需要最小权限、补丁管理、日志监控和异常行为检测共同配合。
 
-- 后期
-- [PART THREE]
-- 第一部分
-- 第二部分
-- 第三部分
-- 第四部分
+讲者补充：攻防是同一件事的两面。越能理解攻击者需要什么条件，越能设计有效防护。
 
-## 第 11 页 / Slide 11: 03.
+> English recap: Privilege and persistence turn incidents into long-term risk; defense needs layers.
 
-### 原文 / Original Text
+### 相关课件图片 / Related Slide Images
 
-- 后期
-- 权限提升
-- 逃避检测技术
-- 云渗透测试
-- 战术思维
-- Linux
-- 权限提升（
-- sudo
-- 权限漏洞、
-- cron
-- 后台任务、
-- Docker
-- 漏洞）
-- Windows
-- 权限提升（服务路径、服务权限、默认配置）
-- 逃避各种安全检测（
-- IDS
-- 、防火墙和杀毒软件），高级攻击技术，提高渗透隐身性
-- 云渗透策略、技术和程序（比如
-- AWS
-- ）
-- 知己知彼，百战不殆
-- 了解对手，提高自身，动手实战，练习练习再练习
-- Try Harder
-
-### 图片 / Images
+### 第 11 页配图 / Slide 11 Images
 
 ![Slide 11 image](./images/slide-11-12.png)
 ![Slide 11 image](./images/slide-11-13.svg)
@@ -234,54 +100,27 @@ draft: false
 ![Slide 11 image](./images/slide-11-18.png)
 ![Slide 11 image](./images/slide-11-19.svg)
 
-## 第 12 页 / Slide 12: 04.
-
-### 原文 / Original Text
-
-- 作业
-- [PART FOUR]
-- 第一部分
-- 工作回顾
-- 工作亮点
-- 工作反思
-- 未来计划
-- 第二部分
-- 第三部分
-- 第四部分
-
-### 图片 / Images
+### 第 12 页配图 / Slide 12 Images
 
 ![Slide 12 image](./images/slide-12-20.png)
 
-## 第 13 页 / Slide 13: 04.
-
-### 原文 / Original Text
-
-- 作业
-- 用自己的语言整理
-- 2025
-- 年
-- OWASP
-- 10
-- 大漏洞
-- 截止日期：
-- 本周六晚
-- 23:59
-
-### 图片 / Images
+### 第 13 页配图 / Slide 13 Images
 
 ![Slide 13 image](./images/slide-13-21.jpeg)
 ![Slide 13 image](./images/slide-13-22.jpeg)
 ![Slide 13 image](./images/slide-13-23.jpeg)
 ![Slide 13 image](./images/slide-13-24.jpeg)
 
-## 第 14 页 / Slide 14: 结束
+## 4. 收束与复盘 / Wrap-up
 
-### 原文 / Original Text
+本课的重点不是学会越界攻击，而是形成结构化复盘能力：目标是什么、路径是什么、证据在哪里、防线如何改进。
 
-- …
-- 了吗？
-- TYcybersec
-- 时间：2025年12月
-- E
-- nd…?
+讲者补充：任何实操都必须限定在社团靶场、个人虚拟机或明确授权范围内。
+
+> English recap: The ethical boundary is part of the technical lesson.
+
+## 课堂练习 / Practice
+
+- 用表格列出攻击链每一步对应的防御措施
+- 选择一个漏洞案例并写出前提条件
+- 说明为什么授权范围比工具本身更重要

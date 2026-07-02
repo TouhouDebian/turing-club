@@ -1,13 +1,13 @@
 ---
-title: "05-密码学基础 / Cryptography Basics"
+title: "05 密码学基础 / Cryptography Basics"
 published: 2025-11-03
-description: "05-密码学基础 / Cryptography Basics. 2023届 Simon Li / Class of 2023 Simon Li."
-tags: ["Cybersecurity", "Club Course", "Slides"]
+description: "密码学基础课介绍从古典密码到现代加密的核心思想。课堂目标不是手写完整算法，而是知道不同密码机制解决什么问题、不能解决什么问题。 / Cryptography basics introduce classical and modern ideas: confidentiality, integrity, authentication, and their limits."
+tags: ["Cryptography", "Hash", "Symmetric Encryption", "Asymmetric Encryption", "Vigenere", "XOR"]
 category: "Club Course"
 draft: false
 ---
 
-# 05-密码学基础
+# 05 密码学基础
 
 **English title:** Cryptography Basics
 
@@ -15,20 +15,35 @@ draft: false
 
 **原 PPT 日期 / Original PPT date:** 2025-11-03
 
-> 本文由社团课程 PPT 转换而来，保留原幻灯片文字与图片，便于网页阅读。
+**关键词 / Keywords:** #Cryptography #Hash #Symmetric-Encryption #Asymmetric-Encryption #Vigenere #XOR
+
+> 本文由社团课程 PPT 整理为阅读版讲义：保留原课件图片，并补充课堂讲解、学习目标和练习方向。
 >
-> This article was converted from the club course PowerPoint. Original slide text and images are preserved for web reading.
+> This article turns the original slides into readable course notes while preserving slide images and adding presenter-style explanations.
 
-## 第 1 页 / Slide 1: 密码学基础
+## 导读 / Overview
 
-### 原文 / Original Text
+密码学基础课介绍从古典密码到现代加密的核心思想。课堂目标不是手写完整算法，而是知道不同密码机制解决什么问题、不能解决什么问题。
 
-- S
-- imon
-- 05-
-- 网络安全社
+> English overview: Cryptography basics introduce classical and modern ideas: confidentiality, integrity, authentication, and their limits.
 
-### 图片 / Images
+## 学习目标 / Learning Goals
+
+- 理解对称加密、非对称加密和哈希的区别
+- 认识 Vigenere、XOR 等基础思想
+- 建立不要自创密码算法的安全意识
+
+## 1. 密码学解决什么问题 / What cryptography solves
+
+密码学常见目标包括保密性、完整性、身份认证和不可否认性。不同算法负责不同目标，把它们混用会导致错误的安全感。
+
+讲者补充：加密不等于安全。密钥管理、随机数、协议设计和实现细节同样会决定结果。
+
+> English recap: Cryptography supports confidentiality, integrity, authentication, and non-repudiation, but only when used correctly.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 1 页配图 / Slide 1 Images
 
 ![Slide 1 image](./images/slide-01-01.png)
 ![Slide 1 image](./images/slide-01-02.png)
@@ -41,52 +56,14 @@ draft: false
 ![Slide 1 image](./images/slide-01-09.png)
 ![Slide 1 image](./images/slide-01-10.svg)
 
-## 第 2 页 / Slide 2: 基础的
-
-### 原文 / Original Text
-
-- base
-- 万恶之源
-- 01
-- 对称加密
-- VS
-- 非对称加密
-- AL_1S
-- &lt;-&gt; Alice
-- VS AL_1S
-- -&gt; Key; Key -&gt;
-- 王女
-- 对称加密                       非对称加密
-- 02
-- V
-- igenere
-- 加密
-- Qqmiaiii
-- 加？密！
-- 03
-- XOR
-- 加密与基础的逻辑运算
-- 与，或，非，同或，异或
-- 04
-- 目录
-
-### 图片 / Images
+### 第 2 页配图 / Slide 2 Images
 
 ![Slide 2 image](./images/slide-02-11.png)
 ![Slide 2 image](./images/slide-02-12.png)
 ![Slide 2 image](./images/slide-02-13.png)
 ![Slide 2 image](./images/slide-02-14.png)
 
-## 第 3 页 / Slide 3: 基础的
-
-### 原文 / Original Text
-
-- base
-- PART  01
-- 准备：
-- https://cyberchef.io/
-
-### 图片 / Images
+### 第 3 页配图 / Slide 3 Images
 
 ![Slide 3 image](./images/slide-03-15.png)
 ![Slide 3 image](./images/slide-03-16.png)
@@ -96,15 +73,7 @@ draft: false
 ![Slide 3 image](./images/slide-03-20.png)
 ![Slide 3 image](./images/slide-03-21.svg)
 
-## 第 4 页 / Slide 4: 基础的
-
-### 原文 / Original Text
-
-- base
-- I
-- ntroduction
-
-### 图片 / Images
+### 第 4 页配图 / Slide 4 Images
 
 ![Slide 4 image](./images/slide-04-22.png)
 ![Slide 4 image](./images/slide-04-23.svg)
@@ -112,15 +81,17 @@ draft: false
 ![Slide 4 image](./images/slide-04-25.svg)
 ![Slide 4 image](./images/slide-04-26.png)
 
-## 第 5 页 / Slide 5: 对称加密
+## 2. 对称与非对称加密 / Symmetric and asymmetric encryption
 
-### 原文 / Original Text
+对称加密速度快，但双方要共享同一把密钥；非对称加密便于密钥交换和签名，但计算成本更高。现代协议通常把两者组合使用。
 
-- VS
-- 非对称加密
-- PART  02
+讲者补充：TLS 等协议不是只用一种算法，而是把密钥交换、身份验证、对称加密和完整性校验组织成流程。
 
-### 图片 / Images
+> English recap: Modern protocols combine symmetric and asymmetric techniques.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 5 页配图 / Slide 5 Images
 
 ![Slide 5 image](./images/slide-05-27.png)
 ![Slide 5 image](./images/slide-05-28.png)
@@ -132,13 +103,7 @@ draft: false
 ![Slide 5 image](./images/slide-05-34.png)
 ![Slide 5 image](./images/slide-05-35.png)
 
-## 第 6 页 / Slide 6: 对称加密
-
-### 原文 / Original Text
-
-- 镜
-
-### 图片 / Images
+### 第 6 页配图 / Slide 6 Images
 
 ![Slide 6 image](./images/slide-06-36.png)
 ![Slide 6 image](./images/slide-06-37.svg)
@@ -146,9 +111,7 @@ draft: false
 ![Slide 6 image](./images/slide-06-39.svg)
 ![Slide 6 image](./images/slide-06-40.png)
 
-## 第 7 页 / Slide 7: 非对称加密
-
-### 图片 / Images
+### 第 7 页配图 / Slide 7 Images
 
 ![Slide 7 image](./images/slide-07-41.jpeg)
 ![Slide 7 image](./images/slide-07-42.png)
@@ -157,21 +120,17 @@ draft: false
 ![Slide 7 image](./images/slide-07-45.svg)
 ![Slide 7 image](./images/slide-07-46.png)
 
-## 第 8 页 / Slide 8: Vigenere
+## 3. Vigenere 与 XOR / Vigenere and XOR
 
-### 原文 / Original Text
+Vigenere 展示了“密钥重复使用”带来的模式问题，XOR 展示了位运算在加密和编码中的基础作用。它们适合帮助初学者理解密钥与明文的关系。
 
-- 加密
-- Qqmiaiii
-- 请根据此密文还原原文
-- (
-- 答案在今天的社团课上出现过
-- )
-- Note
-- ：这是一个对称加密
-- PART  03
+讲者补充：在 CTF 中看到 XOR，不要只想爆破，也要观察明文格式、文件头和重复周期。
 
-### 图片 / Images
+> English recap: Classical examples reveal how keys interact with plaintext and why patterns matter.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 8 页配图 / Slide 8 Images
 
 ![Slide 8 image](./images/slide-08-47.png)
 ![Slide 8 image](./images/slide-08-48.png)
@@ -181,15 +140,7 @@ draft: false
 ![Slide 8 image](./images/slide-08-52.png)
 ![Slide 8 image](./images/slide-08-53.svg)
 
-## 第 9 页 / Slide 9: Vigenere
-
-### 原文 / Original Text
-
-- 加密
-- Vigenere
-- encode
-
-### 图片 / Images
+### 第 9 页配图 / Slide 9 Images
 
 ![Slide 9 image](./images/slide-09-54.png)
 ![Slide 9 image](./images/slide-09-55.svg)
@@ -199,60 +150,7 @@ draft: false
 ![Slide 9 image](./images/slide-09-59.svg)
 ![Slide 9 image](./images/slide-09-60.png)
 
-## 第 10 页 / Slide 10: 步骤
-
-### 原文 / Original Text
-
-- 2:
-- 加密公式
-- 加密公式为：
-- C = (P + K) % 26
-- 其中，
-- P
-- 是明文字母对应的数字，
-- K
-- 是密钥字母对应的数字，
-- C
-- 是密文字母对应的数字。
-- 逐个计算：
-- (7 + 23) % 26 = 4 (E)
-- (4 + 19) % 26 = 23 (X)
-- (11 + 6) % 26 = 17 (R)
-- (11 + 1) % 26 = 12 (M)
-- (14 + 23) % 26 = 11 (L)
-- (22 + 19) % 26 = 15 (P)
-- (14 + 6) % 26 = 20 (U)
-- (17 + 1) % 26 = 18 (S)
-- (3 + 23) % 26 = 0 (A)
-- 分步解析
-- 步骤
-- 1:
-- 字母转化为数字
-- 将字母映射为数字（
-- A=0, B=1, ..., Z=25
-- ）：
-- 明文
-- m =
-- helloword
-- 转换为数字序列：
-- h=7, e=4, l=11, l=11, o=14, w=22, o=14, r=17, d=3
-- 密钥
-- k =
-- xtgb
-- 转换为数字序列（重复使用密钥至与明文等长）：
-- x=23, t=19, g=6, b=1
-- Vigenere
-- 加密
-- 步骤
-- 3:
-- 转换为密文
-- 将计算结果的数字序列转换回字母：
-- 数字序列：
-- 4, 23, 17, 12, 11, 15, 20, 18, 0
-- 密文：
-- EXRMLPUSA
-
-### 图片 / Images
+### 第 10 页配图 / Slide 10 Images
 
 ![Slide 10 image](./images/slide-10-61.jpeg)
 ![Slide 10 image](./images/slide-10-62.png)
@@ -262,18 +160,7 @@ draft: false
 ![Slide 10 image](./images/slide-10-66.png)
 ![Slide 10 image](./images/slide-10-67.png)
 
-## 第 11 页 / Slide 11: XOR
-
-### 原文 / Original Text
-
-- 加密与基础的逻辑
-- /
-- 布尔运算
-- 与，或，非，
-- 同或，异或
-- PART  04
-
-### 图片 / Images
+### 第 11 页配图 / Slide 11 Images
 
 ![Slide 11 image](./images/slide-11-68.png)
 ![Slide 11 image](./images/slide-11-69.png)
@@ -283,16 +170,7 @@ draft: false
 ![Slide 11 image](./images/slide-11-73.png)
 ![Slide 11 image](./images/slide-11-74.svg)
 
-## 第 12 页 / Slide 12: XOR
-
-### 原文 / Original Text
-
-- 加密
-- ^
-- encoding
-- Reference: https://zhuanlan.zhihu.com/p/651511134
-
-### 图片 / Images
+### 第 12 页配图 / Slide 12 Images
 
 ![Slide 12 image](./images/slide-12-75.png)
 ![Slide 12 image](./images/slide-12-76.svg)
@@ -303,109 +181,7 @@ draft: false
 ![Slide 12 image](./images/slide-12-81.jpeg)
 ![Slide 12 image](./images/slide-12-82.png)
 
-## 第 13 页 / Slide 13: && || ! ^ ⊙
-
-### 原文 / Original Text
-
-- 令
-- 1 = true, 0 = false (
-- 布尔运算
-- )
-- 1.
-- 逻辑与运算
-- (And)
-- 可以用
-- &
-- 表示，在程序一般用
-- &&
-- ，如
-- if(a&&b)
-- 与运算的规则为：同时为
-- 1
-- ，结果为
-- 1
-- ，任意一方为
-- 0
-- 时，结果为
-- 0
-- 1
-- &
-- 1
-- =
-- 1
-- &
-- 0
-- =
-- 0
-- &
-- 1
-- =
-- 0
-- &
-- 0
-- =
-- 0
-- 举个例子，
-- 1010&1101
-- 结果为
-- 1000
-- 。
-- 2.
-- 逻辑或运算
-- (Or)
-- 可以用
-- |
-- 表示，在程序一般用
-- ||
-- ，如
-- if(a||b)
-- 或运算的规则为：同时为
-- 0
-- ，结果为
-- 0
-- ，任意一方为
-- 1
-- 时，结果为
-- 1
-- |
-- 1
-- =
-- 1
-- |
-- 0
-- =
-- 1
-- 0
-- |
-- 1
-- =
-- 1
-- 0
-- |
-- 0
-- =
-- 0
-- 举个例子，
-- 1010or1101
-- 结果为
-- 1111
-- 。
-- 3.
-- 逻辑非运算
-- (Not)
-- 可以用
-- !
-- 表示，如
-- !1=0
-- 非运算的规则比较简单，
-- !1=0
-- ；
-- !0=1
-- 举个例子，
-- !1001=0110
-- 。
-
-### 图片 / Images
+### 第 13 页配图 / Slide 13 Images
 
 ![Slide 13 image](./images/slide-13-83.jpeg)
 ![Slide 13 image](./images/slide-13-84.jpeg)
@@ -418,64 +194,7 @@ draft: false
 ![Slide 13 image](./images/slide-13-91.png)
 ![Slide 13 image](./images/slide-13-92.png)
 
-## 第 14 页 / Slide 14: && || ! ^ ⊙
-
-### 原文 / Original Text
-
-- XOR
-- 例子
-- 可以用
-- XOR
-- 或⊕表示，在程序中，一般使用
-- ^
-- 表示，如
-- a^b
-- 异或运算的规则为：不同则为
-- 1
-- ，相同则为
-- 0
-- 。
-- 1010
-- ^
-- 1110
-- =
-- 0100
-- 举个例子，
-- 1010^1110=0100
-- XOR
-- 异或运算
-- 可以用
-- xnor
-- 或⊙表示
-- 同或运算的规则为：不同则为
-- 0
-- ，相同则为
-- 1
-- 。
-- 1010
-- xnor
-- 1110
-- =
-- 1011
-- 举个例子，
-- 1010
-- xnor
-- 1110=1011
-- 注意：
-- 在程序中，一般没有同或运算符：
-- 可以用两个数的异或结果再次异或
-- 1
-- ，即可得到两个数的同或结果。
-- Xnor
-- 同或运算
-- Xnor
-- 例子
-- 令
-- 1 =true, 0= false (
-- 布尔运算
-- )
-
-### 图片 / Images
+### 第 14 页配图 / Slide 14 Images
 
 ![Slide 14 image](./images/slide-14-93.png)
 ![Slide 14 image](./images/slide-14-94.svg)
@@ -489,13 +208,17 @@ draft: false
 ![Slide 14 image](./images/slide-14-102.png)
 ![Slide 14 image](./images/slide-14-103.png)
 
-## 第 15 页 / Slide 15: 今日作业
+## 4. 作业与复习 / Homework and review
 
-### 原文 / Original Text
+复习密码学时建议按问题分类：我要隐藏内容、验证完整性、确认身份，还是交换密钥。先确认目标，再选择机制。
 
-- PART  05
+讲者补充：不要在真实项目中自创加密方案。学习可以复现，生产要使用成熟库和成熟协议。
 
-### 图片 / Images
+> English recap: Choose cryptographic mechanisms by security goal, not by name recognition.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 15 页配图 / Slide 15 Images
 
 ![Slide 15 image](./images/slide-15-104.png)
 ![Slide 15 image](./images/slide-15-105.png)
@@ -505,13 +228,7 @@ draft: false
 ![Slide 15 image](./images/slide-15-109.png)
 ![Slide 15 image](./images/slide-15-110.svg)
 
-## 第 16 页 / Slide 16: 今日作业：
-
-### 原文 / Original Text
-
-- 没有作业！
-
-### 图片 / Images
+### 第 16 页配图 / Slide 16 Images
 
 ![Slide 16 image](./images/slide-16-111.jpeg)
 ![Slide 16 image](./images/slide-16-112.png)
@@ -519,15 +236,7 @@ draft: false
 ![Slide 16 image](./images/slide-16-114.png)
 ![Slide 16 image](./images/slide-16-115.svg)
 
-## 第 17 页 / Slide 17: 准备你的期中考试
-
-### 原文 / Original Text
-
-- Simon
-- THANK YOU
-- Curve! Curve! Curve!
-
-### 图片 / Images
+### 第 17 页配图 / Slide 17 Images
 
 ![Slide 17 image](./images/slide-17-116.png)
 ![Slide 17 image](./images/slide-17-117.png)
@@ -539,3 +248,9 @@ draft: false
 ![Slide 17 image](./images/slide-17-123.svg)
 ![Slide 17 image](./images/slide-17-124.png)
 ![Slide 17 image](./images/slide-17-125.svg)
+
+## 课堂练习 / Practice
+
+- 用自己的话解释哈希和加密的区别
+- 完成一个简单 XOR 还原练习
+- 列出 TLS 中至少两个密码学机制

@@ -93,6 +93,28 @@ const slugMap = new Map([
 	["Linux_AI_漏洞讲解_模板版.pptx", "linux-ai-vulnerability-walkthrough"],
 ]);
 
+const tagsMap = new Map([
+	["00-网络安全社体验课 - 正式.pptx", ["Cybersecurity", "Turing Club", "Club Intro", "CTF", "Ethics", "Linux", "Python"]],
+	["01-Windows基础.pptx", ["Windows", "PowerShell", "CMD", "File System", "Users", "Permissions", "Process", "Security Basics"]],
+	["02-Linux基础.pptx", ["Linux", "Bash", "Shell", "SSH", "File System", "Users", "Permissions"]],
+	["03-Python基础(副社长presentation).pptx", ["Python", "Programming", "Variables", "Control Flow", "Functions", "Automation"]],
+	["04-数据转换基础.pptx", ["Data Encoding", "Binary", "Hex", "ASCII", "Unicode", "Base64", "JSON"]],
+	["05-密码学基础.pptx", ["Cryptography", "Hash", "Symmetric Encryption", "Asymmetric Encryption", "Vigenere", "XOR"]],
+	["06-防火墙基础.pptx", ["Firewall", "Network Security", "Access Control", "Ports", "Traffic Filtering", "Defense"]],
+	["07-网络基础.pptx", ["Networking", "TCP/IP", "TCP", "UDP", "DNS", "HTTP", "Packet Analysis"]],
+	["08-攻击技术简介.pptx", ["Attack Techniques", "Reconnaissance", "Exploitation", "Social Engineering", "Vulnerability", "Defense"]],
+	["09-信息收集与枚举（一半）.pptx", ["OSINT", "Reconnaissance", "Information Gathering", "Search Engines", "Domains", "Passive Reconnaissance"]],
+	["09-信息收集与枚举.pptx", ["OSINT", "Enumeration", "Reconnaissance", "Google Hacking", "DNS", "Port Scanning", "Asset Discovery"]],
+	["10-了解Web攻击.pptx", ["Web Security", "SQL Injection", "XSS", "Database", "OWASP", "Web Defense"]],
+	["11-Web渗透.pptx", ["Web Penetration Testing", "Netcat", "Reverse Shell", "HTTP", "Vulnerability Assessment", "Ethics"]],
+	["Cynthia Li-蜜罐.pptx", ["Honeypot", "Threat Intelligence", "Deception", "IoT Security", "AI Security", "Active Defense"]],
+	["12-防御注入攻击.pptx", ["SQL Injection", "Input Validation", "Parameterized Query", "Secure Coding", "Web Defense"]],
+	["13-防御密码爆破.pptx", ["Password Security", "Brute Force", "Authentication", "MFA", "Rate Limiting", "Defense"]],
+	["14-防御跨站脚本(XSS)攻击.pptx", ["XSS", "CSP", "Output Encoding", "Frontend Security", "Web Defense", "Secure Coding"]],
+	["15-处理事情与交接权限.pptx", ["Operations", "Handover", "Permissions", "Account Security", "Documentation", "Governance"]],
+	["Linux_AI_漏洞讲解_模板版.pptx", ["Linux", "AI Security", "Vulnerability", "Dirty Pipe", "Zero Copy", "Kernel Security", "CVE"]],
+]);
+
 const xmlEntities = {
 	"&amp;": "&",
 	"&lt;": "<",
@@ -108,6 +130,8 @@ const decodeXml = (value) =>
 		.replace(/&(amp|lt|gt|quot|apos);/g, (entity) => xmlEntities[entity] ?? entity);
 
 const escapeYaml = (value) => `"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+const formatYamlArray = (items) =>
+	`[${items.map((item) => escapeYaml(item)).join(", ")}]`;
 const escapeMarkdownText = (value) =>
 	String(value)
 		.replace(/\\/g, "\\\\")
@@ -116,6 +140,8 @@ const escapeMarkdownText = (value) =>
 		.replace(/>/g, "&gt;");
 
 const cleanTitle = (file) => basename(file, extname(file));
+const formatDisplayTitle = (title) =>
+	title.replace(/\s*-\s*/g, " ").replace(/\s+/g, " ").trim();
 
 const unzipList = (pptx) => {
 	const result = spawnSync("unzip", ["-Z1", pptx], { encoding: "utf8" });
@@ -169,10 +195,12 @@ const unique = (items) => [...new Set(items)];
 
 const writePost = ({ pptx, postDir, slug }) => {
 	const fileName = basename(pptx);
-	const titleZh = cleanTitle(fileName);
-	const titleEn = titleTranslations.get(titleZh) ?? titleZh;
+	const rawTitleZh = cleanTitle(fileName);
+	const titleZh = formatDisplayTitle(rawTitleZh);
+	const titleEn = titleTranslations.get(rawTitleZh) ?? titleZh;
 	const author = authors.get(fileName) ?? defaultAuthor;
 	const date = dates.get(fileName);
+	const tags = tagsMap.get(fileName) ?? ["Cybersecurity", "Club Course"];
 	if (!date) throw new Error(`Missing date for ${fileName}`);
 
 	const files = unzipList(pptx);
@@ -231,7 +259,7 @@ const writePost = ({ pptx, postDir, slug }) => {
 		`title: ${escapeYaml(`${titleZh} / ${titleEn}`)}`,
 		`published: ${date}`,
 		`description: ${escapeYaml(description)}`,
-		`tags: ["Cybersecurity", "Club Course", "Slides"]`,
+		`tags: ${formatYamlArray(tags)}`,
 		`category: "Club Course"`,
 		"draft: false",
 		"---",

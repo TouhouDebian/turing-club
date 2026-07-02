@@ -1,13 +1,13 @@
 ---
-title: "02-Linux基础 / Linux Basics"
+title: "02 Linux基础 / Linux Basics"
 published: 2025-09-24
-description: "02-Linux基础 / Linux Basics. 2023届 Simon Li / Class of 2023 Simon Li."
-tags: ["Cybersecurity", "Club Course", "Slides"]
+description: "Linux 基础课把发行版、Shell、文件系统、SSH、用户和权限串起来。它的重点不是记住某个命令，而是理解命令为什么能控制系统资源。 / Linux basics connect distributions, shell, filesystems, SSH, users, and permissions. The point is to understand why commands control resources."
+tags: ["Linux", "Bash", "Shell", "SSH", "File System", "Users", "Permissions"]
 category: "Club Course"
 draft: false
 ---
 
-# 02-Linux基础
+# 02 Linux基础
 
 **English title:** Linux Basics
 
@@ -15,232 +15,129 @@ draft: false
 
 **原 PPT 日期 / Original PPT date:** 2025-09-24
 
-> 本文由社团课程 PPT 转换而来，保留原幻灯片文字与图片，便于网页阅读。
+**关键词 / Keywords:** #Linux #Bash #Shell #SSH #File-System #Users #Permissions
+
+> 本文由社团课程 PPT 整理为阅读版讲义：保留原课件图片，并补充课堂讲解、学习目标和练习方向。
 >
-> This article was converted from the club course PowerPoint. Original slide text and images are preserved for web reading.
+> This article turns the original slides into readable course notes while preserving slide images and adding presenter-style explanations.
 
-## 第 1 页 / Slide 1: Tianyi
+## 导读 / Overview
 
-### 原文 / Original Text
+Linux 基础课把发行版、Shell、文件系统、SSH、用户和权限串起来。它的重点不是记住某个命令，而是理解命令为什么能控制系统资源。
 
-- CyberSec
-- 02-Linux
-- 基础
-- 网络安全社
-- 02-L
-- inux Fundamental
+> English overview: Linux basics connect distributions, shell, filesystems, SSH, users, and permissions. The point is to understand why commands control resources.
 
-### 图片 / Images
+## 学习目标 / Learning Goals
+
+- 理解 Linux 发行版与 Shell 的关系
+- 掌握常见文件和目录操作
+- 理解 SSH、用户、组和权限的安全意义
+
+## 1. Linux 与发行版 / Linux and distributions
+
+Linux 严格来说是内核，日常使用的 Ubuntu、Debian、Arch 等是围绕内核打包出的发行版。发行版差异会影响包管理、默认配置和使用习惯，但文件、权限、进程这些核心概念是相通的。
+
+讲者补充：选择发行版时不用纠结“最强”，先选资料多、容易恢复、适合课堂环境的版本。能稳定练习比追求新奇更重要。
+
+> English recap: A distribution is a usable system built around the Linux kernel. Core security concepts remain similar across distributions.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 1 页配图 / Slide 1 Images
 
 ![Slide 1 image](./images/slide-01-01.jpeg)
 ![Slide 1 image](./images/slide-01-02.png)
 ![Slide 1 image](./images/slide-01-03.svg)
 
-## 第 2 页 / Slide 2: CONTENS
-
-### 原文 / Original Text
-
-- Linux
-- 简介
-- I
-- ntroduction
-- 用户
-- /
-- 组
-- /
-- 权限
-- User/Group/Privilege
-- 命令行基础
-- B
-- ash Basic
-- ???
-
-### 图片 / Images
+### 第 2 页配图 / Slide 2 Images
 
 ![Slide 2 image](./images/slide-02-04.jpeg)
 
-## 第 3 页 / Slide 3: 01
-
-### 原文 / Original Text
-
-- Linux
-- 简介
-- I
-- ntroduction to Linux
-
-### 图片 / Images
+### 第 3 页配图 / Slide 3 Images
 
 ![Slide 3 image](./images/slide-03-05.jpeg)
 
-## 第 4 页 / Slide 4: Slide 4
-
-### 图片 / Images
+### 第 4 页配图 / Slide 4 Images
 
 ![Slide 4 image](./images/slide-04-06.jpeg)
 ![Slide 4 image](./images/slide-04-07.png)
 
-## 第 5 页 / Slide 5: 版本
-
-### 原文 / Original Text
-
-- L
-- inux
-
-### 图片 / Images
+### 第 5 页配图 / Slide 5 Images
 
 ![Slide 5 image](./images/slide-05-08.jpeg)
 ![Slide 5 image](./images/slide-05-09.png)
 ![Slide 5 image](./images/slide-05-10.svg)
 ![Slide 5 image](./images/slide-05-11.png)
 
-## 第 6 页 / Slide 6: 02
+## 2. Shell 与命令行 / Shell and command line
 
-### 原文 / Original Text
+Shell 是人与系统对话的接口。`echo $SHELL`、`chsh`、`cd`、`ls` 等命令看似简单，却覆盖了查看环境、切换目录、列出文件、调整默认 Shell 等基础动作。
 
-- 命令行基础
-- B
-- ash basic
+讲者补充：命令行学习要养成读提示符、读路径、读错误信息的习惯。很多错误不是命令不会，而是当前目录、权限或参数没有看清。
 
-### 图片 / Images
+> English recap: The shell is the interface between the user and the operating system. Small commands build reliable habits.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 6 页配图 / Slide 6 Images
 
 ![Slide 6 image](./images/slide-06-12.jpeg)
 
-## 第 7 页 / Slide 7: SHELL
-
-### 原文 / Original Text
-
-- 基础
-
-### 图片 / Images
+### 第 7 页配图 / Slide 7 Images
 
 ![Slide 7 image](./images/slide-07-13.jpeg)
 ![Slide 7 image](./images/slide-07-14.jpeg)
 ![Slide 7 image](./images/slide-07-15.jpeg)
 ![Slide 7 image](./images/slide-07-16.png)
 
-## 第 8 页 / Slide 8: 切换
-
-### 原文 / Original Text
-
-- shell
-- Change
-- shell
-- echo \$SHELL
-- 01
-- ls /bin/bash
-- 02
-- chsh
-- -s /bin/bash
-- 03
-- reboot
-- 重启生效
-- 04
-- 切换到
-- Bash Shell
-- 查看当前
-- shell
-- 查看是否有
-- bash
-
-### 图片 / Images
+### 第 8 页配图 / Slide 8 Images
 
 ![Slide 8 image](./images/slide-08-17.jpeg)
 
-## 第 9 页 / Slide 9: 15%
-
-### 原文 / Original Text
-
-- 70%
-- SHELL
-- 基础
-- 各种
-- shell
-- 对比
-
-### 图片 / Images
+### 第 9 页配图 / Slide 9 Images
 
 ![Slide 9 image](./images/slide-09-18.png)
 ![Slide 9 image](./images/slide-09-19.png)
 
-## 第 10 页 / Slide 10: 命令行基础
-
-### 原文 / Original Text
-
-- -
-- 切换当前目录
-
-### 图片 / Images
+### 第 10 页配图 / Slide 10 Images
 
 ![Slide 10 image](./images/slide-10-20.jpeg)
 ![Slide 10 image](./images/slide-10-21.jpeg)
 ![Slide 10 image](./images/slide-10-22.jpeg)
 ![Slide 10 image](./images/slide-10-23.png)
 
-## 第 11 页 / Slide 11: 命令行基础
-
-### 原文 / Original Text
-
-- -
-- 文件展示
-
-### 图片 / Images
+### 第 11 页配图 / Slide 11 Images
 
 ![Slide 11 image](./images/slide-11-24.jpeg)
 ![Slide 11 image](./images/slide-11-25.jpeg)
 ![Slide 11 image](./images/slide-11-26.jpeg)
 ![Slide 11 image](./images/slide-11-27.png)
 
-## 第 12 页 / Slide 12: SSH connect
+## 3. SSH 与远程连接 / SSH and remote access
 
-### 原文 / Original Text
+SSH 是远程管理 Linux 主机的常用协议，它用加密连接替代明文登录。连接时要明确用户名、主机地址、端口和认证方式。
 
-- SSH
-- 连接
-- 安全外壳协议
-- SSH
-- 使用加密流量访问远程主机，
-- windows,
-- linux
-- , MacOS
-- 默认包。
-- sudo
-- systemctl
-- start
-- ssh.service
-- ss –
-- pantu
-- | grep 22
-- 连接：
-- ssh
-- 用户名
-- @IP
-- 地址
-- (
-- 域名
-- )
+讲者补充：不要把 SSH 当成“能连上就行”。安全配置还包括禁用弱密码、限制登录用户、使用密钥、查看监听端口和日志。
 
-### 图片 / Images
+> English recap: SSH provides encrypted remote access, but secure configuration matters as much as the connection command.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 12 页配图 / Slide 12 Images
 
 ![Slide 12 image](./images/slide-12-28.jpeg)
 
-## 第 13 页 / Slide 13: 文件系统
+## 4. 文件系统、用户与权限 / Filesystem, users, and permissions
 
-### 原文 / Original Text
+Linux 中“一切皆文件”的思想，让设备、配置、日志和普通文本都能用统一方式管理。用户、组和权限则决定谁能读、写、执行这些文件。
 
-- File system
-- 16052.498K+
-- 为了同一各发行版，
-- Linux
-- 基金会开发了一个名为文件系统层次结构的标准，规定每个主目录的用途
-- FHS
-- 标准
-- ~
-- 也就是：
-- /home/
-- 用户名
-- 用户主目录
+讲者补充：`rwx` 不只是三个字母。读权限影响查看，写权限影响修改，执行权限影响运行或进入目录。理解目录权限尤其重要。
 
-### 图片 / Images
+> English recap: Files, users, groups, and permissions are the foundation of Linux security.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 13 页配图 / Slide 13 Images
 
 ![Slide 13 image](./images/slide-13-29.jpeg)
 ![Slide 13 image](./images/slide-13-30.jpeg)
@@ -250,116 +147,38 @@ draft: false
 ![Slide 13 image](./images/slide-13-34.svg)
 ![Slide 13 image](./images/slide-13-35.png)
 
-## 第 14 页 / Slide 14: 文件操作
-
-### 图片 / Images
+### 第 14 页配图 / Slide 14 Images
 
 ![Slide 14 image](./images/slide-14-36.jpeg)
 ![Slide 14 image](./images/slide-14-37.png)
 
-## 第 15 页 / Slide 15: 文件操作
-
-### 图片 / Images
+### 第 15 页配图 / Slide 15 Images
 
 ![Slide 15 image](./images/slide-15-38.jpeg)
 ![Slide 15 image](./images/slide-15-39.png)
 
-## 第 16 页 / Slide 16: 03
-
-### 原文 / Original Text
-
-- 用户
-- /
-- 组
-- /
-- 权限
-- U
-- ser/Group/Privilege
-
-### 图片 / Images
+### 第 16 页配图 / Slide 16 Images
 
 ![Slide 16 image](./images/slide-16-40.png)
 
-## 第 17 页 / Slide 17: Linux
-
-### 原文 / Original Text
-
-- 用户
-- /
-- 组
-- /
-- 权限
-
-### 图片 / Images
+### 第 17 页配图 / Slide 17 Images
 
 ![Slide 17 image](./images/slide-17-41.jpeg)
 ![Slide 17 image](./images/slide-17-42.jpeg)
 ![Slide 17 image](./images/slide-17-43.jpeg)
 ![Slide 17 image](./images/slide-17-44.png)
 
-## 第 18 页 / Slide 18: 用户
-
-### 原文 / Original Text
-
-- /
-- 组
-- /
-- 权限
-- File privilege
-
-### 图片 / Images
+### 第 18 页配图 / Slide 18 Images
 
 ![Slide 18 image](./images/slide-18-45.jpeg)
 ![Slide 18 image](./images/slide-18-46.png)
 ![Slide 18 image](./images/slide-18-47.png)
 
-## 第 19 页 / Slide 19: 04
-
-### 原文 / Original Text
-
-- S
-- elf-
-- Q
-- uiz
-- 自我课堂检验
-
-### 图片 / Images
+### 第 19 页配图 / Slide 19 Images
 
 ![Slide 19 image](./images/slide-19-48.jpeg)
 
-## 第 20 页 / Slide 20: 自我检验
-
-### 原文 / Original Text
-
-- Self-Quiz
-- 在
-- windows
-- 环境下，在桌面创建文件夹
-- NewFolder
-- ，里面有一个子目录
-- Folder1
-- 和一个空文件
-- EmptyFile.txt
-- ，这个
-- EmptyFile.txt
-- 的权限设置为
-- Administrator
-- 不可访问，其他权限正常
-- (3
-- 分
-- )
-- 在
-- Linux
-- 环境下，
-- ssh
-- 登录
-- 你的宿主机
-- (2
-- 分
-- )
-- 把你的步骤整合成图片文档或者视频发给我
-
-### 图片 / Images
+### 第 20 页配图 / Slide 20 Images
 
 ![Slide 20 image](./images/slide-20-49.jpeg)
 ![Slide 20 image](./images/slide-20-50.jpeg)
@@ -368,16 +187,14 @@ draft: false
 ![Slide 20 image](./images/slide-20-53.jpeg)
 ![Slide 20 image](./images/slide-20-54.jpeg)
 
-## 第 21 页 / Slide 21: M
-
-### 原文 / Original Text
-
-- ission Complete!
-- Over!
-- INTERNET
-
-### 图片 / Images
+### 第 21 页配图 / Slide 21 Images
 
 ![Slide 21 image](./images/slide-21-55.jpeg)
 ![Slide 21 image](./images/slide-21-56.png)
 ![Slide 21 image](./images/slide-21-57.svg)
+
+## 课堂练习 / Practice
+
+- 用命令查看当前 Shell 和当前目录
+- 创建一个文件并修改权限
+- 尝试用 SSH 连接实验机并记录认证方式

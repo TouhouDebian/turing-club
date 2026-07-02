@@ -1,13 +1,13 @@
 ---
-title: "15-处理事情与交接权限 / Handling Tasks and Handover Permissions"
+title: "15 处理事情与交接权限 / Handling Tasks and Handover Permissions"
 published: 2026-04-28
-description: "15-处理事情与交接权限 / Handling Tasks and Handover Permissions. 2023届 Simon Li / Class of 2023 Simon Li."
-tags: ["Cybersecurity", "Club Course", "Slides"]
+description: "交接与权限处理课偏向社团运营和工程习惯：任务交付、权限移交、文档记录、AI 使用边界和活动收尾，都会影响项目能否长期运转。 / This operations lesson covers task handover, permission transfer, documentation, AI boundaries, and sustainable club workflow."
+tags: ["Operations", "Handover", "Permissions", "Account Security", "Documentation", "Governance"]
 category: "Club Course"
 draft: false
 ---
 
-# 15-处理事情与交接权限
+# 15 处理事情与交接权限
 
 **English title:** Handling Tasks and Handover Permissions
 
@@ -15,208 +15,100 @@ draft: false
 
 **原 PPT 日期 / Original PPT date:** 2026-04-28
 
-> 本文由社团课程 PPT 转换而来，保留原幻灯片文字与图片，便于网页阅读。
+**关键词 / Keywords:** #Operations #Handover #Permissions #Account-Security #Documentation #Governance
+
+> 本文由社团课程 PPT 整理为阅读版讲义：保留原课件图片，并补充课堂讲解、学习目标和练习方向。
 >
-> This article was converted from the club course PowerPoint. Original slide text and images are preserved for web reading.
+> This article turns the original slides into readable course notes while preserving slide images and adding presenter-style explanations.
 
-## 第 1 页 / Slide 1: 处理事情
+## 导读 / Overview
 
-### 原文 / Original Text
+交接与权限处理课偏向社团运营和工程习惯：任务交付、权限移交、文档记录、AI 使用边界和活动收尾，都会影响项目能否长期运转。
 
-- 交接权限
-- T
-- ycybersec
-- Simon Li
-- 15
+> English overview: This operations lesson covers task handover, permission transfer, documentation, AI boundaries, and sustainable club workflow.
 
-### 图片 / Images
+## 学习目标 / Learning Goals
+
+- 理解任务交付和权限交接的重要性
+- 建立文档和审计意识
+- 明确 AI 工具使用边界
+
+## 1. 任务不是做完就结束 / A task is not done until handed over
+
+任务完成后还需要交付说明、文件位置、账号权限、后续维护人和已知问题。否则下一位同学会从零开始猜。
+
+讲者补充：交付文档不需要华丽，但必须能让别人接手。
+
+> English recap: A task is complete only when another person can continue it.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 1 页配图 / Slide 1 Images
 
 ![Slide 1 image](./images/slide-01-01.jpeg)
 
-## 第 2 页 / Slide 2: 01
-
-### 原文 / Original Text
-
-- Mock Exam
-- 该来的还是会来的
-- 02
-- 5ZOI5Z+657Gz5Zm2
-- base64
-- 03
-- 4WGZPZMMS7T3XP7IWGDOTGF75CS37ZMZWY======
-- base32
-- 不是
-- 目录
-- 04
-- E59388E59180E5BA93E982A3E8B7AF
-- base16
-- 05
-- X593Y6G5989ZF59089I588R9W69FDVC6D3Y27FI69STGG6U3Y27G
-- Base16+
-- 维吉尼亚：
-- tycybersec
-- 06
-- arvnt://ano.fkegdgmm.tgq/xbbgm/CZ1DSC5bPCRQ/
-- 维吉尼亚：
-- hakimi
-
-### 图片 / Images
+### 第 2 页配图 / Slide 2 Images
 
 ![Slide 2 image](./images/slide-02-02.jpeg)
 
-## 第 3 页 / Slide 3: Mock Exam
-
-### 原文 / Original Text
-
-- 01
-- 模拟考试
-
-### 图片 / Images
+### 第 3 页配图 / Slide 3 Images
 
 ![Slide 3 image](./images/slide-03-03.jpeg)
 
-## 第 4 页 / Slide 4: NO AI
-
-### 原文 / Original Text
-
-- H
-- ybrid
-- 60min
-- Mock Exam
-- 01
-- 请输入文本
-- 其实我没做，六月份再考（可能）
-
-### 图片 / Images
+### 第 4 页配图 / Slide 4 Images
 
 ![Slide 4 image](./images/slide-04-04.jpeg)
 
-## 第 5 页 / Slide 5: 交付任务
-
-### 原文 / Original Text
-
-- 02
-- 转交
-
-### 图片 / Images
+### 第 5 页配图 / Slide 5 Images
 
 ![Slide 5 image](./images/slide-05-05.jpeg)
 
-## 第 6 页 / Slide 6: 交付任务
+## 2. 权限与自由 / Permissions and freedom
 
-### 原文 / Original Text
+自由协作需要权限边界。管理员权限、仓库权限、服务器权限和账号恢复方式都要有记录，并遵循最小权限原则。
 
-- 02
-- 7
-- 楼钥匙
-- 获得物品：钥匙
-- 01
-- 如果钥匙被换
-- 你需要买一个外形一样的锁和锁闩，然后把原来的锁闩用
-- DDP
-- 的螺丝刀卸下来，再装上你自己的
-- 02
-- 如果被困
-- 请立即找你们班同学去帮你去
-- 4
-- 楼开锁或者找老师（不推荐）开电梯
-- 03
-- 其他事项
-- 一次不要拿太多，一次也不要时间太长，推荐晚自习前，中午
-- 12
-- ：
-- 15-12
-- ：
-- 45
-- 04
+讲者补充：权限交接时要同时考虑撤权。离任、换届、项目结束后不应保留不必要权限。
 
-## 第 7 页 / Slide 7: 交付任务
+> English recap: Good permission management includes granting and revoking access.
 
-### 原文 / Original Text
+### 相关课件图片 / Related Slide Images
 
-- 02
-- 日常汇报
-- 每次社团课在社长群发签到表
-- 十佳社团
-- 争取一下，但是不强求
-- 招生问题
-- 看你们了，我没有其他点子，社团改名也可以（最好是关于
-- CS/CE
-- ）
-
-### 图片 / Images
+### 第 7 页配图 / Slide 7 Images
 
 ![Slide 7 image](./images/slide-07-06.jpeg)
 
-## 第 8 页 / Slide 8: 自由
-
-### 原文 / Original Text
-
-- Q&A
-- 03
-- 想问啥问啥，趁这点时间
-
-### 图片 / Images
+### 第 8 页配图 / Slide 8 Images
 
 ![Slide 8 image](./images/slide-08-07.jpeg)
 
-## 第 9 页 / Slide 9: 自由
-
-### 原文 / Original Text
-
-- Q&A
-- 03
-- Q: 计划1
-- A: 演示文稿是实用的工具，可以是演示，演讲，报告等。大部分时间，它们都是在为观众服务。如果您想在演示文稿中展现内容，可以选择多种可以选择多种方式。您可以在讲座中包含团队照片
-- Q: 计划2
-- A: 演示文稿是实用的工具，可以是演示，演讲，报告等。大部分时间，它们都是在为观众服务。如果您想在演示文稿中展现内容，可以选择多种可以选择多种方式。您可以在讲座中包含团队照片
-- Q: 计划3
-- A: 演示文稿是实用的工具，可以是演示，演讲，报告等。大部分时间，它们都是在为观众服务。如果您想在演示文稿中展现内容，可以选择多种可以选择多种方式。您可以在讲座中包含团队照片
-- Q: 计划4
-- A: 演示文稿是实用的工具，可以是演示，演讲，报告等。大部分时间，它们都是在为观众服务。如果您想在演示文稿中展现内容，可以选择多种可以选择多种方式。您可以在讲座中包含团队照片
-
-### 图片 / Images
+### 第 9 页配图 / Slide 9 Images
 
 ![Slide 9 image](./images/slide-09-08.jpeg)
 
-## 第 10 页 / Slide 10: 拍照留念
+## 3. 活动收尾 / Closing an activity
 
-### 原文 / Original Text
+拍照、娱乐和完结不是无关内容，它们帮助社团形成记忆，也提醒大家项目结束后要整理资料、归档成果、感谢参与者。
 
-- 04
-- 123
-- ，茄子！
-- ~
+讲者补充：运营细节会影响技术社团的持续性。资料越清楚，下一届越容易接上。
 
-### 图片 / Images
+> English recap: Sustainable clubs need archives, gratitude, and clear handover.
+
+### 相关课件图片 / Related Slide Images
+
+### 第 10 页配图 / Slide 10 Images
 
 ![Slide 10 image](./images/slide-10-09.jpeg)
 
-## 第 11 页 / Slide 11: 娱乐时间
-
-### 原文 / Original Text
-
-- 05
-- 来打
-- Games
-
-### 图片 / Images
+### 第 11 页配图 / Slide 11 Images
 
 ![Slide 11 image](./images/slide-11-10.jpeg)
 
-## 第 12 页 / Slide 12: 完结撒花
-
-### 原文 / Original Text
-
-- 下次再见
-- 15
-- THANKS
-- 但是
-- S1
-- 赛季还未结束呢
-- ~
-- Simon Li
-
-### 图片 / Images
+### 第 12 页配图 / Slide 12 Images
 
 ![Slide 12 image](./images/slide-12-11.jpeg)
+
+## 课堂练习 / Practice
+
+- 写一份项目交接清单
+- 列出一个仓库需要哪些角色权限
+- 设计离任撤权流程
