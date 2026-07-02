@@ -41,6 +41,14 @@ function formatTag(tagList: string[]) {
 	return tagList.map((t) => `#${t}`).join(" ");
 }
 
+function splitLocalized(value: string) {
+	const [zh, ...rest] = value.split(" / ");
+	return {
+		zh: zh.trim(),
+		en: (rest.join(" / ") || zh).trim(),
+	};
+}
+
 onMount(async () => {
 	let filteredPosts: Post[] = sortedPosts;
 
@@ -133,7 +141,8 @@ onMount(async () => {
                      group-hover:translate-x-1 transition-all group-hover:text-[var(--primary)]
                      text-75 pr-8 whitespace-nowrap overflow-ellipsis overflow-hidden"
                         >
-                            {post.data.title}
+                            <span class="lang-zh">{splitLocalized(post.data.title).zh}</span>
+                            <span class="lang-en">{splitLocalized(post.data.title).en}</span>
                         </div>
 
                         <!-- tag list -->

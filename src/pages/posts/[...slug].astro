@@ -26,6 +26,20 @@ const { entry } = Astro.props;
 const { Content, headings } = await entry.render();
 
 const { remarkPluginFrontmatter } = await entry.render();
+const splitLocalized = (value: string) => {
+	const [zh, ...rest] = value.split(" / ");
+	return {
+		zh: zh.trim(),
+		en: (rest.join(" / ") || zh).trim(),
+	};
+};
+const localizedTitle = splitLocalized(entry.data.title);
+const localizedNextTitle = entry.data.nextTitle
+	? splitLocalized(entry.data.nextTitle)
+	: null;
+const localizedPrevTitle = entry.data.prevTitle
+	? splitLocalized(entry.data.prevTitle)
+	: null;
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -79,7 +93,8 @@ const jsonLd = {
                     md:before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)]
                     before:absolute before:top-[0.75rem] before:left-[-1.125rem]
                 ">
-                    {entry.data.title}
+                    <span class="lang-zh">{localizedTitle.zh}</span>
+                    <span class="lang-en">{localizedTitle.en}</span>
                 </div>
             </div>
 
@@ -117,7 +132,8 @@ const jsonLd = {
             {entry.data.nextSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4" >
                 <Icon name="material-symbols:chevron-left-rounded" class="text-[2rem] text-[var(--primary)]" />
                 <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
-                    {entry.data.nextTitle}
+                    <span class="lang-zh">{localizedNextTitle?.zh}</span>
+                    <span class="lang-en">{localizedNextTitle?.en}</span>
                 </div>
             </div>}
         </a>
@@ -126,7 +142,8 @@ const jsonLd = {
            class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.prevSlug}]}>
             {entry.data.prevSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-end gap-4">
                 <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
-                    {entry.data.prevTitle}
+                    <span class="lang-zh">{localizedPrevTitle?.zh}</span>
+                    <span class="lang-en">{localizedPrevTitle?.en}</span>
                 </div>
                 <Icon name="material-symbols:chevron-right-rounded" class="text-[2rem] text-[var(--primary)]" />
             </div>}

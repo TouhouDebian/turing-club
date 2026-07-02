@@ -11,6 +11,9 @@ function applyLanguage(nextLanguage: Language) {
 	localStorage.setItem("language", nextLanguage);
 	document.documentElement.dataset.language = nextLanguage;
 	document.documentElement.lang = nextLanguage === "zh" ? "zh-CN" : "en";
+	window.dispatchEvent(
+		new CustomEvent("languagechange", { detail: { language: nextLanguage } }),
+	);
 }
 
 function toggleLanguage() {

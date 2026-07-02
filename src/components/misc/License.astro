@@ -17,10 +17,19 @@ const className = Astro.props.class;
 const profileConf = profileConfig;
 const licenseConf = licenseConfig;
 const postUrl = decodeURIComponent(Astro.url.toString());
+const splitLocalized = (value: string) => {
+	const [zh, ...rest] = value.split(" / ");
+	return {
+		zh: zh.trim(),
+		en: (rest.join(" / ") || zh).trim(),
+	};
+};
+const localizedTitle = splitLocalized(title);
 ---
 <div class={`relative transition overflow-hidden bg-[var(--license-block-bg)] py-5 px-6 ${className}`}>
     <div class="transition font-bold text-black/75 dark:text-white/75">
-        {title}
+        <span class="lang-zh">{localizedTitle.zh}</span>
+        <span class="lang-en">{localizedTitle.en}</span>
     </div>
     <a href={postUrl} class="link text-[var(--primary)]">
         {postUrl}
