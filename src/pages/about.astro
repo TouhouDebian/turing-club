@@ -10,6 +10,14 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
             <article class="prose dark:prose-invert prose-base !max-w-none custom-md mt-2">
                 <div class="lang-zh">
                     <h1>关于天一中学图灵社</h1>
+                    <figure class="turing-portrait">
+                        <img src="/images/alan-turing.png" alt="Alan Mathison Turing" loading="lazy" decoding="async" />
+                        <figcaption>
+                            <a href="https://baike.baidu.com/item/%E8%89%BE%E4%BC%A6%C2%B7%E9%BA%A6%E5%B8%AD%E6%A3%AE%C2%B7%E5%9B%BE%E7%81%B5/3940576" target="_blank" rel="noopener noreferrer">
+                                Alan Mathison Turing
+                            </a>
+                        </figcaption>
+                    </figure>
                     <p>
                         天一中学图灵社，英文名 Turing Club，是一个面向计算机科学、编程、网络安全和数据思维的校园技术社团。我们相信技术不应该有高高的门槛，真正重要的是好奇心、持续练习和愿意解决问题的行动力。
                     </p>
@@ -54,6 +62,14 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
 
                 <div class="lang-en">
                     <h1>About Turing Club</h1>
+                    <figure class="turing-portrait">
+                        <img src="/images/alan-turing.png" alt="Alan Mathison Turing" loading="lazy" decoding="async" />
+                        <figcaption>
+                            <a href="https://en.wikipedia.org/wiki/Alan_Turing" target="_blank" rel="noopener noreferrer">
+                                Alan Mathison Turing
+                            </a>
+                        </figcaption>
+                    </figure>
                     <p>
                         Turing Club of Tianyi High School is a campus technology club focused on computer science, programming, cybersecurity, and data thinking. We believe technology should be accessible to every curious beginner.
                     </p>
@@ -99,3 +115,36 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
         </div>
     </div>
 </MainGridLayout>
+
+<style>
+    .turing-portrait {
+        display: grid;
+        justify-items: center;
+        gap: 0.55rem;
+        margin: 1.25rem auto 1.6rem;
+        max-width: min(17rem, 100%);
+    }
+
+    .turing-portrait img {
+        width: min(17rem, 100%);
+        aspect-ratio: 3 / 4;
+        border-radius: 0.75rem;
+        box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.18);
+        object-fit: cover;
+    }
+
+    .turing-portrait figcaption {
+        font-size: 0.92rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .turing-portrait a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .turing-portrait a:hover {
+        text-decoration: underline;
+    }
+</style>
