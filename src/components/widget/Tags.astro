@@ -16,22 +16,15 @@ const className = Astro.props.class;
 const style = Astro.props.style;
 ---
 <WidgetLayout name={i18n(I18nKey.tags)} id="tags" class={className} style={style}>
-    <random-tag-list class="block">
-        <div class="tag-scroll-window">
-            <div class="flex gap-2 flex-wrap pb-1 pr-1">
-                {tags.map(t => (
-                    <ButtonTag href={getTagUrl(t.name)} label={`View all posts with the ${t.name.trim()} tag`}>
-                        {t.name.trim()}
-                    </ButtonTag>
-                ))}
-            </div>
+    <div class="tag-scroll-window">
+        <div class="flex gap-2 flex-wrap pb-1 pr-1">
+            {tags.map(t => (
+                <ButtonTag href={getTagUrl(t.name)} label={`View all posts with the ${t.name.trim()} tag`}>
+                    {t.name.trim()}
+                </ButtonTag>
+            ))}
         </div>
-		<button type="button" class="tag-random btn-plain rounded-lg w-full h-9 mt-3" disabled={tags.length === 0}>
-			<div class="text-[var(--primary)] flex items-center justify-center gap-2">
-				<span>random</span>
-			</div>
-		</button>
-    </random-tag-list>
+    </div>
 </WidgetLayout>
 
 <style>
@@ -57,22 +50,3 @@ const style = Astro.props.style;
         border-radius: 999px;
     }
 </style>
-
-<script>
-    class RandomTagList extends HTMLElement {
-        connectedCallback() {
-            const button = this.querySelector(".tag-random");
-            const links = [...this.querySelectorAll(".tag-scroll-window a")];
-            if (!(button instanceof HTMLButtonElement) || links.length === 0) return;
-
-            button.addEventListener("click", () => {
-                const link = links[Math.floor(Math.random() * links.length)];
-                if (link instanceof HTMLAnchorElement) window.location.href = link.href;
-            });
-        }
-    }
-
-    if (!customElements.get("random-tag-list")) {
-        customElements.define("random-tag-list", RandomTagList);
-    }
-</script>
