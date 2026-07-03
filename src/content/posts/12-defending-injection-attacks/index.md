@@ -43,10 +43,6 @@ draft: false
 
 讲者补充：修复后要验证 payload 不再生效，并确认正常业务没有被破坏。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-11-20.png)
-
 ## 课堂练习
 
 - 把一段拼接 SQL 改成参数化查询思路
@@ -90,10 +86,6 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 Fixes require regression tests and verification.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-11-20.png)
 
 ## Practice
 

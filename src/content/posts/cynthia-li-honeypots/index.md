@@ -34,7 +34,6 @@ draft: false
 ### 相关图片
 
 ![课程相关截图 1](./images/slide-01-02.png)
-![课程相关截图 2](./images/slide-02-04.png)
 
 ## 2. 分类与交互程度
 
@@ -42,31 +41,17 @@ draft: false
 
 讲者补充：课堂上要特别强调隔离和监控，否则高交互蜜罐可能变成攻击跳板。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-04-07.png)
-
 ## 3. AI、IoT 与分布式蜜网
 
 AI 可以帮助蜜罐识别异常、动态调整诱饵特征，IoT 和云场景则扩大了部署范围。分布式蜜网能从多个区域收集趋势。
 
 讲者补充：AI 不是魔法，模型解释性、对抗样本和资源消耗仍是现实挑战。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-06-09.png)
-![课程相关截图 2](./images/slide-07-11.png)
-![课程相关截图 3](./images/slide-08-13.png)
-
 ## 4. 历史、挑战与未来
 
 从早期诱捕实践到 AI 驱动系统，蜜罐一直在攻防博弈中演进。未来方向包括自适应欺骗、量子安全和更大规模的协同情报。
 
 讲者补充：部署蜜罐还要考虑法律、隐私和组织流程，不只是技术搭建。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-12-24.png)
 
 ## 课堂练习
 
@@ -103,7 +88,6 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 ### Related Images
 
 ![Course-related screenshot 1](./images/slide-01-02.png)
-![Course-related screenshot 2](./images/slide-02-04.png)
 
 ## 2. Types and interaction levels
 
@@ -111,31 +95,17 @@ More interaction means richer intelligence but higher risk.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-04-07.png)
-
 ## 3. AI, IoT, and distributed honeynets
 
 AI improves adaptation but introduces explainability and adversarial risks.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-06-09.png)
-![Course-related screenshot 2](./images/slide-07-11.png)
-![Course-related screenshot 3](./images/slide-08-13.png)
-
 ## 4. History, challenges, and future
 
 Honeypots combine technology, law, privacy, and operations.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-12-24.png)
 
 ## Practice
 

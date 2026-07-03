@@ -31,32 +31,17 @@ draft: false
 
 讲者补充：收集阶段最重要的是记录来源。没有来源的信息很难复核，也不适合写进报告。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-04-10.png)
-
 ## 2. 被动信息收集
 
 被动收集包括搜索引擎、公开页面、域名记录、代码仓库、公告和历史快照等。它的优点是低噪声、低影响，适合作为第一步。
 
 讲者补充：Google hacking 的重点是查询思路，不是复制语法。先明确想找什么，再设计搜索语句。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-06-15.png)
-![课程相关截图 2](./images/slide-07-18.png)
-![课程相关截图 3](./images/slide-08-25.png)
-![课程相关截图 4](./images/slide-09-28.png)
-
 ## 3. 不足与下一步
 
 被动收集会受公开资料质量影响，可能过时、不完整或存在误导。因此后续需要主动枚举和验证，但主动操作必须遵守授权范围。
 
 讲者补充：把“不确定”写出来是专业表现。报告中应区分确认事实、推测和待验证线索。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-14-42.png)
 
 ## 课堂练习
 
@@ -90,32 +75,17 @@ Reconnaissance reduces guessing. Evidence and sources matter.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-04-10.png)
-
 ## 2. Passive reconnaissance
 
 Passive reconnaissance uses public sources with minimal target interaction.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-06-15.png)
-![Course-related screenshot 2](./images/slide-07-18.png)
-![Course-related screenshot 3](./images/slide-08-25.png)
-![Course-related screenshot 4](./images/slide-09-28.png)
-
 ## 3. Limitations and next steps
 
 Separate confirmed facts, assumptions, and leads that need validation.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-14-42.png)
 
 ## Practice
 

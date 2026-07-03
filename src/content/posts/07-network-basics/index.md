@@ -31,36 +31,17 @@ draft: false
 
 讲者补充：比喻不是为了取代细节，而是帮助你在看到抓包时知道每一层大概负责什么。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-04-01.png)
-![课程相关截图 2](./images/slide-06-02.png)
-
 ## 2. TCP、UDP 与应用层协议
 
 TCP 注重可靠连接，UDP 注重轻量快速。DNS、HTTP 等应用层协议建立在这些传输方式之上，决定具体业务如何表达请求和响应。
 
 讲者补充：排查网络问题时先问“连得上吗”，再问“协议说得对吗”。这两个问题分别对应不同层次。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-08-03.png)
-![课程相关截图 2](./images/slide-08-04.png)
-![课程相关截图 3](./images/slide-09-05.png)
-![课程相关截图 4](./images/slide-10-06.png)
-
 ## 3. 流量分析与辅助技术
 
 ARP、DHCP、ICMP、VPN 等技术常出现在排障和安全分析中。流量分析不是偷看内容，而是通过包结构、方向、频率和错误信息理解系统状态。
 
 讲者补充：抓包时要在授权网络中进行，并尽量过滤范围，避免采集无关隐私数据。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-12-07.png)
-![课程相关截图 2](./images/slide-13-08.png)
-![课程相关截图 3](./images/slide-13-09.png)
-![课程相关截图 4](./images/slide-14-10.png)
 
 ## 课堂练习
 
@@ -94,36 +75,17 @@ Packets have addresses, routes, ports, and protocol rules.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-04-01.png)
-![Course-related screenshot 2](./images/slide-06-02.png)
-
 ## 2. TCP, UDP, and application protocols
 
 Transport and application protocols answer different questions.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-08-03.png)
-![Course-related screenshot 2](./images/slide-08-04.png)
-![Course-related screenshot 3](./images/slide-09-05.png)
-![Course-related screenshot 4](./images/slide-10-06.png)
-
 ## 3. Traffic analysis and supporting technologies
 
 Traffic analysis turns packets into evidence while respecting authorization and privacy.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-12-07.png)
-![Course-related screenshot 2](./images/slide-13-08.png)
-![Course-related screenshot 3](./images/slide-13-09.png)
-![Course-related screenshot 4](./images/slide-14-10.png)
 
 ## Practice
 

@@ -37,20 +37,11 @@ draft: false
 
 讲者补充：乱码通常不是“文字坏了”，而是用错了解码方式。记录原始字节比复制乱码更可靠。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-04-11.png)
-![课程相关截图 2](./images/slide-05-15.png)
-
 ## 3. Base64、JSON 与实战还原
 
 Base64 常用于把二进制数据放进文本环境，JSON 常用于结构化传输。安全分析中，我们经常需要把多层编码逐层拆开。
 
 讲者补充：每还原一层都要保存中间结果，并说明判断依据。这样即使方向错了，也能退回上一层重新分析。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-10-25.png)
 
 ## 课堂练习
 
@@ -90,20 +81,11 @@ Hex represents bytes; character sets explain what those bytes mean.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-04-11.png)
-![Course-related screenshot 2](./images/slide-05-15.png)
-
 ## 3. Base64, JSON, and recovery
 
 Decode step by step and keep intermediate results for review.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-10-25.png)
 
 ## Practice
 

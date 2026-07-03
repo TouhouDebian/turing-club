@@ -35,7 +35,6 @@ Windows 基础课关注的是日常系统如何成为安全实验对象：文件
 
 ![课程相关截图 1](./images/slide-01-02.png)
 ![课程相关截图 2](./images/slide-01-03.png)
-![课程相关截图 3](./images/slide-02-06.png)
 
 ## 2. 文件、账户与权限
 
@@ -45,23 +44,13 @@ Windows 基础课关注的是日常系统如何成为安全实验对象：文件
 
 ### 相关图片
 
-![课程相关截图 1](./images/slide-04-21.png)
-![课程相关截图 2](./images/slide-05-26.png)
-![课程相关截图 3](./images/slide-06-29.png)
-![课程相关截图 4](./images/slide-06-31.png)
+![课程相关截图 1](./images/slide-06-31.png)
 
 ## 3. 命令行观察与安全排查
 
 CMD、PowerShell 和系统管理工具可以帮助我们查看进程、网络连接、环境变量、文件权限和服务状态。它们是后续学习取证、应急和漏洞复现的入口。
 
 讲者补充：每次练习建议记录命令、输出和结论。能留下复现记录，比“我刚才点过某个按钮”更有价值。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-09-41.png)
-![课程相关截图 2](./images/slide-10-45.png)
-![课程相关截图 3](./images/slide-11-49.png)
-![课程相关截图 4](./images/slide-12-51.png)
 
 ## 课堂练习
 
@@ -99,7 +88,6 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 
 ![Course-related screenshot 1](./images/slide-01-02.png)
 ![Course-related screenshot 2](./images/slide-01-03.png)
-![Course-related screenshot 3](./images/slide-02-06.png)
 
 ## 2. Files, accounts, and permissions
 
@@ -109,23 +97,13 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 
 ### Related Images
 
-![Course-related screenshot 1](./images/slide-04-21.png)
-![Course-related screenshot 2](./images/slide-05-26.png)
-![Course-related screenshot 3](./images/slide-06-29.png)
-![Course-related screenshot 4](./images/slide-06-31.png)
+![Course-related screenshot 1](./images/slide-06-31.png)
 
 ## 3. Command-line observation
 
 Command-line tools turn system operations into repeatable evidence.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-09-41.png)
-![Course-related screenshot 2](./images/slide-10-45.png)
-![Course-related screenshot 3](./images/slide-11-49.png)
-![Course-related screenshot 4](./images/slide-12-51.png)
 
 ## Practice
 

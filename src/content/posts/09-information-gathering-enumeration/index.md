@@ -31,35 +31,17 @@ draft: false
 
 讲者补充：表格化记录比聊天式记录更可靠。每条资产都应能追溯来源。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-04-10.png)
-![课程相关截图 2](./images/slide-06-15.png)
-![课程相关截图 3](./images/slide-07-18.png)
-![课程相关截图 4](./images/slide-08-25.png)
-
 ## 2. 搜索引擎与被动资料
 
 搜索引擎适合发现公开页面、泄露痕迹、文档和历史信息。查询时要注意关键词、限定域名、文件类型和缓存结果。
 
 讲者补充：不要把搜索结果当成最终结论，尤其是时间较久或来源不明的信息。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-09-28.png)
-![课程相关截图 2](./images/slide-10-31.png)
-
 ## 3. 主动枚举与自动化
 
 主动枚举会直接与目标交互，例如 DNS 查询、端口扫描、服务识别。自动化可以提高效率，但也可能制造噪声，因此要控制速率和范围。
 
 讲者补充：扫描前先确认授权、范围和时间窗口。扫描后要复核误报，避免把临时状态写成确定结论。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-12-36.png)
-![课程相关截图 2](./images/slide-13-39.png)
-![课程相关截图 3](./images/slide-14-42.png)
 
 ## 4. 作业与复盘
 
@@ -99,35 +81,17 @@ The output should be a structured asset inventory, not a pile of links.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-04-10.png)
-![Course-related screenshot 2](./images/slide-06-15.png)
-![Course-related screenshot 3](./images/slide-07-18.png)
-![Course-related screenshot 4](./images/slide-08-25.png)
-
 ## 2. Search engines and passive sources
 
 Search results are leads; verify them before treating them as facts.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-09-28.png)
-![Course-related screenshot 2](./images/slide-10-31.png)
-
 ## 3. Active enumeration and automation
 
 Active enumeration needs scope control, rate control, and manual verification.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-12-36.png)
-![Course-related screenshot 2](./images/slide-13-39.png)
-![Course-related screenshot 3](./images/slide-14-42.png)
 
 ## 4. Homework and review
 

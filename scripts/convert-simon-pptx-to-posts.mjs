@@ -91,6 +91,10 @@ const titleTranslations = new Map([
 	["Linux_AI_漏洞讲解_模板版", "Linux AI Vulnerability Walkthrough"],
 ]);
 
+const titleZhOverrides = new Map([
+	["Linux_AI_漏洞讲解_模板版", "浅谈一下Linux近期漏洞"],
+]);
+
 const slugMap = new Map([
 	["00-网络安全社体验课 - 正式.pptx", "00-cybersecurity-club-trial"],
 	["01-Windows基础.pptx", "01-windows-basics"],
@@ -431,7 +435,8 @@ const unique = (items) => [...new Set(items)];
 const writePost = ({ pptx, postDir, slug }) => {
 	const fileName = basename(pptx);
 	const rawTitleZh = cleanTitle(fileName);
-	const titleZh = formatDisplayTitle(rawTitleZh);
+	const titleZh =
+		titleZhOverrides.get(rawTitleZh) ?? formatDisplayTitle(rawTitleZh);
 	const titleEn = titleTranslations.get(rawTitleZh) ?? titleZh;
 	const author = authors.get(fileName) ?? defaultAuthor;
 	const date = dates.get(fileName);

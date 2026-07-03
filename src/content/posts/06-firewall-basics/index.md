@@ -31,25 +31,11 @@ draft: false
 
 讲者补充：防火墙规则要服务于资产边界。先知道要保护什么，再决定挡什么。
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-04-21.png)
-![课程相关截图 2](./images/slide-05-27.png)
-![课程相关截图 3](./images/slide-06-33.png)
-![课程相关截图 4](./images/slide-07-39.png)
-
 ## 2. 规则、端口与方向
 
 一条规则通常包含源地址、目的地址、协议、端口、动作和日志策略。规则顺序会影响命中结果，因此配置后必须测试。
 
 讲者补充：默认拒绝、按需放行是常见防御思路。但在学习环境中要先确保不会把自己锁在机器外。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-09-50.png)
-![课程相关截图 2](./images/slide-10-56.png)
-![课程相关截图 3](./images/slide-11-62.png)
-![课程相关截图 4](./images/slide-12-68.png)
 
 ## 3. 示例与作业
 
@@ -59,9 +45,7 @@ draft: false
 
 ### 相关图片
 
-![课程相关截图 1](./images/slide-14-80.png)
-![课程相关截图 2](./images/slide-15-86.png)
-![课程相关截图 3](./images/slide-15-87.png)
+![课程相关截图 1](./images/slide-15-86.png)
 
 ## 课堂练习
 
@@ -95,25 +79,11 @@ A firewall is access control, not a replacement for secure systems and applicati
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-04-21.png)
-![Course-related screenshot 2](./images/slide-05-27.png)
-![Course-related screenshot 3](./images/slide-06-33.png)
-![Course-related screenshot 4](./images/slide-07-39.png)
-
 ## 2. Rules, ports, and direction
 
 Rules should be specific, ordered, tested, and logged.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-09-50.png)
-![Course-related screenshot 2](./images/slide-10-56.png)
-![Course-related screenshot 3](./images/slide-11-62.png)
-![Course-related screenshot 4](./images/slide-12-68.png)
 
 ## 3. Examples and homework
 
@@ -123,9 +93,7 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 
 ### Related Images
 
-![Course-related screenshot 1](./images/slide-14-80.png)
-![Course-related screenshot 2](./images/slide-15-86.png)
-![Course-related screenshot 3](./images/slide-15-87.png)
+![Course-related screenshot 1](./images/slide-15-86.png)
 
 ## Practice
 

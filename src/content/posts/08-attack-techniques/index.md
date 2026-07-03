@@ -31,20 +31,11 @@ draft: false
 
 讲者补充：学习攻击技术时要同步问防御问题：这个阶段留下什么日志？管理员怎样更早发现？
 
-### 相关图片
-
-![课程相关截图 1](./images/slide-04-02.png)
-
 ## 2. 从侦察到利用
 
 侦察阶段关注目标信息，利用阶段验证某个弱点是否能造成影响。课堂中应强调验证范围，只在授权靶场或实验环境中操作。
 
 讲者补充：不要把“能跑 payload”当作理解。真正要掌握的是前提条件、触发点、影响范围和修复方式。
-
-### 相关图片
-
-![课程相关截图 1](./images/slide-07-06.png)
-![课程相关截图 2](./images/slide-08-09.png)
 
 ## 3. 权限、维持与防御
 
@@ -90,20 +81,11 @@ Attack chains combine small weaknesses. Defenders should map each stage to evide
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-04-02.png)
-
 ## 2. From reconnaissance to exploitation
 
 Exploitation must be scoped and authorized. Understand prerequisites and impact.
 
 Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
-
-### Related Images
-
-![Course-related screenshot 1](./images/slide-07-06.png)
-![Course-related screenshot 2](./images/slide-08-09.png)
 
 ## 3. Privilege, persistence, and defense
 

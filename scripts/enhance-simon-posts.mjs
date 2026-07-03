@@ -1,6 +1,8 @@
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
 	existsSync,
+	mkdirSync,
 	readdirSync,
 	readFileSync,
 	rmSync,
@@ -10,6 +12,9 @@ import { extname, join } from "node:path";
 import sharp from "sharp";
 
 const postsDir = "src/content/posts";
+const ocrScript = join("scripts", "ocr-images.swift");
+const swiftModuleCache = join(process.cwd(), ".tmp/swift-module-cache");
+const clangModuleCache = join(process.cwd(), ".tmp/clang-module-cache");
 
 const guides = {
 	"00-cybersecurity-club-trial": {
@@ -940,6 +945,7 @@ const guides = {
 		],
 	},
 	"linux-ai-vulnerability-walkthrough": {
+		titleZh: "浅谈一下Linux近期漏洞",
 		lead: "Linux 与 AI 漏洞讲解从 Dirty Pipe、Zero Copy 和 AI 扫描谈起，帮助同学理解：现代系统很安全，但复杂优化也可能带来难发现的内核级漏洞。",
 		enLead:
 			"This walkthrough uses Dirty Pipe, Zero Copy, and AI scanning to explain why optimized systems can still hide deep kernel bugs.",
@@ -1073,6 +1079,36 @@ const readJpegSize = (buffer) => {
 	return null;
 };
 
+const decodeXmlEntities = (value) =>
+	value
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&amp;/g, "&")
+		.replace(/&quot;/g, '"')
+		.replace(/&apos;/g, "'")
+		.replace(/&#x([0-9a-f]+);/gi, (_, hex) =>
+			String.fromCodePoint(Number.parseInt(hex, 16)),
+		)
+		.replace(/&#(\d+);/g, (_, code) =>
+			String.fromCodePoint(Number.parseInt(code, 10)),
+		);
+
+const extractSvgText = (buffer) => {
+	const svg = buffer.toString("utf8");
+	const tspanMatches = [...svg.matchAll(/<tspan\b[^>]*>([\s\S]*?)<\/tspan>/gi)];
+	const textMatches = tspanMatches.length
+		? []
+		: [...svg.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/gi)];
+	const lines = (tspanMatches.length ? tspanMatches : textMatches)
+		.map((match) =>
+			decodeXmlEntities(match[1].replace(/<[^>]+>/g, ""))
+				.replace(/\s+/g, " ")
+				.trim(),
+		)
+		.filter(Boolean);
+	return normalizeOcrText(lines.join("\n"));
+};
+
 const readImageInfo = (postDir, src) => {
 	const filePath = join(postDir, src.replace(/^\.\//, ""));
 	if (!existsSync(filePath)) return null;
@@ -1091,6 +1127,7 @@ const readImageInfo = (postDir, src) => {
 		width: size?.width ?? 0,
 		height: size?.height ?? 0,
 		hash: createHash("sha1").update(buffer).digest("hex"),
+		svgText: ext === ".svg" ? extractSvgText(buffer) : "",
 	};
 };
 
@@ -1149,6 +1186,87 @@ const getTechnicalImageScore = async (filePath) => {
 	};
 };
 
+const normalizeOcrText = (value) => {
+	const lines = String(value)
+		.replace(/\r/g, "")
+		.split("\n")
+		.map((line) =>
+			line
+				.trim()
+				.replace(/^[|│]\s*/, "")
+				.replace(/^\d{1,3}\s+(?=[A-Za-z_<({[/#$])/u, ""),
+		)
+		.filter(Boolean);
+	const uniqueLines = [];
+	for (const line of lines) {
+		if (uniqueLines.at(-1) === line) continue;
+		uniqueLines.push(line);
+	}
+	return uniqueLines.join("\n").trim();
+};
+
+const looksLikeCode = (text) => {
+	const codeHints = [
+		/<\/?[a-z][\w-]*(\s|>)/i,
+		/\b(function|const|let|var|class|import|from|def|return|async|await)\b/,
+		/\b(sudo|apt|pip|python|curl|wget|ssh|chmod|chown|grep|awk|sed|nmap)\b/,
+		/[{};=<>]/,
+	];
+	return codeHints.filter((pattern) => pattern.test(text)).length >= 2;
+};
+
+const isUsefulOcrText = (text) => {
+	if (!text) return false;
+	const compact = text.replace(/\s/g, "");
+	if (compact.length < 24) return false;
+	const lines = text.split("\n").filter(Boolean);
+	return lines.length >= 2 || compact.length >= 48;
+};
+
+const extractTextFromImages = (images) => {
+	if (!images.length || !existsSync(ocrScript)) return;
+	for (const image of images) {
+		if (!isUsefulOcrText(image.svgText)) continue;
+		image.ocrText = image.svgText;
+		image.ocrKind = looksLikeCode(image.svgText) ? "code" : "text";
+	}
+	const rasterImages = images.filter((image) =>
+		[".png", ".jpg", ".jpeg"].includes(image.ext),
+	);
+	if (!rasterImages.length) return;
+	mkdirSync(swiftModuleCache, { recursive: true });
+	mkdirSync(clangModuleCache, { recursive: true });
+	const result = spawnSync(
+		"swift",
+		[ocrScript, ...rasterImages.map((image) => image.filePath)],
+		{
+			encoding: "utf8",
+			env: {
+				...process.env,
+				SWIFT_MODULE_CACHE_PATH: swiftModuleCache,
+				CLANG_MODULE_CACHE_PATH: clangModuleCache,
+			},
+			maxBuffer: 16 * 1024 * 1024,
+		},
+	);
+	if (result.status !== 0 || !result.stdout.trim()) {
+		if (result.stderr.trim()) {
+			console.warn(`OCR skipped: ${result.stderr.trim().split("\n").at(-1)}`);
+		}
+		return;
+	}
+
+	const byPath = new Map(rasterImages.map((image) => [image.filePath, image]));
+	for (const item of JSON.parse(result.stdout)) {
+		const image = byPath.get(item.path);
+		if (!image) continue;
+		const text = normalizeOcrText(item.text ?? "");
+		if (!isUsefulOcrText(text)) continue;
+		image.ocrText = text;
+		image.ocrKind = looksLikeCode(text) ? "code" : "text";
+	}
+};
+
 const collectSlideImages = async (body, postDir) => {
 	const slides = new Map();
 	const images = [];
@@ -1172,6 +1290,7 @@ const collectSlideImages = async (body, postDir) => {
 	}
 	for (const image of images)
 		image.duplicateCount = hashCounts.get(image.hash) ?? 1;
+	extractTextFromImages(images);
 	return slides;
 };
 
@@ -1180,10 +1299,10 @@ const isRelevantImage = (image) => {
 	if (image.ext === ".svg") return false;
 	if (image.ext === ".jpg" || image.ext === ".jpeg") return false;
 	if (!image.width || !image.height) return false;
-	if (image.width < 360 || image.height < 160) return false;
+	if (image.width < 240 || image.height < 240) return false;
 	if (image.width * image.height < 180_000) return false;
-	if (Math.max(image.width / image.height, image.height / image.width) > 6)
-		return false;
+	const ratio = image.width / image.height;
+	if (ratio < 0.92 || ratio > 1.08) return false;
 	if (image.duplicateCount > 3) return false;
 	const metrics = image.technicalScore;
 	if (!metrics) return false;
@@ -1194,20 +1313,59 @@ const isRelevantImage = (image) => {
 	return true;
 };
 
-const selectImagesForRange = (slides, range, usedImages, maxImages = 4) => {
+const selectMaterialsForRange = (slides, range, usedImages, maxItems = 4) => {
 	const [start, end] = range;
-	const selected = [];
+	const images = [];
+	const texts = [];
 	for (let slide = start; slide <= end; slide += 1) {
-		const images = slides.get(slide);
-		if (!images?.length) continue;
-		for (const image of images) {
-			if (usedImages.has(image.src) || !isRelevantImage(image)) continue;
-			selected.push(image);
+		const slideImages = slides.get(slide);
+		if (!slideImages?.length) continue;
+		for (const image of slideImages) {
+			if (usedImages.has(image.src)) continue;
+			if (image.ocrText) {
+				texts.push({
+					src: image.src,
+					text: image.ocrText,
+					kind: image.ocrKind,
+				});
+				usedImages.add(image.src);
+				if (texts.length + images.length >= maxItems) return { images, texts };
+				continue;
+			}
+			if (!isRelevantImage(image)) continue;
+			images.push(image);
 			usedImages.add(image.src);
-			if (selected.length >= maxImages) return selected;
+			if (texts.length + images.length >= maxItems) return { images, texts };
 		}
 	}
-	return selected;
+	return { images, texts };
+};
+
+const renderExtractedTextBlock = (items, lang) => {
+	if (!items.length) return "";
+	const lines = [
+		lang === "zh" ? "### 图片文字整理" : "### Extracted Image Text",
+		"",
+	];
+	items.forEach((item, index) => {
+		if (items.length > 1) {
+			lines.push(
+				lang === "zh"
+					? `#### 图片文字 ${index + 1}`
+					: `#### Extracted Text ${index + 1}`,
+				"",
+			);
+		}
+		if (item.kind === "code") {
+			lines.push("```text", item.text, "```", "");
+			return;
+		}
+		for (const line of item.text.split("\n")) {
+			lines.push(`> ${line}`);
+		}
+		lines.push("");
+	});
+	return lines.join("\n").trimEnd();
 };
 
 const renderImageBlock = (images, lang) => {
@@ -1277,7 +1435,9 @@ for (const [slug, guide] of Object.entries(guides)) {
 	const original = readFileSync(postPath, "utf8");
 	const frontmatter = parseFrontmatter(original);
 	const tags = parseTags(frontmatter.tagsLine);
-	const [titleZh, titleEn = ""] = frontmatter.title.split(" / ");
+	const [rawTitleZh, titleEn = ""] = frontmatter.title.split(" / ");
+	const titleZh = guide.titleZh ?? rawTitleZh;
+	const fullTitle = `${titleZh} / ${titleEn || titleZh}`;
 	const author = getAuthorForPost(slug, original);
 	const date =
 		original
@@ -1295,7 +1455,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 
 	const lines = [
 		"---",
-		`title: ${escapeYaml(frontmatter.title)}`,
+		`title: ${escapeYaml(fullTitle)}`,
 		`published: ${frontmatter.published}`,
 		`description: ${escapeYaml(description)}`,
 		`tags: [${tags.map(escapeYaml).join(", ")}]`,
@@ -1322,12 +1482,14 @@ for (const [slug, guide] of Object.entries(guides)) {
 	];
 
 	guide.sections.forEach((item, index) => {
-		const sectionImages = guide.hideImages
-			? []
-			: selectImagesForRange(slides, item.slides, usedImages);
+		const sectionMaterials = guide.hideImages
+			? { images: [], texts: [] }
+			: selectMaterialsForRange(slides, item.slides, usedImages);
 		lines.push(`## ${index + 1}. ${item.title}`, "");
 		for (const paragraph of item.paragraphs) lines.push(paragraph, "");
-		const renderedImages = renderImageBlock(sectionImages, "zh");
+		const renderedText = renderExtractedTextBlock(sectionMaterials.texts, "zh");
+		if (renderedText) lines.push(renderedText, "");
+		const renderedImages = renderImageBlock(sectionMaterials.images, "zh");
 		if (renderedImages) lines.push(renderedImages, "");
 	});
 
@@ -1355,13 +1517,15 @@ for (const [slug, guide] of Object.entries(guides)) {
 
 	usedImages.clear();
 	guide.sections.forEach((item, index) => {
-		const sectionImages = guide.hideImages
-			? []
-			: selectImagesForRange(slides, item.slides, usedImages);
+		const sectionMaterials = guide.hideImages
+			? { images: [], texts: [] }
+			: selectMaterialsForRange(slides, item.slides, usedImages);
 		lines.push(`## ${index + 1}. ${item.enTitle}`, "");
 		for (const paragraph of item.enParagraphs ?? englishParagraphsFor(item))
 			lines.push(paragraph, "");
-		const renderedImages = renderImageBlock(sectionImages, "en");
+		const renderedText = renderExtractedTextBlock(sectionMaterials.texts, "en");
+		if (renderedText) lines.push(renderedText, "");
+		const renderedImages = renderImageBlock(sectionMaterials.images, "en");
 		if (renderedImages) lines.push(renderedImages, "");
 	});
 
