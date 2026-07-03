@@ -53,22 +53,54 @@ A static blog template built with [Astro](https://astro.build).
 
 ```yaml
 ---
-title: My First Blog Post
-author: Turing Club
+title: Chinese Title / English Title
+author: Chinese Author Name / English Author Name
 published: 2023-09-09
-description: This is the first post of my new Astro blog.
+description: Chinese summary / English summary.
 image: ./cover.jpg
-tags: [Foo, Bar]
-category: Front-end
+tags: [Linux, Shell]
+category: Chinese Category / English Category
 draft: false
-lang: jp      # Set only if the post's language differs from the site's language in `config.ts`
+lang: en      # Set only if the post's language differs from the site's language in `config.ts`
 ---
+```
+
+Notes:
+
+- Use `Chinese / English` for `title`, `author`, `description`, and `category` when the field should follow the language switch.
+- Use `YYYY-MM-DD` for `published`.
+- Keep `tags` short and consistent; English tags work best for archive filtering.
+- Keep article images in the post folder, usually under `images/`.
+- Set `draft: true` while writing and switch it to `false` before publishing.
+
+## ✍️ Writing Posts
+
+Recommended bilingual structure:
+
+```md
+:::section{.lang-zh}
+
+## 导读
+
+这里写中文正文。
+
+:::
+
+:::section{.lang-en}
+
+## Overview
+
+Write the English version here.
+
+:::
 ```
 
 For bilingual posts, use one of these workflows:
 
 - Recommended: write one Markdown file with `:::section{.lang-zh}` and `:::section{.lang-en}` blocks. Keep the same headings in both sections so the language switch stays predictable.
 - Safer for long posts: draft in Chinese first, then translate section by section. Keep code blocks, commands, image paths, and frontmatter identical in both languages.
+- Technical posts should read like “problem -> idea -> steps -> result -> notes”, not like pasted slides.
+- Use code fences for commands, code, and terminal output. Prefer text over screenshots when text is enough.
 - Fast notes: write the main article in the site language and add `lang:` only when a post is intentionally single-language.
 
 ## 🧩 Markdown Extended Syntax
