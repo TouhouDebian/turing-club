@@ -1,15 +1,14 @@
 ---
 title: "15 处理事情与交接权限 / Handling Tasks and Handover Permissions"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-04-28
 description: "交接与权限处理课偏向社团运营和工程习惯：任务交付、权限移交、文档记录、AI 使用边界和活动收尾，都会影响项目能否长期运转。 / This operations lesson covers task handover, permission transfer, documentation, AI boundaries, and sustainable club workflow."
 tags: ["Operations", "Handover", "Permissions", "Account Security", "Documentation", "Governance"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2026-04-28
 
@@ -53,8 +52,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2026-04-28
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -65,27 +62,27 @@ This operations lesson covers task handover, permission transfer, documentation,
 
 ## Learning Goals
 
-- Understand the core ideas of Handling Tasks and Handover Permissions.
-- Connect Operations, Handover, Permissions to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Handling Tasks and Handover Permissions.
+- Use Operations, Handover, Permissions to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. A task is not done until handed over
 
 A task is complete only when another person can continue it.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. Permissions and freedom
 
 Good permission management includes granting and revoking access.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Closing an activity
 
 Sustainable clubs need archives, gratitude, and clear handover.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

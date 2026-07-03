@@ -61,6 +61,7 @@ deno run -A npm:create-fuwari@latest
 ```yaml
 ---
 title: My First Blog Post
+author: 天一中学图灵社
 published: 2023-09-09
 description: This is the first post of my new Astro blog.
 image: ./cover.jpg
@@ -70,6 +71,12 @@ draft: false
 lang: jp      # 仅当文章语言与 `config.ts` 中的网站语言不同时需要设置
 ---
 ```
+
+双语文章推荐用下面几种写法：
+
+- 推荐：一个 Markdown 文件里同时写 `:::section{.lang-zh}` 和 `:::section{.lang-en}`，两边使用相同标题结构，语言切换最稳定。
+- 长文更稳：先写中文，再按小节翻译英文；代码块、命令、图片路径和 frontmatter 保持一致。
+- 临时笔记：只写一种语言，并在确实需要时设置 `lang:`，避免半翻译内容在切换语言时混乱。
 
 ## 🧞 指令
 

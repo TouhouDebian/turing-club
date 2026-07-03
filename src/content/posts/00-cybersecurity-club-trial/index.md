@@ -1,15 +1,14 @@
 ---
 title: "00 网络安全社体验课 正式 / Cybersecurity Club Trial Lesson"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-09-11
 description: "这节体验课不是单纯展示工具，而是把图灵社的学习路线摊开：从网页、后端、文件读取、内存读取，到虚拟机实验和摸底测试。读者可以把它当作加入网络安全方向前的路线图。 / This trial lesson is a roadmap for the club: web pages, backend ideas, file and memory reading, virtual machines, and a baseline challenge."
 tags: ["Cybersecurity", "Turing Club", "Club Intro", "CTF", "Ethics", "Linux", "Python"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2025-09-11
 
@@ -53,8 +52,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2025-09-11
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -65,27 +62,27 @@ This trial lesson is a roadmap for the club: web pages, backend ideas, file and 
 
 ## Learning Goals
 
-- Understand the core ideas of Cybersecurity Club Trial Lesson.
-- Connect Cybersecurity, Turing Club, Club Intro to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Cybersecurity Club Trial Lesson.
+- Use Cybersecurity, Turing Club, Club Intro to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Club learning path
 
 The first goal is orientation. Before tools, learners need a mental map of web, backend, operating system, and ethics.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. From webpage to backend
 
 The web-to-backend path is a chain of trust. Many vulnerabilities come from trusting input at the wrong boundary.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Lab environment and self-check
 
 Virtual machines keep practice safe and repeatable. A baseline test helps learners choose the right starting point.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

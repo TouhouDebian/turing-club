@@ -59,6 +59,7 @@ Template blog statis yang dibangun dengan [Astro](https://astro.build).
 ```yaml
 ---
 title: Judul Postingan Pertama Saya
+author: Turing Club
 published: 2023-09-09
 description: Ini adalah postingan pertama blog Astro saya.
 image: ./cover.jpg

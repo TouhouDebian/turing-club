@@ -44,6 +44,7 @@ if (!fs.existsSync(dirPath)) {
 
 const content = `---
 title: ${args[0]}
+author: '天一中学图灵社 / Turing Club'
 published: ${getDate()}
 description: ''
 image: ''

@@ -1,15 +1,14 @@
 ---
 title: "13 防御密码爆破 / Defending Against Password Brute Force"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-04-22
 description: "防御密码爆破课程关注认证系统如何抵抗大量猜测。重点不是让密码规则越来越复杂，而是组合限速、锁定、MFA、监控和用户体验。 / Defending brute force attacks combines rate limiting, lockout, MFA, monitoring, and usable authentication design."
 tags: ["Password Security", "Brute Force", "Authentication", "MFA", "Rate Limiting", "Defense"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2026-04-22
 
@@ -61,8 +60,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2026-04-22
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -73,15 +70,15 @@ Defending brute force attacks combines rate limiting, lockout, MFA, monitoring, 
 
 ## Learning Goals
 
-- Understand the core ideas of Defending Against Password Brute Force.
-- Connect Password Security, Brute Force, Authentication to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Defending Against Password Brute Force.
+- Use Password Security, Brute Force, Authentication to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. How brute force works
 
 Brute force needs an entry point, feedback, and many attempts.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ### Related Images
 
@@ -91,13 +88,13 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 
 Controls must balance security, usability, and abuse resistance.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Code, logs, and maintenance
 
 Authentication defense includes every path that can verify credentials.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ### Related Images
 

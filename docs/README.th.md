@@ -41,6 +41,7 @@
 ```yaml
 ---
 title: โพสต์แรกของฉัน
+author: Turing Club
 published: 2023-09-09
 description: นี่คือโพสต์แรกของเว็บบล็อก Astro อันใหม่ของฉัน
 image: ./cover.jpg

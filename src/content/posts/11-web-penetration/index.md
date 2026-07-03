@@ -1,15 +1,14 @@
 ---
 title: "11 Web渗透 / Web Penetration Testing"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-01-26
 description: "Web 渗透课程以 Netcat 和考试式练习为入口，强调工具只是手段，真正要训练的是网络连接、输入输出、证据记录和边界意识。 / This lesson uses Netcat and exam-style practice to train connections, input/output, evidence, and boundaries."
 tags: ["Web Penetration Testing", "Netcat", "Reverse Shell", "HTTP", "Vulnerability Assessment", "Ethics"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2026-01-26
 
@@ -59,8 +58,6 @@ Netcat 常被称为网络瑞士军刀，可用于监听端口、连接服务、�
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2026-01-26
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -71,33 +68,33 @@ This lesson uses Netcat and exam-style practice to train connections, input/outp
 
 ## Learning Goals
 
-- Understand the core ideas of Web Penetration Testing.
-- Connect Web Penetration Testing, Netcat, Reverse Shell to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Web Penetration Testing.
+- Use Web Penetration Testing, Netcat, Reverse Shell to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Course structure and boundaries
 
 Tool practice must stay within authorized lab environments.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. What Netcat is used for
 
 Netcat is useful because it exposes raw network input and output.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Exam-style practice
 
 Exam tasks reward clear assumptions, controlled tests, and evidence.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 4. Future web security learning
 
 Good testing helps people fix systems, not merely prove access.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

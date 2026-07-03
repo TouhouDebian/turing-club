@@ -1,15 +1,14 @@
 ---
 title: "05 密码学基础 / Cryptography Basics"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-11-03
 description: "密码学基础课介绍从古典密码到现代加密的核心思想。课堂目标不是手写完整算法，而是知道不同密码机制解决什么问题、不能解决什么问题。 / Cryptography basics introduce classical and modern ideas: confidentiality, integrity, authentication, and their limits."
 tags: ["Cryptography", "Hash", "Symmetric Encryption", "Asymmetric Encryption", "Vigenere", "XOR"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2025-11-03
 
@@ -63,8 +62,6 @@ Vigenere 展示了“密钥重复使用”带来的模式问题，XOR 展示了�
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2025-11-03
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -75,15 +72,15 @@ Cryptography basics introduce classical and modern ideas: confidentiality, integ
 
 ## Learning Goals
 
-- Understand the core ideas of Cryptography Basics.
-- Connect Cryptography, Hash, Symmetric Encryption to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Cryptography Basics.
+- Use Cryptography, Hash, Symmetric Encryption to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. What cryptography solves
 
 Cryptography supports confidentiality, integrity, authentication, and non-repudiation, but only when used correctly.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ### Related Images
 
@@ -93,19 +90,19 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 
 Modern protocols combine symmetric and asymmetric techniques.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Vigenere and XOR
 
 Classical examples reveal how keys interact with plaintext and why patterns matter.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 4. Homework and review
 
 Choose cryptographic mechanisms by security goal, not by name recognition.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

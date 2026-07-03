@@ -1,7 +1,6 @@
 ---
 
 import { profileConfig } from "../config";
-import { url } from "../utils/url-utils";
 
 const currentYear = new Date().getFullYear();
 ---
@@ -11,11 +10,7 @@ const currentYear = new Date().getFullYear();
 <!--<div class="transition bg-[oklch(92%_0.01_var(&#45;&#45;hue))] dark:bg-black rounded-2xl py-8 mt-4 mb-8 flex flex-col items-center justify-center px-6">-->
 <div class="transition border-dashed border-[oklch(85%_0.01_var(--hue))] dark:border-white/15 rounded-2xl mb-12 flex flex-col items-center justify-center px-6">
     <div class="transition text-50 text-sm text-center">
-        &copy; <span id="copyright-year">{currentYear}</span> <span class="lang-zh">{profileConfig.name}</span><span class="lang-en">Turing Club</span>. All Rights Reserved. /
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('rss.xml')}>RSS</a> /
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href={url('sitemap-index.xml')}>Sitemap</a><br>
-        <span class="lang-zh">顶部图片出处：</span><span class="lang-en">Header image source: </span>
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" rel="noopener" href="https://www.pixiv.net/artworks/89596288">https://www.pixiv.net/artworks/89596288</a><br>
+        &copy; <span id="copyright-year">{currentYear}</span> <span class="lang-zh">{profileConfig.name}</span><span class="lang-en">Turing Club</span>. All Rights Reserved.<br>
         Powered by
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a> &
         <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a>

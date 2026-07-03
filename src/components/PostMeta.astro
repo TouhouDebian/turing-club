@@ -23,6 +23,14 @@ const {
 	hideUpdateDate = false,
 } = Astro.props;
 const className = Astro.props.class;
+const splitLocalized = (value: string) => {
+	const [zh, ...rest] = value.split(" / ");
+	return {
+		zh: zh.trim(),
+		en: (rest.join(" / ") || zh).trim(),
+	};
+};
+const localizedCategory = category?.trim() ? splitLocalized(category) : null;
 ---
 
 <div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
@@ -56,7 +64,12 @@ const className = Astro.props.class;
             <a href={getCategoryUrl(category)} aria-label={`View all posts in the ${category} category`}
                class="link-lg transition text-50 text-sm font-medium
                             hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
-                {category || i18n(I18nKey.uncategorized)}
+                {localizedCategory ? (
+                    <>
+                        <span class="lang-zh">{localizedCategory.zh}</span>
+                        <span class="lang-en">{localizedCategory.en}</span>
+                    </>
+                ) : i18n(I18nKey.uncategorized)}
             </a>
         </div>
     </div>

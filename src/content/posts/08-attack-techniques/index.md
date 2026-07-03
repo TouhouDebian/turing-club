@@ -1,15 +1,14 @@
 ---
 title: "08 攻击技术简介 / Introduction to Attack Techniques"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-02
 description: "攻击技术简介课用于建立攻防视角：攻击链通常包含信息收集、漏洞利用、权限扩大、维持访问和清理痕迹等环节。学习这些内容的目的，是更好地理解防御重点。 / This lesson introduces attack stages so learners can understand what defenders need to observe and prevent."
 tags: ["Attack Techniques", "Reconnaissance", "Exploitation", "Social Engineering", "Vulnerability", "Defense"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2025-12-02
 
@@ -59,8 +58,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2025-12-02
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -71,33 +68,33 @@ This lesson introduces attack stages so learners can understand what defenders n
 
 ## Learning Goals
 
-- Understand the core ideas of Introduction to Attack Techniques.
-- Connect Attack Techniques, Reconnaissance, Exploitation to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Introduction to Attack Techniques.
+- Use Attack Techniques, Reconnaissance, Exploitation to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. An attack chain is not one button
 
 Attack chains combine small weaknesses. Defenders should map each stage to evidence.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. From reconnaissance to exploitation
 
 Exploitation must be scoped and authorized. Understand prerequisites and impact.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Privilege, persistence, and defense
 
 Privilege and persistence turn incidents into long-term risk; defense needs layers.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 4. Wrap-up
 
 The ethical boundary is part of the technical lesson.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

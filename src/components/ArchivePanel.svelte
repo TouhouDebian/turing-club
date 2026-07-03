@@ -7,11 +7,13 @@ import { getPostUrlBySlug } from "../utils/url-utils";
 
 export let tags: string[] = [];
 export let categories: string[] = [];
+export let authors: string[] = [];
 export let sortedPosts: Post[] = [];
 
 const params = new URLSearchParams(window.location.search);
 tags = params.has("tag") ? params.getAll("tag") : [];
 categories = params.has("category") ? params.getAll("category") : [];
+authors = params.has("author") ? params.getAll("author") : [];
 const uncategorized = params.get("uncategorized");
 
 interface Post {
@@ -19,6 +21,7 @@ interface Post {
 	data: {
 		title: string;
 		tags: string[];
+		author?: string;
 		category?: string | null;
 		published: Date;
 	};
@@ -63,6 +66,12 @@ onMount(async () => {
 	if (categories.length > 0) {
 		filteredPosts = filteredPosts.filter(
 			(post) => post.data.category && categories.includes(post.data.category),
+		);
+	}
+
+	if (authors.length > 0) {
+		filteredPosts = filteredPosts.filter(
+			(post) => post.data.author && authors.includes(post.data.author),
 		);
 	}
 

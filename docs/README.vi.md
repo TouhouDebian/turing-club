@@ -41,6 +41,7 @@ Một mẫu blog tĩnh được xây bằng [Astro](https://astro.build).
 ```yaml
 ---
 title: Blog đầu tiên của mình
+author: Turing Club
 published: 2023-09-09
 description: Đây là bài viết đầu tiên vủa mình trên trang blog tạo bằng Astro này.
 image: ./cover.jpg

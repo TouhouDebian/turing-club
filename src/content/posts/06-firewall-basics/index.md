@@ -1,15 +1,14 @@
 ---
 title: "06 防火墙基础 / Firewall Basics"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-11-17
 description: "防火墙基础课讨论流量如何被允许、拒绝、记录和分段。它不是一道万能墙，而是一套基于规则、场景和日志的访问控制方法。 / Firewall basics explain how traffic is allowed, denied, logged, and segmented through rules and policy."
 tags: ["Firewall", "Network Security", "Access Control", "Ports", "Traffic Filtering", "Defense"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2025-11-17
 
@@ -57,8 +56,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2025-11-17
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -69,27 +66,27 @@ Firewall basics explain how traffic is allowed, denied, logged, and segmented th
 
 ## Learning Goals
 
-- Understand the core ideas of Firewall Basics.
-- Connect Firewall, Network Security, Access Control to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Firewall Basics.
+- Use Firewall, Network Security, Access Control to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Role of a firewall
 
 A firewall is access control, not a replacement for secure systems and applications.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. Rules, ports, and direction
 
 Rules should be specific, ordered, tested, and logged.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Examples and homework
 
 Firewall work is evidence-driven: configure, test, and read logs.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ### Related Images
 

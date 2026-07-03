@@ -1,15 +1,14 @@
 ---
 title: "09 信息收集与枚举 / Information Gathering and Enumeration"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-09
 description: "完整的信息收集与枚举课程在被动收集之后加入主动枚举、自动化和作业设计。重点是把零散线索转成可验证的资产清单。 / The full lesson moves from passive reconnaissance to active enumeration and automation, turning clues into an asset inventory."
 tags: ["OSINT", "Enumeration", "Reconnaissance", "Google Hacking", "DNS", "Port Scanning", "Asset Discovery"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2025-12-09
 
@@ -59,8 +58,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2025-12-09
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -71,33 +68,33 @@ The full lesson moves from passive reconnaissance to active enumeration and auto
 
 ## Learning Goals
 
-- Understand the core ideas of Information Gathering and Enumeration.
-- Connect OSINT, Enumeration, Reconnaissance to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Information Gathering and Enumeration.
+- Use OSINT, Enumeration, Reconnaissance to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. From clues to assets
 
 The output should be a structured asset inventory, not a pile of links.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. Search engines and passive sources
 
 Search results are leads; verify them before treating them as facts.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Active enumeration and automation
 
 Active enumeration needs scope control, rate control, and manual verification.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 4. Homework and review
 
 A good report explains method, evidence, and conclusion clearly enough to reproduce.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

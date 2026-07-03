@@ -9,23 +9,28 @@ async function getRawSortedPosts() {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
 
-	const manualSameDayOrder: Record<string, number> = {
-		"04-data-conversion-basics": 1,
-		"03-python-basics": 2,
-	};
-
 	const sorted = allBlogPosts.sort((a, b) => {
 		const dateA = new Date(a.data.published);
 		const dateB = new Date(b.data.published);
 		if (dateA.getTime() !== dateB.getTime()) return dateA > dateB ? -1 : 1;
 
-		const priorityA = manualSameDayOrder[a.slug] ?? 99;
-		const priorityB = manualSameDayOrder[b.slug] ?? 99;
-		if (priorityA !== priorityB) return priorityA - priorityB;
+		const sequenceA = getLeadingSequence(a);
+		const sequenceB = getLeadingSequence(b);
+		if (sequenceA !== null && sequenceB !== null && sequenceA !== sequenceB) {
+			return sequenceB - sequenceA;
+		}
 
 		return a.slug.localeCompare(b.slug);
 	});
 	return sorted;
+}
+
+function getLeadingSequence(post: CollectionEntry<"posts">): number | null {
+	const match =
+		post.slug.match(/^(\d+)/)?.[1] ?? post.data.title.match(/^(\d+)/)?.[1];
+	if (!match) return null;
+	const value = Number.parseInt(match, 10);
+	return Number.isFinite(value) ? value : null;
 }
 
 export async function getSortedPosts() {

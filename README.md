@@ -54,6 +54,7 @@ A static blog template built with [Astro](https://astro.build).
 ```yaml
 ---
 title: My First Blog Post
+author: Turing Club
 published: 2023-09-09
 description: This is the first post of my new Astro blog.
 image: ./cover.jpg
@@ -63,6 +64,12 @@ draft: false
 lang: jp      # Set only if the post's language differs from the site's language in `config.ts`
 ---
 ```
+
+For bilingual posts, use one of these workflows:
+
+- Recommended: write one Markdown file with `:::section{.lang-zh}` and `:::section{.lang-en}` blocks. Keep the same headings in both sections so the language switch stays predictable.
+- Safer for long posts: draft in Chinese first, then translate section by section. Keep code blocks, commands, image paths, and frontmatter identical in both languages.
+- Fast notes: write the main article in the site language and add `lang:` only when a post is intentionally single-language.
 
 ## 🧩 Markdown Extended Syntax
 

@@ -1,15 +1,14 @@
 ---
 title: "09 信息收集与枚举（一半） / Information Gathering and Enumeration, Part 1"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-02
 description: "信息收集与枚举上半部分先讲被动信息收集：尽量不直接接触目标系统，通过公开资料、搜索引擎、域名和网页痕迹建立目标画像。 / Part 1 focuses on passive reconnaissance: building a target profile from public information before touching the target."
 tags: ["OSINT", "Reconnaissance", "Information Gathering", "Search Engines", "Domains", "Passive Reconnaissance"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2025-12-02
 
@@ -53,8 +52,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2025-12-02
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -65,27 +62,27 @@ Part 1 focuses on passive reconnaissance: building a target profile from public 
 
 ## Learning Goals
 
-- Understand the core ideas of Information Gathering and Enumeration, Part 1.
-- Connect OSINT, Reconnaissance, Information Gathering to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Information Gathering and Enumeration, Part 1.
+- Use OSINT, Reconnaissance, Information Gathering to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Purpose of reconnaissance
 
 Reconnaissance reduces guessing. Evidence and sources matter.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. Passive reconnaissance
 
 Passive reconnaissance uses public sources with minimal target interaction.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Limitations and next steps
 
 Separate confirmed facts, assumptions, and leads that need validation.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

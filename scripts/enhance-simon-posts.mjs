@@ -15,6 +15,8 @@ const postsDir = "src/content/posts";
 const ocrScript = join("scripts", "ocr-images.swift");
 const swiftModuleCache = join(process.cwd(), ".tmp/swift-module-cache");
 const clangModuleCache = join(process.cwd(), ".tmp/clang-module-cache");
+const courseCategory =
+	"2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start";
 
 const guides = {
 	"00-cybersecurity-club-trial": {
@@ -1039,10 +1041,11 @@ const parseFrontmatter = (text) => {
 		yaml.match(new RegExp(`^${key}:\\s*(.+)$`, "m"))?.[1]?.trim() ?? "";
 	return {
 		title: JSON.parse(get("title")),
+		author: get("author") ? JSON.parse(get("author")) : "",
 		published: get("published"),
 		description: get("description") ? JSON.parse(get("description")) : "",
 		tagsLine: get("tags"),
-		category: get("category").replace(/^"|"$/g, "") || "Club Course",
+		category: get("category").replace(/^"|"$/g, "") || courseCategory,
 		draft: get("draft") || "false",
 		body: text.slice(match[0].length),
 	};
@@ -1398,8 +1401,18 @@ const splitBilingual = (value) => {
 		en: (rest.join(" / ") || zh).trim(),
 	};
 };
-const getAuthorForPost = (slug, original) => {
+const getAuthorForPost = (slug, original, frontmatterAuthor = "") => {
 	const fallback = authorBySlug.get(slug) ?? defaultAuthor;
+	const frontmatterParsed = splitBilingual(frontmatterAuthor);
+	if (frontmatterParsed.zh) {
+		return {
+			zh: frontmatterParsed.zh,
+			en:
+				frontmatterParsed.en && frontmatterParsed.en !== frontmatterParsed.zh
+					? frontmatterParsed.en
+					: fallback.en,
+		};
+	}
 	const raw =
 		original.match(/\*\*作者 \/ Author:\*\*[^\S\n]*([^\n]*)/)?.[1]?.trim() ??
 		original.match(/\*\*作者：\*\*[^\S\n]*([^\n]*)/)?.[1]?.trim() ??
@@ -1415,9 +1428,9 @@ const getAuthorForPost = (slug, original) => {
 	};
 };
 const englishGoalsFor = (title, tags) => [
-	`Understand the core ideas of ${title}.`,
-	`Connect ${tags.slice(0, 3).join(", ")} to practical security work.`,
-	"Practice only in authorized, repeatable lab environments.",
+	`Explain the main workflow behind ${title}.`,
+	`Use ${tags.slice(0, 3).join(", ")} to read commands, traffic, logs, or code with evidence.`,
+	"Stay inside authorized lab environments and document each step clearly.",
 ];
 const englishPracticeFor = (title) => [
 	`Summarize the main workflow of ${title} in your own words.`,
@@ -1426,7 +1439,7 @@ const englishPracticeFor = (title) => [
 ];
 const englishParagraphsFor = (item) => [
 	item.enSummary,
-	"Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.",
+	"Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.",
 ];
 
 for (const [slug, guide] of Object.entries(guides)) {
@@ -1438,7 +1451,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 	const [rawTitleZh, titleEn = ""] = frontmatter.title.split(" / ");
 	const titleZh = guide.titleZh ?? rawTitleZh;
 	const fullTitle = `${titleZh} / ${titleEn || titleZh}`;
-	const author = getAuthorForPost(slug, original);
+	const author = getAuthorForPost(slug, original, frontmatter.author);
 	const date =
 		original
 			.match(/\*\*原 PPT 日期 \/ Original PPT date:\*\*[^\S\n]*([^\n]+)/)?.[1]
@@ -1456,6 +1469,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 	const lines = [
 		"---",
 		`title: ${escapeYaml(fullTitle)}`,
+		`author: ${escapeYaml(`${author.zh} / ${author.en}`)}`,
 		`published: ${frontmatter.published}`,
 		`description: ${escapeYaml(description)}`,
 		`tags: [${tags.map(escapeYaml).join(", ")}]`,
@@ -1464,8 +1478,6 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"---",
 		"",
 		":::section{.lang-zh}",
-		"",
-		`**作者：** ${author.zh}`,
 		"",
 		`**原 PPT 日期：** ${date}`,
 		"",
@@ -1498,8 +1510,6 @@ for (const [slug, guide] of Object.entries(guides)) {
 	const englishTitle = titleEn || titleZh;
 	lines.push(
 		":::section{.lang-en}",
-		"",
-		`**Author:** ${author.en || author.zh}`,
 		"",
 		`**Original PPT date:** ${date}`,
 		"",

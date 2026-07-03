@@ -14,6 +14,8 @@ const root = process.cwd();
 const simonDir = join(root, "Simon");
 const postsDir = join(root, "src/content/posts");
 const tmpDir = join(root, ".tmp/pptx-posts");
+const courseCategory =
+	"2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start";
 
 const dates = new Map([
 	["00-网络安全社体验课 - 正式.pptx", "2025-09-11"],
@@ -440,7 +442,7 @@ const writePost = ({ pptx, postDir, slug }) => {
 	const titleEn = titleTranslations.get(rawTitleZh) ?? titleZh;
 	const author = authors.get(fileName) ?? defaultAuthor;
 	const date = dates.get(fileName);
-	const tags = tagsMap.get(fileName) ?? ["Cybersecurity", "Club Course"];
+	const tags = tagsMap.get(fileName) ?? ["Cybersecurity", "Slides"];
 	if (!date) throw new Error(`Missing date for ${fileName}`);
 
 	const files = unzipList(pptx);
@@ -512,10 +514,11 @@ const writePost = ({ pptx, postDir, slug }) => {
 	const frontmatter = [
 		"---",
 		`title: ${escapeYaml(`${titleZh} / ${titleEn}`)}`,
+		`author: ${escapeYaml(`${author.zh} / ${author.en}`)}`,
 		`published: ${date}`,
 		`description: ${escapeYaml(description)}`,
 		`tags: ${formatYamlArray(tags)}`,
-		`category: "Club Course"`,
+		`category: ${escapeYaml(courseCategory)}`,
 		"draft: false",
 		"---",
 	].join("\n");
@@ -524,8 +527,6 @@ const writePost = ({ pptx, postDir, slug }) => {
 		`# ${titleZh}`,
 		"",
 		`**English title:** ${titleEn}`,
-		"",
-		`**作者 / Author:** ${author.zh} / ${author.en}`,
 		"",
 		`**原 PPT 日期 / Original PPT date:** ${date}`,
 		"",

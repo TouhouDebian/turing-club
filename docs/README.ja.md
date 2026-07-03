@@ -61,6 +61,7 @@ deno run -A npm:create-fuwari@latest
 ```yaml
 ---
 title: My First Blog Post
+author: Turing Club
 published: 2023-09-09
 description: This is the first post of my new Astro blog.
 image: /images/cover.jpg

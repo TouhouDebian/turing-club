@@ -40,6 +40,7 @@
 ```yaml
 ---
 title: 내 첫 블로그 게시물
+author: Turing Club
 published: 2023-09-09
 description: 내 새로운 Astro 블로그의 첫 번째 게시물입니다!
 image: ./cover.jpg

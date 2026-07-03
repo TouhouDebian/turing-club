@@ -1,15 +1,14 @@
 ---
 title: "12 防御注入攻击 / Defending Against Injection Attacks"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-04-22
 description: "防御注入攻击课程从攻击原理转向修复方法：不要让用户输入直接改变命令、查询或解释器语义。核心防线是参数化、校验、最小权限和持续维护。 / Defending injection means preventing user input from changing query, command, or interpreter semantics."
 tags: ["SQL Injection", "Input Validation", "Parameterized Query", "Secure Coding", "Web Defense"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2026-04-22
 
@@ -53,8 +52,6 @@ draft: false
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2026-04-22
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -65,27 +62,27 @@ Defending injection means preventing user input from changing query, command, or
 
 ## Learning Goals
 
-- Understand the core ideas of Defending Against Injection Attacks.
-- Connect SQL Injection, Input Validation, Parameterized Query to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Defending Against Injection Attacks.
+- Use SQL Injection, Input Validation, Parameterized Query to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Common pattern of injection
 
 Injection happens when untrusted data becomes executable structure.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 2. Defense overview
 
 Parameterized APIs separate code from data.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## 3. Code examples and maintenance
 
 Fixes require regression tests and verification.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 

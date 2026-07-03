@@ -6,7 +6,7 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
-import { getDir, getPostUrlBySlug } from "@utils/url-utils";
+import { getAuthorUrl, getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
@@ -40,6 +40,9 @@ const localizedNextTitle = entry.data.nextTitle
 const localizedPrevTitle = entry.data.prevTitle
 	? splitLocalized(entry.data.prevTitle)
 	: null;
+const localizedAuthor = entry.data.author
+	? splitLocalized(entry.data.author)
+	: null;
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -49,8 +52,8 @@ const jsonLd = {
 	keywords: entry.data.tags,
 	author: {
 		"@type": "Person",
-		name: profileConfig.name,
-		url: Astro.site,
+		name: localizedAuthor?.en ?? profileConfig.name,
+		url: localizedAuthor ? getAuthorUrl(entry.data.author) : Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
 	inLanguage: entry.data.lang
@@ -98,6 +101,22 @@ const jsonLd = {
                 </div>
             </div>
 
+            {localizedAuthor && (
+                <div class="onload-animation mb-4">
+                    <a
+                        href={getAuthorUrl(entry.data.author)}
+                        class="inline-flex max-w-full items-center gap-2 rounded-lg bg-[var(--btn-plain-bg)] px-3 py-2 text-sm font-bold text-[var(--primary)] transition hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)]"
+                        aria-label={`View posts by ${localizedAuthor.en}`}
+                    >
+                        <Icon name="material-symbols:person-rounded" class="text-lg shrink-0"></Icon>
+                        <span class="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
+                            <span class="lang-zh">{localizedAuthor.zh}</span>
+                            <span class="lang-en">{localizedAuthor.en}</span>
+                        </span>
+                    </a>
+                </div>
+            )}
+
             <!-- metadata -->
             <div class="onload-animation">
                 <PostMetadata
@@ -121,7 +140,7 @@ const jsonLd = {
                 <Content />
             </Markdown>
 
-            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+            {licenseConfig.enable && <License title={entry.data.title} author={entry.data.author} slug={entry.slug} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
 
         </div>
     </div>

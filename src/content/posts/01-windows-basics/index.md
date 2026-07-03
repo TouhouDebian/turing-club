@@ -1,15 +1,14 @@
 ---
 title: "01 Windows基础 / Windows Basics"
+author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-09-17
 description: "Windows 基础课关注的是日常系统如何成为安全实验对象：文件、用户、权限、进程、命令行和网络配置都不是孤立知识，它们共同决定一台主机是否可管理、可审计、可防护。 / This lesson treats Windows as a security target: files, users, permissions, processes, shells, and networking form the base of host security."
 tags: ["Windows", "PowerShell", "CMD", "File System", "Users", "Permissions", "Process", "Security Basics"]
-category: "Club Course"
+category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
 
 :::section{.lang-zh}
-
-**作者：** 2023届 Simon Li
 
 **原 PPT 日期：** 2025-09-17
 
@@ -62,8 +61,6 @@ CMD、PowerShell 和系统管理工具可以帮助我们查看进程、网络连
 
 :::section{.lang-en}
 
-**Author:** Class of 2023 Simon Li
-
 **Original PPT date:** 2025-09-17
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
@@ -74,15 +71,15 @@ This lesson treats Windows as a security target: files, users, permissions, proc
 
 ## Learning Goals
 
-- Understand the core ideas of Windows Basics.
-- Connect Windows, PowerShell, CMD to practical security work.
-- Practice only in authorized, repeatable lab environments.
+- Explain the main workflow behind Windows Basics.
+- Use Windows, PowerShell, CMD to read commands, traffic, logs, or code with evidence.
+- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Windows as a host
 
 Think of Windows as a host with identities, files, processes, and network services.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ### Related Images
 
@@ -93,7 +90,7 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 
 Least privilege is the core habit: do not run with more permission than the task requires.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ### Related Images
 
@@ -103,7 +100,7 @@ Read this section as a workflow, not as a tool list. Identify the input, the sys
 
 Command-line tools turn system operations into repeatable evidence.
 
-Read this section as a workflow, not as a tool list. Identify the input, the system boundary, the command or protocol involved, and the evidence that proves the result.
+Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
 ## Practice
 
