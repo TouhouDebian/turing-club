@@ -13,8 +13,6 @@ draft: false
 
 **原 PPT 日期：** 2025-12-09
 
-**关键词：** #OSINT #Enumeration #Reconnaissance #Google-Hacking #DNS #Port-Scanning #Asset-Discovery
-
 > 本文由社团课程 PPT 整理为阅读版讲义，只保留与正文知识点相关的截图、命令行画面、表格或结构图，并补充课堂讲解、学习目标和练习方向。
 
 ## 导读
@@ -82,8 +80,6 @@ draft: false
 **Author:** Class of 2023 Simon Li
 
 **Original PPT date:** 2025-12-09
-
-**Keywords:** #OSINT #Enumeration #Reconnaissance #Google-Hacking #DNS #Port-Scanning #Asset-Discovery
 
 > This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
 

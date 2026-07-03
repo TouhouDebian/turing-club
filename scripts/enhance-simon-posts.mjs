@@ -58,6 +58,7 @@ const guides = {
 			"画出一次网页上传到后端处理的流程图",
 			"写下三个你认为最容易出错的信任边界",
 		],
+		hideImages: true,
 	},
 	"01-windows-basics": {
 		lead: "Windows 基础课关注的是日常系统如何成为安全实验对象：文件、用户、权限、进程、命令行和网络配置都不是孤立知识，它们共同决定一台主机是否可管理、可审计、可防护。",
@@ -1001,6 +1002,26 @@ function section(title, enTitle, slides, paragraphs, enSummary) {
 	return { title, enTitle, slides, paragraphs, enSummary };
 }
 
+const defaultAuthor = {
+	zh: "2023届 Simon Li",
+	en: "Class of 2023 Simon Li",
+};
+
+const authorBySlug = new Map([
+	[
+		"03-python-basics",
+		{ zh: "2023届 Jack Zhang", en: "Class of 2023 Jack Zhang" },
+	],
+	[
+		"cynthia-li-honeypots",
+		{ zh: "2024届 Cynthia Li", en: "Class of 2024 Cynthia Li" },
+	],
+	[
+		"linux-ai-vulnerability-walkthrough",
+		{ zh: "2024届 Bob Gong", en: "Class of 2024 Bob Gong" },
+	],
+]);
+
 const escapeYaml = (value) =>
 	`"${String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 
@@ -1212,13 +1233,27 @@ const cleanupUnusedImages = (postDir, usedImages) => {
 };
 
 const renderList = (items) => items.map((item) => `- ${item}`).join("\n");
-const renderKeywords = (tags) =>
-	tags.map((tag) => `#${tag.replace(/\s+/g, "-")}`).join(" ");
 const splitBilingual = (value) => {
 	const [zh, ...rest] = String(value).split(" / ");
 	return {
 		zh: zh.trim(),
 		en: (rest.join(" / ") || zh).trim(),
+	};
+};
+const getAuthorForPost = (slug, original) => {
+	const fallback = authorBySlug.get(slug) ?? defaultAuthor;
+	const raw =
+		original.match(/\*\*作者 \/ Author:\*\*[^\S\n]*([^\n]*)/)?.[1]?.trim() ??
+		original.match(/\*\*作者：\*\*[^\S\n]*([^\n]*)/)?.[1]?.trim() ??
+		original.match(/\*\*Author:\*\*[^\S\n]*([^\n]*)/)?.[1]?.trim() ??
+		"";
+	if (raw.includes("原 PPT 日期") || raw.includes("Original PPT date"))
+		return fallback;
+	const parsed = splitBilingual(raw);
+	if (!parsed.zh) return fallback;
+	return {
+		zh: parsed.zh,
+		en: parsed.en && parsed.en !== parsed.zh ? parsed.en : fallback.en,
 	};
 };
 const englishGoalsFor = (title, tags) => [
@@ -1243,13 +1278,14 @@ for (const [slug, guide] of Object.entries(guides)) {
 	const frontmatter = parseFrontmatter(original);
 	const tags = parseTags(frontmatter.tagsLine);
 	const [titleZh, titleEn = ""] = frontmatter.title.split(" / ");
-	const author = splitBilingual(
-		original.match(/\*\*作者 \/ Author:\*\*\s*(.+)/)?.[1]?.trim() ?? "",
-	);
+	const author = getAuthorForPost(slug, original);
 	const date =
 		original
-			.match(/\*\*原 PPT 日期 \/ Original PPT date:\*\*\s*(.+)/)?.[1]
-			?.trim() ?? frontmatter.published;
+			.match(/\*\*原 PPT 日期 \/ Original PPT date:\*\*[^\S\n]*([^\n]+)/)?.[1]
+			?.trim() ??
+		original.match(/\*\*原 PPT 日期：\*\*[^\S\n]*([^\n]+)/)?.[1]?.trim() ??
+		original.match(/\*\*Original PPT date:\*\*[^\S\n]*([^\n]+)/)?.[1]?.trim() ??
+		frontmatter.published;
 	const slides = await collectSlideImages(
 		frontmatter.body,
 		join(postsDir, slug),
@@ -1273,8 +1309,6 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 		`**原 PPT 日期：** ${date}`,
 		"",
-		`**关键词：** ${renderKeywords(tags)}`,
-		"",
 		"> 本文由社团课程 PPT 整理为阅读版讲义，只保留与正文知识点相关的截图、命令行画面、表格或结构图，并补充课堂讲解、学习目标和练习方向。",
 		"",
 		"## 导读",
@@ -1288,7 +1322,9 @@ for (const [slug, guide] of Object.entries(guides)) {
 	];
 
 	guide.sections.forEach((item, index) => {
-		const sectionImages = selectImagesForRange(slides, item.slides, usedImages);
+		const sectionImages = guide.hideImages
+			? []
+			: selectImagesForRange(slides, item.slides, usedImages);
 		lines.push(`## ${index + 1}. ${item.title}`, "");
 		for (const paragraph of item.paragraphs) lines.push(paragraph, "");
 		const renderedImages = renderImageBlock(sectionImages, "zh");
@@ -1305,8 +1341,6 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 		`**Original PPT date:** ${date}`,
 		"",
-		`**Keywords:** ${renderKeywords(tags)}`,
-		"",
 		"> This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.",
 		"",
 		"## Overview",
@@ -1321,7 +1355,9 @@ for (const [slug, guide] of Object.entries(guides)) {
 
 	usedImages.clear();
 	guide.sections.forEach((item, index) => {
-		const sectionImages = selectImagesForRange(slides, item.slides, usedImages);
+		const sectionImages = guide.hideImages
+			? []
+			: selectImagesForRange(slides, item.slides, usedImages);
 		lines.push(`## ${index + 1}. ${item.enTitle}`, "");
 		for (const paragraph of item.enParagraphs ?? englishParagraphsFor(item))
 			lines.push(paragraph, "");

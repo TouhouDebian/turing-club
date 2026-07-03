@@ -9,10 +9,21 @@ async function getRawSortedPosts() {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
 
+	const manualSameDayOrder: Record<string, number> = {
+		"04-data-conversion-basics": 1,
+		"03-python-basics": 2,
+	};
+
 	const sorted = allBlogPosts.sort((a, b) => {
 		const dateA = new Date(a.data.published);
 		const dateB = new Date(b.data.published);
-		return dateA > dateB ? -1 : 1;
+		if (dateA.getTime() !== dateB.getTime()) return dateA > dateB ? -1 : 1;
+
+		const priorityA = manualSameDayOrder[a.slug] ?? 99;
+		const priorityB = manualSameDayOrder[b.slug] ?? 99;
+		if (priorityA !== priorityB) return priorityA - priorityB;
+
+		return a.slug.localeCompare(b.slug);
 	});
 	return sorted;
 }

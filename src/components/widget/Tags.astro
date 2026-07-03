@@ -9,9 +9,7 @@ import WidgetLayout from "./WidgetLayout.astro";
 
 const tags = await getTagList();
 
-const COLLAPSED_HEIGHT = "7.5rem";
-
-const isCollapsed = tags.length >= 20;
+const showToggle = tags.length > 6;
 
 interface Props {
 	class?: string;
@@ -20,12 +18,87 @@ interface Props {
 const className = Astro.props.class;
 const style = Astro.props.style;
 ---
-<WidgetLayout name={i18n(I18nKey.tags)} id="tags" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT} class={className} style={style}>
-    <div class="flex gap-2 flex-wrap">
+<WidgetLayout name={i18n(I18nKey.tags)} id="tags" class={className} style={style}>
+    <tag-list class="block" data-has-toggle={String(showToggle)}>
+    <div class:list={["tag-scroll-window", { "has-toggle": showToggle }]}>
+    <div class="flex gap-2 flex-wrap pb-1">
         {tags.map(t => (
             <ButtonTag href={getTagUrl(t.name)} label={`View all posts with the ${t.name.trim()} tag`}>
                 {t.name.trim()}
             </ButtonTag>
         ))}
     </div>
+    </div>
+    {showToggle && (
+        <button type="button" class="tag-toggle btn-plain rounded-lg w-full h-9 mt-3">
+            <div class="text-[var(--primary)] flex items-center justify-center gap-2">
+                <span class="tag-toggle-more flex items-center gap-2">
+                    <span class="text-[1.5rem] leading-none tracking-widest">...</span>
+                    <span class="lang-zh">更多</span>
+                    <span class="lang-en">More</span>
+                </span>
+                <span class="tag-toggle-done hidden">
+                    <span class="lang-zh">完成</span>
+                    <span class="lang-en">Done</span>
+                </span>
+            </div>
+        </button>
+    )}
+    </tag-list>
 </WidgetLayout>
+
+<style>
+    .tag-scroll-window {
+        scrollbar-width: thin;
+        scrollbar-color: color-mix(in oklch, var(--primary) 72%, transparent) transparent;
+    }
+
+    .tag-scroll-window.has-toggle {
+        --tag-window-height: 7.25rem;
+        max-height: var(--tag-window-height);
+        overflow: hidden;
+    }
+
+    .tag-scroll-window.is-expanded {
+        overflow-y: auto;
+        padding-right: 0.25rem;
+    }
+
+    .tag-scroll-window.is-expanded::-webkit-scrollbar {
+        width: 0.35rem;
+    }
+
+    .tag-scroll-window.is-expanded::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .tag-scroll-window.is-expanded::-webkit-scrollbar-thumb {
+        background: color-mix(in oklch, var(--primary) 72%, transparent);
+        border-radius: 999px;
+    }
+</style>
+
+<script>
+    class TagList extends HTMLElement {
+        connectedCallback() {
+            if (this.dataset.hasToggle !== "true") return;
+
+            const scrollWindow = this.querySelector(".tag-scroll-window");
+            const button = this.querySelector(".tag-toggle");
+            const moreLabel = this.querySelector(".tag-toggle-more");
+            const doneLabel = this.querySelector(".tag-toggle-done");
+            if (!(scrollWindow instanceof HTMLElement) || !(button instanceof HTMLButtonElement)) return;
+
+            button.addEventListener("click", () => {
+                const isExpanded = scrollWindow.classList.toggle("is-expanded");
+                if (!isExpanded) scrollWindow.scrollTo({ top: 0, behavior: "smooth" });
+                moreLabel?.classList.toggle("hidden", isExpanded);
+                doneLabel?.classList.toggle("hidden", !isExpanded);
+            });
+        }
+    }
+
+    if (!customElements.get("tag-list")) {
+        customElements.define("tag-list", TagList);
+    }
+</script>
