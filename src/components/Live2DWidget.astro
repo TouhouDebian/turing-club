@@ -110,7 +110,7 @@ const modelData = modelOptions.map((model) => ({
 	</button>
 	<select id="live2d-model-select" aria-label="Select Live2D model">
 		{modelOptions.map((model) => (
-			<option value={model.id} selected={model.id === "remilia-event"}>
+			<option value={model.id} selected={model.id === "flandre"}>
 				{model.name}
 			</option>
 		))}
@@ -120,7 +120,7 @@ const modelData = modelOptions.map((model) => ({
 	<div id="live2d-bubble" aria-live="polite"></div>
 	<a
 		id="live2d-credit"
-		href="https://github.com/n0099/TouhouCannonBall-Live2d-Models/tree/main/Remilia%20(Event)"
+		href="https://github.com/n0099/TouhouCannonBall-Live2d-Models/tree/main/Flandre"
 		target="_blank"
 		rel="noopener"
 	>
@@ -373,7 +373,8 @@ const modelData = modelOptions.map((model) => ({
 
 		const positionStorageKey = "live2d-position";
 		const modelStorageKey = "live2d-model";
-		const defaultModelId = "remilia-event";
+		const defaultModelId = "flandre";
+		const legacyDefaultModelIds = new Set(["remilia-event"]);
 		const modelsById = new Map(modelData.map((model) => [model.id, model]));
 			const preservedDefaultPoseModelIds = new Set([
 				"koishi",
@@ -385,7 +386,7 @@ const modelData = modelOptions.map((model) => ({
 			]);
 			const stableSleeveModelIds = new Set(["akyuu"]);
 			const characterPoseMotionPreferences = {
-				akyuu: [[50, 51, 52, 53, 54, 55]],
+				akyuu: [[10, 11, 12, 13, 14, 15]],
 				alice: [[30, 31, 32, 33, 34, 35]],
 				cirno: [
 					[10, 11, 12, 13, 14, 15],
@@ -824,6 +825,10 @@ const modelData = modelOptions.map((model) => ({
 
 		const getSelectedModel = () => {
 			const storedModelId = localStorage.getItem(modelStorageKey);
+			if (legacyDefaultModelIds.has(storedModelId)) {
+				localStorage.removeItem(modelStorageKey);
+				return modelsById.get(defaultModelId) ?? modelData[0];
+			}
 			return modelsById.get(storedModelId) ?? modelsById.get(defaultModelId) ?? modelData[0];
 		};
 
@@ -1141,7 +1146,7 @@ const modelData = modelOptions.map((model) => ({
 		const syncAccessoryBreathing = (model, t, idleProfile) => {
 			const accessoryScale = idleProfile.accessoryScale ?? 1;
 			const dollScale = idleProfile.dollScale ?? accessoryScale;
-			const wingScale = idleProfile.wingScale ?? accessoryScale;
+			const wingScale = idleProfile.wingScale ?? 0;
 			const earScale = idleProfile.earScale ?? accessoryScale;
 			const wispScale = idleProfile.wispScale ?? accessoryScale;
 			const soft = Math.sin(t * 0.64);
@@ -1154,7 +1159,10 @@ const modelData = modelOptions.map((model) => ({
 			addModelParameter(model, ["ParamDollAngleX"], slow * 1.45 * dollScale, 0.32);
 			addModelParameter(model, ["ParamDollAngleY"], soft * 1.15 * dollScale, 0.3);
 
-			const idleWing = Math.sin(t * 0.78) * 0.15 + Math.sin(t * 0.42) * 0.06;
+			if (wingScale > 0) {
+				const idleWing = Math.sin(t * 0.34 + 0.25) * 0.07 + Math.sin(t * 0.18) * 0.025;
+				const wingLift = Math.sin(t * 0.28 + 1.1) * 0.08;
+				const wingRotation = Math.sin(t * 0.22 + 0.6) * 0.075;
 				addModelParameter(
 					model,
 					[
@@ -1165,7 +1173,7 @@ const modelData = modelOptions.map((model) => ({
 						"ParamWingLOpen",
 					],
 					idleWing * wingScale,
-					0.16,
+					0.11,
 				);
 				addModelParameter(
 					model,
@@ -1177,10 +1185,11 @@ const modelData = modelOptions.map((model) => ({
 						"ParamWingROpen",
 					],
 					idleWing * wingScale,
-					0.16,
+					0.11,
 				);
-				addModelParameter(model, ["ParamWingRotation"], slow * 0.16 * wingScale, 0.13);
-				addModelParameter(model, ["ParamWingLY", "ParamWingRY"], offset * 0.18 * wingScale, 0.08);
+				addModelParameter(model, ["ParamWingRotation"], wingRotation * wingScale, 0.08);
+				addModelParameter(model, ["ParamWingLY", "ParamWingRY"], wingLift * wingScale, 0.05);
+			}
 
 			addModelParameter(
 				model,
@@ -1244,6 +1253,23 @@ const modelData = modelOptions.map((model) => ({
 			addModelParameter(model, ["ParamEyeHiLightShake"], tiny * 0.1 * accessoryScale, 0.05);
 		};
 
+		const syncAkyuuLoweredArms = (model, speechEase) => {
+			if (currentModelId !== "akyuu") return;
+
+			const poseWeight = Math.max(0.38, 1 - speechEase * 0.55);
+			setModelPartOpacity(model, "PART_LEFT_ARM", 1);
+			setModelPartOpacity(model, "PART_RIGHT_ARM", 1);
+			setModelParameter(model, ["ParamLeftShoulderUp"], -12 * poseWeight);
+			setModelParameter(model, ["ParamRightShoulderUp"], -12 * poseWeight);
+			setModelParameter(model, ["ParamLeftArmRotation"], 10 * poseWeight);
+			setModelParameter(model, ["ParamRightArmRotation"], 12 * poseWeight);
+			setModelParameter(model, ["ParamLeftArmFrontRotation"], 2 * poseWeight);
+			setModelParameter(model, ["ParamRightArmFrontRotation"], 0);
+			setModelParameter(model, ["ParamLeftArmShoulderFrontAndBack"], 14 * poseWeight);
+			setModelParameter(model, ["ParamRightArmShoulderFrontAndBack"], 12 * poseWeight);
+			setModelParameter(model, ["ParamLeftHandGrip", "ParamRightHandGrip"], 0);
+		};
+
 		const syncLiveliness = (model, now, profile, speechEase) => {
 				const t = (now - idleStartedAt) / 1000;
 				const idleProfile = getIdleProfile();
@@ -1270,6 +1296,7 @@ const modelData = modelOptions.map((model) => ({
 				addModelParameter(model, ["ParamEyeBallX"], pointerFocus.x * 0.68 * trackingWeight, 0.55);
 				addModelParameter(model, ["ParamEyeBallY"], -pointerFocus.y * 0.46 * trackingWeight, 0.48);
 				syncAccessoryBreathing(model, t, idleProfile);
+				syncAkyuuLoweredArms(model, speechEase);
 			if (profile) {
 				const wave =
 					Math.sin((now - speechProfileStartedAt) / 130 + gestureSeed) * 0.5 +

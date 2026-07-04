@@ -3,6 +3,7 @@ title: "09 信息收集与枚举（一半） / Information Gathering and Enumera
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-02
 description: "信息收集与枚举上半部分先讲被动信息收集：尽量不直接接触目标系统，通过公开资料、搜索引擎、域名和网页痕迹建立目标画像。 / Part 1 focuses on passive reconnaissance: building a target profile from public information before touching the target."
+image: "./images/slide-12-36.jpeg"
 tags: ["OSINT", "Reconnaissance", "Information Gathering", "Search Engines", "Domains", "Passive Reconnaissance"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
@@ -12,13 +13,17 @@ draft: false
 
 **原 PPT 日期：** 2025-12-02
 
-> 这篇讲义按课堂主线重新梳理：先抓住概念，再看命令、结构图和练习任务。别急着开大招，先把地图点亮。
+> 此文为codex改编往年课件而成
 
-## 导读
+## 先把地图点亮
+
+如果你是第一次接触这个主题，不用先背一堆名词。先抓住一个小问题：它解决什么麻烦？输入从哪里来？最后能留下什么证据？
 
 信息收集与枚举上半部分先讲被动信息收集：尽量不直接接触目标系统，通过公开资料、搜索引擎、域名和网页痕迹建立目标画像。
 
-## 学习目标
+下面按“概念 -> 例子 -> 可操作的小任务”的顺序拆开。读完不一定立刻变成高手，但至少能知道下一步该点亮哪块地图。
+
+## 你会学到
 
 - 理解信息收集的目的和边界
 - 掌握被动收集的常见来源
@@ -28,29 +33,29 @@ draft: false
 
 信息收集不是八卦，而是为了减少盲目操作。知道目标资产、技术栈、公开入口和历史暴露信息，才能制定更稳妥的测试计划。
 
-讲者补充：收集阶段最重要的是记录来源。没有来源的信息很难复核，也不适合写进报告。
+收集阶段最重要的是记录来源。没有来源的信息很难复核，也不适合写进报告。
 
-> 小旁白：先别急着开大招，把输入、处理、输出连成一条线，很多问题会自己露头。
+> 小提示：先别急着开大招，把输入、处理、输出连成一条线，很多问题会自己露头。
 
 ## 2. 被动信息收集
 
 被动收集包括搜索引擎、公开页面、域名记录、代码仓库、公告和历史快照等。它的优点是低噪声、低影响，适合作为第一步。
 
-讲者补充：Google hacking 的重点是查询思路，不是复制语法。先明确想找什么，再设计搜索语句。
+Google hacking 的重点是查询思路，不是复制语法。先明确想找什么，再设计搜索语句。
 
-> 小旁白：这一步像看关卡小地图：确认边界、资源和出口，再开始操作会稳很多。
+> 小提示：这一步像看关卡小地图：确认边界、资源和出口，再开始操作会稳很多。
 
 ## 3. 不足与下一步
 
 被动收集会受公开资料质量影响，可能过时、不完整或存在误导。因此后续需要主动枚举和验证，但主动操作必须遵守授权范围。
 
-讲者补充：把“不确定”写出来是专业表现。报告中应区分确认事实、推测和待验证线索。
+把“不确定”写出来是专业表现。报告中应区分确认事实、推测和待验证线索。
 
-> 小旁白：看到命令别只复制，顺手问一句：它读了什么、改了什么、留下了什么证据？
+> 小提示：看到命令别只复制，顺手问一句：它读了什么、改了什么、留下了什么证据？
 
-![课程相关截图 1](./images/slide-17-56.png)
+![图示 1](./images/slide-17-56.png)
 
-## 课堂练习
+## 动手小任务
 
 - 为一个授权靶场域名整理公开信息来源
 - 写出三条搜索语句及其目的
@@ -62,11 +67,15 @@ draft: false
 
 **Original PPT date:** 2025-12-02
 
-> These notes follow the lesson path: understand the idea first, then read commands, diagrams, and practice tasks with evidence.
+> This article was adapted by Codex from previous course slides.
 
 ## Overview
 
+If this topic is new to you, do not start by memorizing every term. First ask a smaller question: what problem does it solve, where does input enter, and what evidence can we observe?
+
 Part 1 focuses on passive reconnaissance: building a target profile from public information before touching the target.
+
+The article follows a simple path: idea, example, and a small task you can reproduce safely.
 
 ## Learning Goals
 
@@ -78,7 +87,7 @@ Part 1 focuses on passive reconnaissance: building a target profile from public 
 
 Reconnaissance reduces guessing. Evidence and sources matter.
 
-Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
+Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
 
 > Side note: Do not rush the special move: draw input, processing, and output first.
 
@@ -86,7 +95,7 @@ Start with the problem, then trace the data, command, or protocol that proves th
 
 Passive reconnaissance uses public sources with minimal target interaction.
 
-Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
+Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
 
 > Side note: Treat this like checking the minimap before a stage: scope, resources, and exits matter.
 
@@ -94,11 +103,11 @@ Start with the problem, then trace the data, command, or protocol that proves th
 
 Separate confirmed facts, assumptions, and leads that need validation.
 
-Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
+Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
 
 > Side note: Do not just copy the command. Ask what it reads, what it changes, and what evidence it leaves.
 
-![Course-related screenshot 1](./images/slide-17-56.png)
+![Illustration 1](./images/slide-17-56.png)
 
 ## Practice
 

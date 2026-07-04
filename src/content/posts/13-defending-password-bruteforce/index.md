@@ -12,13 +12,17 @@ draft: false
 
 **原 PPT 日期：** 2026-04-22
 
-> 这篇讲义按课堂主线重新梳理：先抓住概念，再看命令、结构图和练习任务。别急着开大招，先把地图点亮。
+> 此文为codex改编往年课件而成
 
-## 导读
+## 先把地图点亮
+
+如果你是第一次接触这个主题，不用先背一堆名词。先抓住一个小问题：它解决什么麻烦？输入从哪里来？最后能留下什么证据？
 
 防御密码爆破课程关注认证系统如何抵抗大量猜测。重点不是让密码规则越来越复杂，而是组合限速、锁定、MFA、监控和用户体验。
 
-## 学习目标
+下面按“概念 -> 例子 -> 可操作的小任务”的顺序拆开。读完不一定立刻变成高手，但至少能知道下一步该点亮哪块地图。
+
+## 你会学到
 
 - 理解爆破攻击的基本条件
 - 掌握限速、锁定和 MFA 的作用
@@ -28,29 +32,29 @@ draft: false
 
 爆破依赖三个条件：可尝试的入口、可验证的反馈、足够多的尝试次数。防御就是打断其中一个或多个条件。
 
-讲者补充：错误提示不要泄露“用户名存在但密码错”这类可枚举信息。
+错误提示不要泄露“用户名存在但密码错”这类可枚举信息。
 
-> 小旁白：如果结论只能靠“感觉”，那还没通关；补一条可复现的命令、截图或日志。
+> 小提示：如果结论只能靠“感觉”，那还没通关；补一条可复现的命令、截图或日志。
 
 ## 2. 防御手段
 
 常见措施包括登录限速、失败次数锁定、验证码、MFA、强密码策略和泄露密码检测。不同场景需要平衡安全和可用性。
 
-讲者补充：锁定策略要防止被滥用成拒绝服务，例如攻击者故意锁死大量用户。
+锁定策略要防止被滥用成拒绝服务，例如攻击者故意锁死大量用户。
 
-> 小旁白：报错不是敌人，它通常是在很诚实地告诉你哪一层没对上。
+> 小提示：报错不是敌人，它通常是在很诚实地告诉你哪一层没对上。
 
-![课程相关截图 1](./images/slide-07-40.jpeg)
+![图示 1](./images/slide-07-40.jpeg)
 
 ## 3. 代码、日志与维护
 
 认证系统需要记录失败次数、来源、时间、用户代理和风险评分。维护阶段要关注异常峰值、撞库行为和绕过路径。
 
-讲者补充：密码防御不是只靠登录页面，重置密码、注册、API 登录同样要纳入策略。
+密码防御不是只靠登录页面，重置密码、注册、API 登录同样要纳入策略。
 
-> 小旁白：工具是技能栏，不是自动胜利按钮；真正的主角仍然是你的判断链。
+> 小提示：工具是技能栏，不是自动胜利按钮；真正的主角仍然是你的判断链。
 
-## 课堂练习
+## 动手小任务
 
 - 设计一个登录限速策略
 - 解释 MFA 能防什么、不能防什么
@@ -62,11 +66,15 @@ draft: false
 
 **Original PPT date:** 2026-04-22
 
-> These notes follow the lesson path: understand the idea first, then read commands, diagrams, and practice tasks with evidence.
+> This article was adapted by Codex from previous course slides.
 
 ## Overview
 
+If this topic is new to you, do not start by memorizing every term. First ask a smaller question: what problem does it solve, where does input enter, and what evidence can we observe?
+
 Defending brute force attacks combines rate limiting, lockout, MFA, monitoring, and usable authentication design.
+
+The article follows a simple path: idea, example, and a small task you can reproduce safely.
 
 ## Learning Goals
 
@@ -78,7 +86,7 @@ Defending brute force attacks combines rate limiting, lockout, MFA, monitoring, 
 
 Brute force needs an entry point, feedback, and many attempts.
 
-Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
+Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
 
 > Side note: If a conclusion only feels right, it is not cleared yet. Add reproducible evidence.
 
@@ -86,17 +94,17 @@ Start with the problem, then trace the data, command, or protocol that proves th
 
 Controls must balance security, usability, and abuse resistance.
 
-Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
+Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
 
 > Side note: Errors are not the villain; they usually point at the layer that does not match.
 
-![Course-related screenshot 1](./images/slide-07-40.jpeg)
+![Illustration 1](./images/slide-07-40.jpeg)
 
 ## 3. Code, logs, and maintenance
 
 Authentication defense includes every path that can verify credentials.
 
-Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
+Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
 
 > Side note: Tools are skill slots, not an auto-win button. The real protagonist is your reasoning chain.
 

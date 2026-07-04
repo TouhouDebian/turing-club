@@ -17,6 +17,19 @@ const swiftModuleCache = join(process.cwd(), ".tmp/swift-module-cache");
 const clangModuleCache = join(process.cwd(), ".tmp/clang-module-cache");
 const courseCategory =
 	"2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start";
+const adaptedNoteZh = "此文为codex改编往年课件而成";
+const adaptedNoteEn =
+	"This article was adapted by Codex from previous course slides.";
+const coverBySlug = new Map([
+	["00-cybersecurity-club-trial", "./images/slide-10-46.jpeg"],
+	["01-windows-basics", "./images/slide-02-07.jpeg"],
+	["02-linux-basics", "./images/slide-01-01.jpeg"],
+	["04-data-conversion-basics", "./images/slide-09-21.jpeg"],
+	["05-cryptography-basics", "./images/slide-16-111.jpeg"],
+	["08-attack-techniques", "./images/slide-04-01.jpeg"],
+	["09-information-gathering-part-1", "./images/slide-12-36.jpeg"],
+	["09-information-gathering-enumeration", "./images/slide-16-49.jpeg"],
+]);
 
 const guides = {
 	"00-cybersecurity-club-trial": {
@@ -1665,9 +1678,7 @@ const renderImageBlock = (images, lang) => {
 	const lines = [];
 	images.forEach((image, index) => {
 		const alt =
-			lang === "zh"
-				? `课程相关截图 ${index + 1}`
-				: `Course-related screenshot ${index + 1}`;
+			lang === "zh" ? `图示 ${index + 1}` : `Illustration ${index + 1}`;
 		lines.push(`![${alt}](${image.renderSrc ?? image.src})`, "");
 	});
 	return lines.join("\n").trimEnd();
@@ -1683,6 +1694,26 @@ const cleanupUnusedImages = (postDir, usedImages) => {
 };
 
 const renderList = (items) => items.map((item) => `- ${item}`).join("\n");
+const makeReadableParagraph = (value) =>
+	String(value)
+		.replace(/^讲者补充：/, "")
+		.replace(/课堂上应/g, "学习时可以")
+		.replace(/课堂目标/g, "目标")
+		.replace(/课堂讨论应/g, "继续深入时可以")
+		.replace(/课堂上要/g, "这里要")
+		.trim();
+const renderReadableParagraphs = (paragraphs) =>
+	paragraphs.map(makeReadableParagraph).filter(Boolean);
+const zhOpening = (guide) => [
+	"如果你是第一次接触这个主题，不用先背一堆名词。先抓住一个小问题：它解决什么麻烦？输入从哪里来？最后能留下什么证据？",
+	guide.lead,
+	"下面按“概念 -> 例子 -> 可操作的小任务”的顺序拆开。读完不一定立刻变成高手，但至少能知道下一步该点亮哪块地图。",
+];
+const enOpening = (guide) => [
+	"If this topic is new to you, do not start by memorizing every term. First ask a smaller question: what problem does it solve, where does input enter, and what evidence can we observe?",
+	guide.enLead,
+	"The article follows a simple path: idea, example, and a small task you can reproduce safely.",
+];
 const splitBilingual = (value) => {
 	const [zh, ...rest] = String(value).split(" / ");
 	return {
@@ -1728,7 +1759,7 @@ const englishPracticeFor = (title) => [
 ];
 const englishParagraphsFor = (item) => [
 	item.enSummary,
-	"Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.",
+	"Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?",
 ];
 
 for (const [slug, guide] of Object.entries(guides)) {
@@ -1754,30 +1785,41 @@ for (const [slug, guide] of Object.entries(guides)) {
 	);
 	const slideTexts = collectSlideTextMap(frontmatter.body);
 	const usedImages = new Set();
+	const coverImage = coverBySlug.get(slug) ?? "";
+	const coverExists = coverImage
+		? existsSync(join(postsDir, slug, coverImage.replace(/^\.\//, "")))
+		: false;
+	if (coverExists) usedImages.add(coverImage);
 	const description = `${guide.lead} / ${guide.enLead}`;
-
-	const lines = [
+	const frontmatterLines = [
 		"---",
 		`title: ${escapeYaml(fullTitle)}`,
 		`author: ${escapeYaml(`${author.zh} / ${author.en}`)}`,
 		`published: ${frontmatter.published}`,
 		`description: ${escapeYaml(description)}`,
+	];
+	if (coverExists) frontmatterLines.push(`image: ${escapeYaml(coverImage)}`);
+	frontmatterLines.push(
 		`tags: [${tags.map(escapeYaml).join(", ")}]`,
 		`category: ${escapeYaml(frontmatter.category)}`,
 		`draft: ${frontmatter.draft}`,
 		"---",
+	);
+
+	const lines = [
+		...frontmatterLines,
 		"",
 		":::section{.lang-zh}",
 		"",
 		`**原 PPT 日期：** ${date}`,
 		"",
-		"> 这篇讲义按课堂主线重新梳理：先抓住概念，再看命令、结构图和练习任务。别急着开大招，先把地图点亮。",
+		`> ${adaptedNoteZh}`,
 		"",
-		"## 导读",
+		"## 先把地图点亮",
 		"",
-		guide.lead,
+		...zhOpening(guide).flatMap((paragraph) => [paragraph, ""]),
 		"",
-		"## 学习目标",
+		"## 你会学到",
 		"",
 		renderList(guide.goals),
 		"",
@@ -1804,8 +1846,9 @@ for (const [slug, guide] of Object.entries(guides)) {
 	for (const [index, item] of guide.sections.entries()) {
 		const sectionMaterials = sectionMaterialsList[index];
 		lines.push(`## ${index + 1}. ${item.title}`, "");
-		for (const paragraph of item.paragraphs) lines.push(paragraph, "");
-		lines.push(`> 小旁白：${asideFor("zh", slug, index)}`, "");
+		for (const paragraph of renderReadableParagraphs(item.paragraphs))
+			lines.push(paragraph, "");
+		lines.push(`> 小提示：${asideFor("zh", slug, index)}`, "");
 		const renderedSlideText = renderSlideTextBlock(
 			sectionMaterials.slideTexts,
 			"zh",
@@ -1817,7 +1860,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 		if (renderedImages) lines.push(renderedImages, "");
 	}
 
-	lines.push("## 课堂练习", "", renderList(guide.practice), "", ":::", "");
+	lines.push("## 动手小任务", "", renderList(guide.practice), "", ":::", "");
 
 	const englishTitle = titleEn || titleZh;
 	lines.push(
@@ -1825,11 +1868,11 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 		`**Original PPT date:** ${date}`,
 		"",
-		"> These notes follow the lesson path: understand the idea first, then read commands, diagrams, and practice tasks with evidence.",
+		`> ${adaptedNoteEn}`,
 		"",
 		"## Overview",
 		"",
-		guide.enLead,
+		...enOpening(guide).flatMap((paragraph) => [paragraph, ""]),
 		"",
 		"## Learning Goals",
 		"",
