@@ -1155,17 +1155,7 @@ const cleanSlideLines = (rawLines) => {
 
 const shouldKeepSlideTextItem = (item) => {
 	const text = item.lines.join("\n");
-	return (
-		item.lines.length >= 2 ||
-		looksLikeCode(text) ||
-		item.lines.some((line) => chineseLength(line) >= 12)
-	);
-};
-
-const displaySlideTitle = (item) => {
-	if (!noisySlideLine(item.title)) return item.title;
-	const firstLine = item.lines[0] ?? `第 ${item.slide} 页`;
-	return firstLine.length > 28 ? `${firstLine.slice(0, 28)}...` : firstLine;
+	return looksLikeCode(text) || item.lines.some(looksLikeCommandLine);
 };
 
 const collectSlideTextMap = (body) => {
@@ -1390,6 +1380,24 @@ const codeFenceLanguage = (text) => {
 	return "text";
 };
 
+const tidyInlineText = (value) =>
+	String(value)
+		.replace(/\s+([，。；：、）])/gu, "$1")
+		.replace(/（\s+/gu, "（")
+		.replace(/\s+（/gu, "（")
+		.replace(/\bhtml\b/gi, "HTML")
+		.replace(/\bsql\b/gi, "SQL")
+		.replace(/\bxss\b/gi, "XSS")
+		.replace(/\burl\b/gi, "URL")
+		.replace(/\s+/g, " ")
+		.trim();
+
+const compactNoteLines = (lines, maxChars = 220) => {
+	const text = tidyInlineText(lines.join("；"));
+	if (!text) return "";
+	return text.length > maxChars ? `${text.slice(0, maxChars).trim()}……` : text;
+};
+
 const isUsefulOcrText = (text) => {
 	if (!text) return false;
 	const compact = text.replace(/\s/g, "");
@@ -1559,26 +1567,9 @@ const scoreKnowledgeImage = (image) => {
 	};
 };
 
-const ensureSquareRenderImage = async (image) => {
+const ensureOriginalRenderImage = async (image) => {
 	if (!image || !isRasterImage(image)) return image;
-	if (isSquareEnough(image)) {
-		image.renderSrc = image.src;
-		return image;
-	}
-
-	const outSrc = image.src.replace(/\.[^.]+$/u, "-square.png");
-	const outPath = image.filePath.replace(/\.[^.]+$/u, "-square.png");
-	await sharp(image.filePath)
-		.resize({
-			width: 1024,
-			height: 1024,
-			fit: "contain",
-			background: { r: 9, g: 15, b: 24, alpha: 1 },
-		})
-		.png({ compressionLevel: 9 })
-		.toFile(outPath);
-	image.renderSrc = outSrc;
-	image.sourceSrc = image.src;
+	image.renderSrc = image.src;
 	return image;
 };
 
@@ -1640,61 +1631,30 @@ const selectMaterialsForRange = async (
 		)
 			continue;
 		if (images.length >= 2 || texts.length + images.length >= maxItems) break;
-		const image = await ensureSquareRenderImage(candidate.image);
+		const image = await ensureOriginalRenderImage(candidate.image);
 		images.push(image);
 		chosenVisualSources.add(image.src);
 		usedImages.add(image.src);
 		if (image.renderSrc) usedImages.add(image.renderSrc);
-		if (image.sourceSrc) usedImages.add(image.sourceSrc);
 	}
 
 	for (const src of usedForText) usedImages.add(src);
 	return { images, texts };
 };
 
-const renderSlideTextBlock = (items, lang) => {
-	if (lang !== "zh" || !items.length) return "";
-	const lines = [
-		"### PPT 文字要点",
-		"",
-		"> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。",
-		"",
-	];
-	items.forEach((item) => {
-		lines.push(`#### 第 ${item.slide} 页：${displaySlideTitle(item)}`, "");
-		const text = item.lines.join("\n");
-		if (looksLikeCode(text)) {
-			lines.push(`\`\`\`${codeFenceLanguage(text)}`, text, "```", "");
-			return;
-		}
-		for (const line of item.lines) lines.push(`- ${line}`);
-		lines.push("");
-	});
-	return lines.join("\n").trimEnd();
-};
+const renderSlideTextBlock = () => "";
 
 const renderExtractedTextBlock = (items, lang) => {
 	if (!items.length) return "";
-	const lines = [
-		lang === "zh" ? "### 图片文字整理" : "### Extracted Image Text",
-		"",
-	];
-	items.forEach((item, index) => {
-		if (items.length > 1) {
-			lines.push(
-				lang === "zh"
-					? `#### 图片文字 ${index + 1}`
-					: `#### Extracted Text ${index + 1}`,
-				"",
-			);
-		}
+	const lines = [];
+	items.forEach((item) => {
 		if (item.kind === "code") {
 			lines.push(`\`\`\`${codeFenceLanguage(item.text)}`, item.text, "```", "");
 			return;
 		}
-		for (const line of item.text.split("\n")) {
-			lines.push(`> ${line}`);
-		}
+		const textLines = item.text.split("\n").map(tidyInlineText).filter(Boolean);
+		const compact = compactNoteLines(textLines, 240);
+		if (compact) lines.push(`> ${lang === "zh" ? "补充" : "Note"}：${compact}`);
 		lines.push("");
 	});
 	return lines.join("\n").trimEnd();
@@ -1702,22 +1662,15 @@ const renderExtractedTextBlock = (items, lang) => {
 
 const renderImageBlock = (images, lang) => {
 	if (!images.length) return "";
-	const lines = [
-		lang === "zh" ? "### 相关图解" : "### Related Visuals",
-		"",
-		lang === "zh"
-			? "> 这些图是为了辅助理解结构、命令输出或表格关系；装饰图已经尽量排除。"
-			: "> These visuals are kept for structure, command output, or tables; decorative images are intentionally filtered out.",
-		"",
-	];
+	const lines = [];
 	images.forEach((image, index) => {
 		const alt =
 			lang === "zh"
 				? `课程相关截图 ${index + 1}`
 				: `Course-related screenshot ${index + 1}`;
-		lines.push(`![${alt}](${image.renderSrc ?? image.src})`);
+		lines.push(`![${alt}](${image.renderSrc ?? image.src})`, "");
 	});
-	return lines.join("\n");
+	return lines.join("\n").trimEnd();
 };
 
 const cleanupUnusedImages = (postDir, usedImages) => {
@@ -1818,7 +1771,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 		`**原 PPT 日期：** ${date}`,
 		"",
-		"> 这里不是 PPT 逐页搬运版，而是把课堂主线重新整理成阅读版讲义：能用文字讲清楚的就写成文字；图片只保留终端、结构图、代码、表格和关键截图。",
+		"> 这篇讲义按课堂主线重新梳理：先抓住概念，再看命令、结构图和练习任务。别急着开大招，先把地图点亮。",
 		"",
 		"## 导读",
 		"",
@@ -1872,7 +1825,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 		`**Original PPT date:** ${date}`,
 		"",
-		"> This is not a slide-by-slide dump. It rebuilds the lesson as readable notes: text whenever text is clearer, and visuals only when they explain terminals, diagrams, code, tables, or key evidence.",
+		"> These notes follow the lesson path: understand the idea first, then read commands, diagrams, and practice tasks with evidence.",
 		"",
 		"## Overview",
 		"",

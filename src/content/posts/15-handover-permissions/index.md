@@ -12,7 +12,7 @@ draft: false
 
 **原 PPT 日期：** 2026-04-28
 
-> 这里不是 PPT 逐页搬运版，而是把课堂主线重新整理成阅读版讲义：能用文字讲清楚的就写成文字；图片只保留终端、结构图、代码、表格和关键截图。
+> 这篇讲义按课堂主线重新梳理：先抓住概念，再看命令、结构图和练习任务。别急着开大招，先把地图点亮。
 
 ## 导读
 
@@ -32,22 +32,6 @@ draft: false
 
 > 小旁白：如果结论只能靠“感觉”，那还没通关；补一条可复现的命令、截图或日志。
 
-### PPT 文字要点
-
-> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。
-
-#### 第 2 页：该来的还是会来的
-
-- 该来的还是会来的
-- 4WGZPZMMS7T3XP7IWGDOTGF75CS37ZMZWY======
-- E59388E59180E5BA93E982A3E8B7AF
-- X593Y6G5989ZF59089I588R9W69FDVC6D3Y27FI69STGG6U3Y27G
-- arvnt://ano.fkegdgmm.tgq/xbbgm/CZ1DSC5bPCRQ/
-
-#### 第 4 页：NO AI
-
-- 其实我没做，六月份再考（可能）
-
 ## 2. 权限与自由
 
 自由协作需要权限边界。管理员权限、仓库权限、服务器权限和账号恢复方式都要有记录，并遵循最小权限原则。
@@ -55,31 +39,6 @@ draft: false
 讲者补充：权限交接时要同时考虑撤权。离任、换届、项目结束后不应保留不必要权限。
 
 > 小旁白：报错不是敌人，它通常是在很诚实地告诉你哪一层没对上。
-
-### PPT 文字要点
-
-> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。
-
-#### 第 6 页：交付任务
-
-- 获得物品：钥匙
-- 如果钥匙被换
-- 你需要买一个外形一样的锁和锁闩，然后把原来的锁闩用
-- 的螺丝刀卸下来，再装上你自己的
-- 请立即找你们班同学去帮你去
-- 楼开锁或者找老师（不推荐）开电梯
-- 一次不要拿太多，一次也不要时间太长，推荐晚自习前，中午
-
-#### 第 7 页：交付任务
-
-- 每次社团课在社长群发签到表
-- 争取一下，但是不强求
-- 看你们了，我没有其他点子，社团改名也可以（最好是关于
-- CS/CE
-
-#### 第 9 页：自由
-
-- A: 演示文稿是实用的工具，可以是演示，演讲，报告等。大部分时间，它们都是在为观众服务。如果您想在演示文稿中展现内容，可以选择多种可以选择多种方式。您可以在讲座中包含团队照片
 
 ## 3. 活动收尾
 
@@ -101,7 +60,7 @@ draft: false
 
 **Original PPT date:** 2026-04-28
 
-> This is not a slide-by-slide dump. It rebuilds the lesson as readable notes: text whenever text is clearer, and visuals only when they explain terminals, diagrams, code, tables, or key evidence.
+> These notes follow the lesson path: understand the idea first, then read commands, diagrams, and practice tasks with evidence.
 
 ## Overview
 

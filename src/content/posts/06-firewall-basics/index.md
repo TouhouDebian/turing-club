@@ -1,7 +1,7 @@
 ---
 title: "06 防火墙基础 / Firewall Basics"
 author: "2023届 Simon Li / Class of 2023 Simon Li"
-published: 2025-11-17
+published: 2025-11-10
 description: "防火墙基础课讨论流量如何被允许、拒绝、记录和分段。它不是一道万能墙，而是一套基于规则、场景和日志的访问控制方法。 / Firewall basics explain how traffic is allowed, denied, logged, and segmented through rules and policy."
 tags: ["Firewall", "Network Security", "Access Control", "Ports", "Traffic Filtering", "Defense"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
@@ -10,9 +10,9 @@ draft: false
 
 :::section{.lang-zh}
 
-**原 PPT 日期：** 2025-11-17
+**原 PPT 日期：** 2025-11-10
 
-> 这里不是 PPT 逐页搬运版，而是把课堂主线重新整理成阅读版讲义：能用文字讲清楚的就写成文字；图片只保留终端、结构图、代码、表格和关键截图。
+> 这篇讲义按课堂主线重新梳理：先抓住概念，再看命令、结构图和练习任务。别急着开大招，先把地图点亮。
 
 ## 导读
 
@@ -48,16 +48,6 @@ draft: false
 
 > 小旁白：如果结论只能靠“感觉”，那还没通关；补一条可复现的命令、截图或日志。
 
-### PPT 文字要点
-
-> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。
-
-#### 第 17 页：作业
-
-- Iptables
-- 并且添加规则：
-- 截图提交，周六截止
-
 ## 课堂练习
 
 - 写出一条允许 SSH 的规则条件
@@ -68,9 +58,9 @@ draft: false
 
 :::section{.lang-en}
 
-**Original PPT date:** 2025-11-17
+**Original PPT date:** 2025-11-10
 
-> This is not a slide-by-slide dump. It rebuilds the lesson as readable notes: text whenever text is clearer, and visuals only when they explain terminals, diagrams, code, tables, or key evidence.
+> These notes follow the lesson path: understand the idea first, then read commands, diagrams, and practice tasks with evidence.
 
 ## Overview
 

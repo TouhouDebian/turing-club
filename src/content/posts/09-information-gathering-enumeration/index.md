@@ -12,7 +12,7 @@ draft: false
 
 **原 PPT 日期：** 2025-12-09
 
-> 这里不是 PPT 逐页搬运版，而是把课堂主线重新整理成阅读版讲义：能用文字讲清楚的就写成文字；图片只保留终端、结构图、代码、表格和关键截图。
+> 这篇讲义按课堂主线重新梳理：先抓住概念，再看命令、结构图和练习任务。别急着开大招，先把地图点亮。
 
 ## 导读
 
@@ -31,22 +31,6 @@ draft: false
 讲者补充：表格化记录比聊天式记录更可靠。每条资产都应能追溯来源。
 
 > 小旁白：报错不是敌人，它通常是在很诚实地告诉你哪一层没对上。
-
-### PPT 文字要点
-
-> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。
-
-#### 第 2 页：Collect information
-
-- Collect information
-- 被动信息收集
-- Passive information collection
-- Proactive information collection
-- Next work direction
-
-#### 第 8 页：被动信息收集
-
-- 演示文稿是一种实用的工具，可以是演示，演讲，报告等。大部分时间，它们都是在为观众服务
 
 ## 2. 搜索引擎与被动资料
 
@@ -72,18 +56,6 @@ draft: false
 
 > 小旁白：这一步像看关卡小地图：确认边界、资源和出口，再开始操作会稳很多。
 
-### PPT 文字要点
-
-> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。
-
-#### 第 16 页：作业三选一
-
-- 被动信息收集关于
-- 主动收集关于
-- TYAP/TYZX
-- 主动信息收集
-- 如果选择此选项，将获得双倍得分
-
 ## 课堂练习
 
 - 建立一份资产清单模板
@@ -96,7 +68,7 @@ draft: false
 
 **Original PPT date:** 2025-12-09
 
-> This is not a slide-by-slide dump. It rebuilds the lesson as readable notes: text whenever text is clearer, and visuals only when they explain terminals, diagrams, code, tables, or key evidence.
+> These notes follow the lesson path: understand the idea first, then read commands, diagrams, and practice tasks with evidence.
 
 ## Overview
 
