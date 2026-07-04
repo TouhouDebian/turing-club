@@ -12,7 +12,7 @@ draft: false
 
 **原 PPT 日期：** 2025-11-17
 
-> 本文由社团课程 PPT 整理为阅读版讲义，只保留与正文知识点相关的截图、命令行画面、表格或结构图，并补充课堂讲解、学习目标和练习方向。
+> 这里不是 PPT 逐页搬运版，而是把课堂主线重新整理成阅读版讲义：能用文字讲清楚的就写成文字；图片只保留终端、结构图、代码、表格和关键截图。
 
 ## 导读
 
@@ -30,11 +30,15 @@ draft: false
 
 讲者补充：防火墙规则要服务于资产边界。先知道要保护什么，再决定挡什么。
 
+> 小旁白：这一步像看关卡小地图：确认边界、资源和出口，再开始操作会稳很多。
+
 ## 2. 规则、端口与方向
 
 一条规则通常包含源地址、目的地址、协议、端口、动作和日志策略。规则顺序会影响命中结果，因此配置后必须测试。
 
 讲者补充：默认拒绝、按需放行是常见防御思路。但在学习环境中要先确保不会把自己锁在机器外。
+
+> 小旁白：看到命令别只复制，顺手问一句：它读了什么、改了什么、留下了什么证据？
 
 ## 3. 示例与作业
 
@@ -42,9 +46,17 @@ draft: false
 
 讲者补充：每次改规则前先备份，改完后记录预期结果和实际结果。
 
-### 相关图片
+> 小旁白：如果结论只能靠“感觉”，那还没通关；补一条可复现的命令、截图或日志。
 
-![课程相关截图 1](./images/slide-15-86.png)
+### PPT 文字要点
+
+> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。
+
+#### 第 17 页：作业
+
+- Iptables
+- 并且添加规则：
+- 截图提交，周六截止
 
 ## 课堂练习
 
@@ -58,7 +70,7 @@ draft: false
 
 **Original PPT date:** 2025-11-17
 
-> This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.
+> This is not a slide-by-slide dump. It rebuilds the lesson as readable notes: text whenever text is clearer, and visuals only when they explain terminals, diagrams, code, tables, or key evidence.
 
 ## Overview
 
@@ -76,11 +88,15 @@ A firewall is access control, not a replacement for secure systems and applicati
 
 Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
+> Side note: Treat this like checking the minimap before a stage: scope, resources, and exits matter.
+
 ## 2. Rules, ports, and direction
 
 Rules should be specific, ordered, tested, and logged.
 
 Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
+
+> Side note: Do not just copy the command. Ask what it reads, what it changes, and what evidence it leaves.
 
 ## 3. Examples and homework
 
@@ -88,9 +104,7 @@ Firewall work is evidence-driven: configure, test, and read logs.
 
 Start with the problem, then trace the data, command, or protocol that proves the result. Keep the notes short enough that another club member can reproduce the step in a lab.
 
-### Related Images
-
-![Course-related screenshot 1](./images/slide-15-86.png)
+> Side note: If a conclusion only feels right, it is not cleared yet. Add reproducible evidence.
 
 ## Practice
 

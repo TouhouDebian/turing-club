@@ -1056,6 +1056,164 @@ const parseTags = (tagsLine) => {
 	return matches.length ? matches : [];
 };
 
+const decodeMarkdownText = (value) =>
+	String(value)
+		.replace(/\\\$/g, "$")
+		.replace(/\\\\/g, "\\")
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&amp;/g, "&")
+		.replace(/\s+/g, " ")
+		.trim();
+
+const technicalShortTerms = new Set([
+	"AI",
+	"API",
+	"ASCII",
+	"CMD",
+	"CSP",
+	"CVE",
+	"DNS",
+	"FHS",
+	"HTML",
+	"HTTP",
+	"HTTPS",
+	"JSON",
+	"LINUX",
+	"MACOS",
+	"PYTHON",
+	"SQL",
+	"SHELL",
+	"SSH",
+	"TCP",
+	"UDP",
+	"UNICODE",
+	"URL",
+	"WINDOWS",
+	"XOR",
+	"XSS",
+	"BASH",
+	"BASE64",
+]);
+
+const noisySlideLine = (line) =>
+	/^(contents?|contens|introduction\b.*|ntroduction\b.*|homework\b.*|omework\b.*|thank you\b.*|thanks\b.*|tianyi|tycybersec|blue archive|simon li|imon li|cybersec|网络安全社|感谢您的观看|emmm|\?+|shortcomings of work)$/i.test(
+		line,
+	) ||
+	/^\d{1,3}%$/.test(line) ||
+	/^0?\d[.-]?$/.test(line) ||
+	/^[a-z]?ser\/group\/privilege$/i.test(line);
+
+const chineseLength = (line) => (line.match(/[\u4e00-\u9fff]/gu) ?? []).length;
+
+const looksLikeCommandLine = (line) =>
+	/\b(sudo|apt|pip|python|curl|wget|ssh|chmod|chown|grep|awk|sed|nmap|nc|echo|chsh|reboot|cd|ls|cat|ufw|iptables)\b/i.test(
+		line,
+	) ||
+	/[$#>]\s*\w+/.test(line) ||
+	/\/[A-Za-z0-9_.-]+/.test(line);
+
+const isUsefulSlideLine = (value) => {
+	const line = decodeMarkdownText(value);
+	if (line.length < 3) return false;
+	if (/^(原文|Original Text|图片|Images)$/i.test(line)) return false;
+	if (/^(slide|第)\s*\d+/i.test(line)) return false;
+	if (/^[\d\s.,，。:：/-]+$/u.test(line)) return false;
+	if (noisySlideLine(line)) return false;
+	if (technicalShortTerms.has(line.toUpperCase())) return true;
+	if (looksLikeCommandLine(line)) return true;
+	if (chineseLength(line) >= 6) return true;
+	if (line.length >= 18 && /[A-Za-z]/.test(line)) return true;
+	return false;
+};
+
+const cleanSlideLines = (rawLines) => {
+	const decoded = rawLines
+		.map(decodeMarkdownText)
+		.filter((line) => isUsefulSlideLine(line));
+	const merged = [];
+	for (let index = 0; index < decoded.length; index += 1) {
+		const line = decoded[index];
+		const next = decoded[index + 1] ?? "";
+		if (
+			technicalShortTerms.has(line.toUpperCase()) &&
+			next &&
+			(chineseLength(next) >= 4 ||
+				/^(injection|connect|security|basic|基础)/i.test(next))
+		) {
+			merged.push(`${line} ${next}`);
+			index += 1;
+			continue;
+		}
+		if (technicalShortTerms.has(line.toUpperCase())) continue;
+		if (!technicalShortTerms.has(line.toUpperCase()) && line.length < 5)
+			continue;
+		merged.push(line.replace("为了同一各发行版", "为了统一各发行版"));
+	}
+	return merged.filter((line, index) => merged.indexOf(line) === index);
+};
+
+const shouldKeepSlideTextItem = (item) => {
+	const text = item.lines.join("\n");
+	return (
+		item.lines.length >= 2 ||
+		looksLikeCode(text) ||
+		item.lines.some((line) => chineseLength(line) >= 12)
+	);
+};
+
+const displaySlideTitle = (item) => {
+	if (!noisySlideLine(item.title)) return item.title;
+	const firstLine = item.lines[0] ?? `第 ${item.slide} 页`;
+	return firstLine.length > 28 ? `${firstLine.slice(0, 28)}...` : firstLine;
+};
+
+const collectSlideTextMap = (body) => {
+	const slideTexts = new Map();
+	const slideMatches = body.matchAll(
+		/## 第\s*(\d+)\s*页\s*\/\s*Slide\s*\d+:\s*([^\n]+)\n([\s\S]*?)(?=\n## 第\s*\d+\s*页\s*\/\s*Slide|\s*$)/g,
+	);
+	for (const match of slideMatches) {
+		const slide = Number(match[1]);
+		const title = decodeMarkdownText(match[2]);
+		const content = match[3];
+		const bodyLines = [...content.matchAll(/^- ([^\n]+)/gm)].map(
+			(lineMatch) => lineMatch[1],
+		);
+		const rawLines = bodyLines.length ? bodyLines : [title];
+		const lines = cleanSlideLines(rawLines);
+		if (lines.length) slideTexts.set(slide, { slide, title, lines });
+	}
+	return slideTexts;
+};
+
+const selectSlideTextForRange = (slideTexts, range) => {
+	const [start, end] = range;
+	const selected = [];
+	let totalLines = 0;
+	for (let slide = start; slide <= end; slide += 1) {
+		const item = slideTexts.get(slide);
+		if (!item?.lines.length) continue;
+		const text = item.lines.join("\n");
+		const lineLimit = looksLikeCode(text) ? 14 : 8;
+		const lines = item.lines.slice(0, lineLimit);
+		if (
+			technicalShortTerms.has(item.title.toUpperCase()) &&
+			lines[0] &&
+			/^的/u.test(lines[0])
+		) {
+			lines[0] = `${item.title} ${lines[0]}`;
+		}
+		if (!lines.length) continue;
+		const selectedItem = { ...item, lines };
+		if (!shouldKeepSlideTextItem(selectedItem)) continue;
+		selected.push(selectedItem);
+		totalLines += lines.length;
+		if (selected.length >= 3 || totalLines >= 22) break;
+	}
+	return selected;
+};
+
 const readPngSize = (buffer) => {
 	if (buffer.length < 24 || buffer.toString("ascii", 1, 4) !== "PNG")
 		return null;
@@ -1218,12 +1376,51 @@ const looksLikeCode = (text) => {
 	return codeHints.filter((pattern) => pattern.test(text)).length >= 2;
 };
 
+const codeFenceLanguage = (text) => {
+	if (/\b(select|insert|update|delete|from|where|union)\b/i.test(text))
+		return "sql";
+	if (/<\/?[a-z][\w-]*(\s|>)/i.test(text)) return "html";
+	if (/\b(def|import|print|range|elif|lambda)\b/.test(text)) return "python";
+	if (/\b(function|const|let|var|console\.log|document\.)\b/.test(text))
+		return "js";
+	if (
+		/\b(sudo|apt|curl|wget|ssh|chmod|chown|grep|awk|sed|nmap|nc)\b/.test(text)
+	)
+		return "bash";
+	return "text";
+};
+
 const isUsefulOcrText = (text) => {
 	if (!text) return false;
 	const compact = text.replace(/\s/g, "");
 	if (compact.length < 24) return false;
 	const lines = text.split("\n").filter(Boolean);
 	return lines.length >= 2 || compact.length >= 48;
+};
+
+const zhAsideNotes = [
+	"先别急着开大招，把输入、处理、输出连成一条线，很多问题会自己露头。",
+	"这一步像看关卡小地图：确认边界、资源和出口，再开始操作会稳很多。",
+	"看到命令别只复制，顺手问一句：它读了什么、改了什么、留下了什么证据？",
+	"如果结论只能靠“感觉”，那还没通关；补一条可复现的命令、截图或日志。",
+	"报错不是敌人，它通常是在很诚实地告诉你哪一层没对上。",
+	"工具是技能栏，不是自动胜利按钮；真正的主角仍然是你的判断链。",
+];
+
+const enAsideNotes = [
+	"Do not rush the special move: draw input, processing, and output first.",
+	"Treat this like checking the minimap before a stage: scope, resources, and exits matter.",
+	"Do not just copy the command. Ask what it reads, what it changes, and what evidence it leaves.",
+	"If a conclusion only feels right, it is not cleared yet. Add reproducible evidence.",
+	"Errors are not the villain; they usually point at the layer that does not match.",
+	"Tools are skill slots, not an auto-win button. The real protagonist is your reasoning chain.",
+];
+
+const asideFor = (lang, slug, index) => {
+	const notes = lang === "zh" ? zhAsideNotes : enAsideNotes;
+	let seed = index;
+	for (const char of slug) seed += char.charCodeAt(0);
+	return notes[seed % notes.length];
 };
 
 const extractTextFromImages = (images) => {
@@ -1297,51 +1494,183 @@ const collectSlideImages = async (body, postDir) => {
 	return slides;
 };
 
-const isRelevantImage = (image) => {
-	if (!image) return false;
-	if (image.ext === ".svg") return false;
-	if (image.ext === ".jpg" || image.ext === ".jpeg") return false;
-	if (!image.width || !image.height) return false;
-	if (image.width < 240 || image.height < 240) return false;
-	if (image.width * image.height < 180_000) return false;
+const isRasterImage = (image) =>
+	[".png", ".jpg", ".jpeg"].includes(image?.ext ?? "");
+
+const isSquareEnough = (image) => {
+	if (!image?.width || !image.height) return false;
 	const ratio = image.width / image.height;
-	if (ratio < 0.92 || ratio > 1.08) return false;
-	if (image.duplicateCount > 3) return false;
-	const metrics = image.technicalScore;
-	if (!metrics) return false;
-	if (metrics.edgeDensity < 0.045) return false;
-	if (metrics.standardDeviation < 8) return false;
-	if (metrics.lightRatio > 0.98 || metrics.darkRatio > 0.98) return false;
-	if (metrics.entropy > 5.2 && metrics.edgeDensity < 0.34) return false;
-	return true;
+	return ratio >= 0.92 && ratio <= 1.08;
 };
 
-const selectMaterialsForRange = (slides, range, usedImages, maxItems = 4) => {
+const textHasTechnicalSignal = (text) =>
+	/\b(cmd|powershell|sudo|apt|ssh|nmap|netcat|nc|sql|select|http|tcp|udp|dns|firewall|iptables|ufw|wireshark|burp|base64|ascii|unicode|hash|xor|cve|dirty pipe|zero copy|python|bash|json|html|xss)\b/i.test(
+		text,
+	) ||
+	/(数据库|终端|命令|端口|协议|防火墙|权限|进程|注入|编码|解码|漏洞|流量|抓包|密钥|哈希|脚本|函数|变量|文件|目录)/u.test(
+		text,
+	);
+
+const scoreKnowledgeImage = (image) => {
+	if (!image || !isRasterImage(image))
+		return { score: Number.NEGATIVE_INFINITY };
+	if (!image.width || !image.height) return { score: Number.NEGATIVE_INFINITY };
+	const area = image.width * image.height;
+	if (image.width < 120 || image.height < 120 || area < 45_000)
+		return { score: Number.NEGATIVE_INFINITY };
+	const metrics = image.technicalScore;
+	if (!metrics) return { score: Number.NEGATIVE_INFINITY };
+	if (metrics.lightRatio > 0.995 || metrics.darkRatio > 0.995)
+		return { score: Number.NEGATIVE_INFINITY };
+
+	const text = image.ocrText ?? "";
+	const hasUsefulText = isUsefulOcrText(text);
+	const hasCode = hasUsefulText && looksLikeCode(text);
+	const hasTechnicalText = hasUsefulText && textHasTechnicalSignal(text);
+	const lines = text.split("\n").filter(Boolean).length;
+	const ratio = image.width / image.height;
+	const isDiagramShape = ratio > 1.25 || ratio < 0.8;
+
+	let score = 0;
+	if (hasUsefulText)
+		score += Math.min(4.5, 1.4 + lines * 0.35 + text.length / 260);
+	if (hasCode) score += 2.2;
+	if (hasTechnicalText) score += 1.4;
+	if (metrics.edgeDensity > 0.08)
+		score += Math.min(2.4, metrics.edgeDensity * 6);
+	if (metrics.standardDeviation > 18)
+		score += Math.min(1.4, metrics.standardDeviation / 38);
+	if (metrics.darkRatio > 0.08 && metrics.lightRatio > 0.08) score += 0.7;
+	if (isDiagramShape && (hasUsefulText || metrics.edgeDensity > 0.16))
+		score += 0.9;
+	if (isSquareEnough(image)) score += 0.25;
+	if (image.duplicateCount > 3) score -= 2.2;
+	if (image.duplicateCount > 6) score -= 2.8;
+	if (!hasUsefulText && metrics.entropy > 5.45 && metrics.edgeDensity < 0.26)
+		score -= 3.4;
+	if (!hasUsefulText && metrics.edgeDensity < 0.055) score -= 2;
+	if (!hasUsefulText && !isDiagramShape && metrics.entropy > 4.9) score -= 1.2;
+
+	return {
+		score,
+		hasUsefulText,
+		hasCode,
+		visual: score >= (hasUsefulText ? 3.2 : 3.8),
+	};
+};
+
+const ensureSquareRenderImage = async (image) => {
+	if (!image || !isRasterImage(image)) return image;
+	if (isSquareEnough(image)) {
+		image.renderSrc = image.src;
+		return image;
+	}
+
+	const outSrc = image.src.replace(/\.[^.]+$/u, "-square.png");
+	const outPath = image.filePath.replace(/\.[^.]+$/u, "-square.png");
+	await sharp(image.filePath)
+		.resize({
+			width: 1024,
+			height: 1024,
+			fit: "contain",
+			background: { r: 9, g: 15, b: 24, alpha: 1 },
+		})
+		.png({ compressionLevel: 9 })
+		.toFile(outPath);
+	image.renderSrc = outSrc;
+	image.sourceSrc = image.src;
+	return image;
+};
+
+const selectMaterialsForRange = async (
+	slides,
+	range,
+	usedImages,
+	slideTextItems = [],
+	maxItems = 5,
+) => {
 	const [start, end] = range;
-	const images = [];
-	const texts = [];
+	const textHeavySlides = new Set(
+		slideTextItems
+			.filter((item) => item.lines.join("").length > 80)
+			.map((item) => item.slide),
+	);
+	const candidates = [];
 	for (let slide = start; slide <= end; slide += 1) {
 		const slideImages = slides.get(slide);
 		if (!slideImages?.length) continue;
 		for (const image of slideImages) {
 			if (usedImages.has(image.src)) continue;
-			if (image.ocrText) {
-				texts.push({
-					src: image.src,
-					text: image.ocrText,
-					kind: image.ocrKind,
-				});
-				usedImages.add(image.src);
-				if (texts.length + images.length >= maxItems) return { images, texts };
-				continue;
-			}
-			if (!isRelevantImage(image)) continue;
-			images.push(image);
-			usedImages.add(image.src);
-			if (texts.length + images.length >= maxItems) return { images, texts };
+			const assessment = scoreKnowledgeImage(image);
+			candidates.push({ image, ...assessment });
 		}
 	}
+	candidates.sort((a, b) => b.score - a.score);
+
+	const images = [];
+	const texts = [];
+	const usedForText = new Set();
+	for (const candidate of candidates) {
+		if (!candidate.hasUsefulText) continue;
+		if (texts.length >= 3) break;
+		if (candidate.score < 2.4 && !candidate.hasCode) continue;
+		texts.push({
+			src: candidate.image.src,
+			text: candidate.image.ocrText,
+			kind: candidate.image.ocrKind,
+		});
+		usedForText.add(candidate.image.src);
+		usedImages.add(candidate.image.src);
+		if (texts.length + images.length >= maxItems) break;
+	}
+
+	const chosenVisualSources = new Set();
+	for (const candidate of candidates) {
+		if (!candidate.visual) continue;
+		if (
+			textHeavySlides.has(candidate.image.slide) &&
+			!candidate.hasUsefulText &&
+			candidate.score < 5.2
+		)
+			continue;
+		if (chosenVisualSources.has(candidate.image.src)) continue;
+		if (
+			usedImages.has(candidate.image.src) &&
+			!usedForText.has(candidate.image.src)
+		)
+			continue;
+		if (images.length >= 2 || texts.length + images.length >= maxItems) break;
+		const image = await ensureSquareRenderImage(candidate.image);
+		images.push(image);
+		chosenVisualSources.add(image.src);
+		usedImages.add(image.src);
+		if (image.renderSrc) usedImages.add(image.renderSrc);
+		if (image.sourceSrc) usedImages.add(image.sourceSrc);
+	}
+
+	for (const src of usedForText) usedImages.add(src);
 	return { images, texts };
+};
+
+const renderSlideTextBlock = (items, lang) => {
+	if (lang !== "zh" || !items.length) return "";
+	const lines = [
+		"### PPT 文字要点",
+		"",
+		"> 下面是从原 PPT 可编辑文字层整理出的内容；能写成文字的，就不强行塞截图。",
+		"",
+	];
+	items.forEach((item) => {
+		lines.push(`#### 第 ${item.slide} 页：${displaySlideTitle(item)}`, "");
+		const text = item.lines.join("\n");
+		if (looksLikeCode(text)) {
+			lines.push(`\`\`\`${codeFenceLanguage(text)}`, text, "```", "");
+			return;
+		}
+		for (const line of item.lines) lines.push(`- ${line}`);
+		lines.push("");
+	});
+	return lines.join("\n").trimEnd();
 };
 
 const renderExtractedTextBlock = (items, lang) => {
@@ -1360,7 +1689,7 @@ const renderExtractedTextBlock = (items, lang) => {
 			);
 		}
 		if (item.kind === "code") {
-			lines.push("```text", item.text, "```", "");
+			lines.push(`\`\`\`${codeFenceLanguage(item.text)}`, item.text, "```", "");
 			return;
 		}
 		for (const line of item.text.split("\n")) {
@@ -1373,13 +1702,20 @@ const renderExtractedTextBlock = (items, lang) => {
 
 const renderImageBlock = (images, lang) => {
 	if (!images.length) return "";
-	const lines = [lang === "zh" ? "### 相关图片" : "### Related Images", ""];
+	const lines = [
+		lang === "zh" ? "### 相关图解" : "### Related Visuals",
+		"",
+		lang === "zh"
+			? "> 这些图是为了辅助理解结构、命令输出或表格关系；装饰图已经尽量排除。"
+			: "> These visuals are kept for structure, command output, or tables; decorative images are intentionally filtered out.",
+		"",
+	];
 	images.forEach((image, index) => {
 		const alt =
 			lang === "zh"
 				? `课程相关截图 ${index + 1}`
 				: `Course-related screenshot ${index + 1}`;
-		lines.push(`![${alt}](${image.src})`);
+		lines.push(`![${alt}](${image.renderSrc ?? image.src})`);
 	});
 	return lines.join("\n");
 };
@@ -1463,6 +1799,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 		frontmatter.body,
 		join(postsDir, slug),
 	);
+	const slideTexts = collectSlideTextMap(frontmatter.body);
 	const usedImages = new Set();
 	const description = `${guide.lead} / ${guide.enLead}`;
 
@@ -1481,7 +1818,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 		`**原 PPT 日期：** ${date}`,
 		"",
-		"> 本文由社团课程 PPT 整理为阅读版讲义，只保留与正文知识点相关的截图、命令行画面、表格或结构图，并补充课堂讲解、学习目标和练习方向。",
+		"> 这里不是 PPT 逐页搬运版，而是把课堂主线重新整理成阅读版讲义：能用文字讲清楚的就写成文字；图片只保留终端、结构图、代码、表格和关键截图。",
 		"",
 		"## 导读",
 		"",
@@ -1493,17 +1830,39 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 	];
 
-	guide.sections.forEach((item, index) => {
-		const sectionMaterials = guide.hideImages
+	const sectionMaterialsList = [];
+	for (const item of guide.sections) {
+		const slideTextItems = selectSlideTextForRange(slideTexts, item.slides);
+		const visualMaterials = guide.hideImages
 			? { images: [], texts: [] }
-			: selectMaterialsForRange(slides, item.slides, usedImages);
+			: await selectMaterialsForRange(
+					slides,
+					item.slides,
+					usedImages,
+					slideTextItems,
+				);
+		sectionMaterialsList.push(
+			guide.hideImages
+				? { images: [], texts: [], slideTexts: slideTextItems }
+				: { ...visualMaterials, slideTexts: slideTextItems },
+		);
+	}
+
+	for (const [index, item] of guide.sections.entries()) {
+		const sectionMaterials = sectionMaterialsList[index];
 		lines.push(`## ${index + 1}. ${item.title}`, "");
 		for (const paragraph of item.paragraphs) lines.push(paragraph, "");
+		lines.push(`> 小旁白：${asideFor("zh", slug, index)}`, "");
+		const renderedSlideText = renderSlideTextBlock(
+			sectionMaterials.slideTexts,
+			"zh",
+		);
+		if (renderedSlideText) lines.push(renderedSlideText, "");
 		const renderedText = renderExtractedTextBlock(sectionMaterials.texts, "zh");
 		if (renderedText) lines.push(renderedText, "");
 		const renderedImages = renderImageBlock(sectionMaterials.images, "zh");
 		if (renderedImages) lines.push(renderedImages, "");
-	});
+	}
 
 	lines.push("## 课堂练习", "", renderList(guide.practice), "", ":::", "");
 
@@ -1513,7 +1872,7 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 		`**Original PPT date:** ${date}`,
 		"",
-		"> This article turns the original slides into readable course notes. It keeps only content-related screenshots, terminal captures, tables, or diagrams, and adds presenter-style explanations.",
+		"> This is not a slide-by-slide dump. It rebuilds the lesson as readable notes: text whenever text is clearer, and visuals only when they explain terminals, diagrams, code, tables, or key evidence.",
 		"",
 		"## Overview",
 		"",
@@ -1525,19 +1884,17 @@ for (const [slug, guide] of Object.entries(guides)) {
 		"",
 	);
 
-	usedImages.clear();
-	guide.sections.forEach((item, index) => {
-		const sectionMaterials = guide.hideImages
-			? { images: [], texts: [] }
-			: selectMaterialsForRange(slides, item.slides, usedImages);
+	for (const [index, item] of guide.sections.entries()) {
+		const sectionMaterials = sectionMaterialsList[index];
 		lines.push(`## ${index + 1}. ${item.enTitle}`, "");
 		for (const paragraph of item.enParagraphs ?? englishParagraphsFor(item))
 			lines.push(paragraph, "");
+		lines.push(`> Side note: ${asideFor("en", slug, index)}`, "");
 		const renderedText = renderExtractedTextBlock(sectionMaterials.texts, "en");
 		if (renderedText) lines.push(renderedText, "");
 		const renderedImages = renderImageBlock(sectionMaterials.images, "en");
 		if (renderedImages) lines.push(renderedImages, "");
-	});
+	}
 
 	lines.push(
 		"## Practice",
