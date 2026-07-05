@@ -4,7 +4,7 @@ author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-09-24
 description: "Linux 基础课把发行版、Shell、文件系统、SSH、用户和权限串起来。它的重点不是记住某个命令，而是理解命令为什么能控制系统资源。 / Linux basics connect distributions, shell, filesystems, SSH, users, and permissions. The point is to understand why commands control resources."
 image: "./images/slide-01-01.jpeg"
-tags: ["Linux", "Bash", "Shell", "SSH", "File System", "Users", "Permissions"]
+tags: ["Linux", "Bash", "SSH", "Permissions"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

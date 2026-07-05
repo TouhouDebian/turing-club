@@ -4,7 +4,7 @@ author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-02
 description: "信息收集与枚举上半部分先讲被动信息收集：尽量不直接接触目标系统，通过公开资料、搜索引擎、域名和网页痕迹建立目标画像。 / Part 1 focuses on passive reconnaissance: building a target profile from public information before touching the target."
 image: "./images/slide-12-36.jpeg"
-tags: ["OSINT", "Reconnaissance", "Information Gathering", "Search Engines", "Domains", "Passive Reconnaissance"]
+tags: ["OSINT", "Reconnaissance", "Search Engines", "Domains"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

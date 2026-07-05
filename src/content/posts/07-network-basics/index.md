@@ -3,7 +3,7 @@ title: "07 网络基础 / Networking Basics"
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-11-17
 description: "网络基础课从“送快递”的比喻讲起，把 TCP/IP、常见协议、流量分析和 VPN 串成一张地图。安全学习离不开网络，因为攻击和防御都需要在流量中留下痕迹。 / Networking basics connect TCP/IP, protocols, traffic analysis, and VPN through the idea of delivering packets."
-tags: ["Networking", "TCP/IP", "TCP", "UDP", "DNS", "HTTP", "Packet Analysis"]
+tags: ["Networking", "TCP/IP", "DNS", "HTTP", "Packet Analysis"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

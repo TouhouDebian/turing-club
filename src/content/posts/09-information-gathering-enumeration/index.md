@@ -4,7 +4,7 @@ author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-09
 description: "完整的信息收集与枚举课程在被动收集之后加入主动枚举、自动化和作业设计。重点是把零散线索转成可验证的资产清单。 / The full lesson moves from passive reconnaissance to active enumeration and automation, turning clues into an asset inventory."
 image: "./images/slide-16-49.jpeg"
-tags: ["OSINT", "Enumeration", "Reconnaissance", "Google Hacking", "DNS", "Port Scanning", "Asset Discovery"]
+tags: ["OSINT", "Enumeration", "Google Hacking", "DNS", "Port Scanning"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

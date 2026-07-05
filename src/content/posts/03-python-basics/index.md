@@ -3,7 +3,7 @@ title: "03 Python基础(副社长presentation) / Python Basics"
 author: "2023届 Jack Zhang / Class of 2023 Jack Zhang"
 published: 2025-10-15
 description: "Python 基础课服务于后续自动化、安全脚本和数据处理。初学时应优先理解变量、流程控制、函数和调试，而不是急着写很长的程序。 / Python basics support automation, security scripting, and data processing. Variables, control flow, functions, and debugging come first."
-tags: ["Python", "Programming", "Variables", "Control Flow", "Functions", "Automation"]
+tags: ["Python", "Programming", "Control Flow", "Automation"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

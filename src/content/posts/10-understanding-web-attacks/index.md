@@ -3,7 +3,7 @@ title: "10 了解Web攻击 / Understanding Web Attacks"
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-09
 description: "Web 攻击入门课围绕数据库、SQL 注入和 XSS 展开。它的核心是理解用户输入如何进入服务器、数据库和浏览器，并在错误处理时造成安全影响。 / This web security lesson focuses on databases, SQL injection, and XSS: how input moves through server, database, and browser."
-tags: ["Web Security", "SQL Injection", "XSS", "Database", "OWASP", "Web Defense"]
+tags: ["Web Security", "SQL Injection", "XSS", "Database", "OWASP"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

@@ -4,7 +4,7 @@ author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-12-02
 description: "攻击技术简介课用于建立攻防视角：攻击链通常包含信息收集、漏洞利用、权限扩大、维持访问和清理痕迹等环节。学习这些内容的目的，是更好地理解防御重点。 / This lesson introduces attack stages so learners can understand what defenders need to observe and prevent."
 image: "./images/slide-04-01.jpeg"
-tags: ["Attack Techniques", "Reconnaissance", "Exploitation", "Social Engineering", "Vulnerability", "Defense"]
+tags: ["Attack Techniques", "Reconnaissance", "Exploitation", "Social Engineering", "Defense"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

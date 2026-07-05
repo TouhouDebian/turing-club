@@ -4,7 +4,7 @@ author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-10-15
 description: "数据转换基础课解决一个常见困惑：安全题目中的字符串为什么会变成二进制、十六进制、Base64 或 JSON。理解编码不是炫技，而是为了还原数据本来的含义。 / Data conversion explains why strings appear as binary, hex, Base64, Unicode, or JSON in security tasks."
 image: "./images/slide-09-21.jpeg"
-tags: ["Data Encoding", "Binary", "Hex", "ASCII", "Unicode", "Base64", "JSON"]
+tags: ["Data Encoding", "Binary", "Hex", "Base64", "Unicode"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

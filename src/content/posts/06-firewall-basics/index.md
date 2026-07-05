@@ -3,7 +3,7 @@ title: "06 防火墙基础 / Firewall Basics"
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2025-11-10
 description: "防火墙基础课讨论流量如何被允许、拒绝、记录和分段。它不是一道万能墙，而是一套基于规则、场景和日志的访问控制方法。 / Firewall basics explain how traffic is allowed, denied, logged, and segmented through rules and policy."
-tags: ["Firewall", "Network Security", "Access Control", "Ports", "Traffic Filtering", "Defense"]
+tags: ["Firewall", "Network Security", "Traffic Filtering", "Ports"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

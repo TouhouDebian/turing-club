@@ -3,7 +3,7 @@ title: "12 防御注入攻击 / Defending Against Injection Attacks"
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-04-22
 description: "防御注入攻击课程从攻击原理转向修复方法：不要让用户输入直接改变命令、查询或解释器语义。核心防线是参数化、校验、最小权限和持续维护。 / Defending injection means preventing user input from changing query, command, or interpreter semantics."
-tags: ["SQL Injection", "Input Validation", "Parameterized Query", "Secure Coding", "Web Defense"]
+tags: ["SQL Injection", "Input Validation", "Parameterized Query", "Web Defense"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

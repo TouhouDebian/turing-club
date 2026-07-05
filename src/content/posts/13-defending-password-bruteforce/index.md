@@ -3,7 +3,7 @@ title: "13 防御密码爆破 / Defending Against Password Brute Force"
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-04-22
 description: "防御密码爆破课程关注认证系统如何抵抗大量猜测。重点不是让密码规则越来越复杂，而是组合限速、锁定、MFA、监控和用户体验。 / Defending brute force attacks combines rate limiting, lockout, MFA, monitoring, and usable authentication design."
-tags: ["Password Security", "Brute Force", "Authentication", "MFA", "Rate Limiting", "Defense"]
+tags: ["Password Security", "Brute Force", "Authentication", "MFA", "Rate Limiting"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

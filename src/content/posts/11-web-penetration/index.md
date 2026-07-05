@@ -3,7 +3,7 @@ title: "11 Web渗透 / Web Penetration Testing"
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-01-26
 description: "Web 渗透课程以 Netcat 和考试式练习为入口，强调工具只是手段，真正要训练的是网络连接、输入输出、证据记录和边界意识。 / This lesson uses Netcat and exam-style practice to train connections, input/output, evidence, and boundaries."
-tags: ["Web Penetration Testing", "Netcat", "Reverse Shell", "HTTP", "Vulnerability Assessment", "Ethics"]
+tags: ["Web Penetration Testing", "Netcat", "Reverse Shell", "HTTP"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

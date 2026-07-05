@@ -3,7 +3,7 @@ title: "Cynthia Li 蜜罐 / Honeypots"
 author: "2024届 Cynthia Li / Class of 2024 Cynthia Li"
 published: 2026-01-21
 description: "蜜罐课程从主动防御角度介绍如何用诱饵系统收集威胁情报。它把传统蜜罐、IoT 蜜罐、云蜜罐、AI 自适应防御和未来趋势连接起来。 / This honeypot lesson explains deception-based active defense, from traditional systems to IoT, cloud, AI, and future trends."
-tags: ["Honeypot", "Threat Intelligence", "Deception", "IoT Security", "AI Security", "Active Defense"]
+tags: ["Honeypot", "Threat Intelligence", "Deception", "Active Defense"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

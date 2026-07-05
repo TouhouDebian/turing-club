@@ -3,7 +3,7 @@ title: "15 处理事情与交接权限 / Handling Tasks and Handover Permissions
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-04-28
 description: "交接与权限处理课偏向社团运营和工程习惯：任务交付、权限移交、文档记录、AI 使用边界和活动收尾，都会影响项目能否长期运转。 / This operations lesson covers task handover, permission transfer, documentation, AI boundaries, and sustainable club workflow."
-tags: ["Operations", "Handover", "Permissions", "Account Security", "Documentation", "Governance"]
+tags: ["Operations", "Handover", "Permissions", "Account Security"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---

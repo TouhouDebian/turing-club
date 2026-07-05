@@ -3,7 +3,7 @@ title: "14 防御跨站脚本(XSS)攻击 / Defending Against Cross-Site Scriptin
 author: "2023届 Simon Li / Class of 2023 Simon Li"
 published: 2026-04-22
 description: "防御 XSS 课程把重点放在输出上下文、编码、CSP 和安全开发习惯上。XSS 防御不是简单删除 `<script>`，而是系统性管理不可信内容。 / Defending XSS requires output-context encoding, CSP, secure rendering, and careful handling of untrusted content."
-tags: ["XSS", "CSP", "Output Encoding", "Frontend Security", "Web Defense", "Secure Coding"]
+tags: ["XSS", "CSP", "Output Encoding", "Frontend Security"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
 ---
