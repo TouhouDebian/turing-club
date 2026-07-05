@@ -5,7 +5,6 @@ import Navbar from "@components/Navbar.astro";
 import SideBar from "@components/widget/SideBar.astro";
 import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
-import ImageWrapper from "../components/misc/ImageWrapper.astro";
 import TOC from "../components/widget/TOC.astro";
 import { siteConfig } from "../config";
 import {
@@ -35,6 +34,8 @@ const {
 const hasBannerCredit =
 	siteConfig.banner.enable && siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
+const bannerLightSrc = siteConfig.banner.lightSrc ?? siteConfig.banner.src;
+const bannerPosition = siteConfig.banner.position ?? "center";
 
 const mainPanelTop = siteConfig.banner.enable
 	? `calc(${BANNER_HEIGHT}vh - ${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem)`
@@ -53,10 +54,24 @@ const mainPanelTop = siteConfig.banner.enable
 
 <!-- Banner -->
 {siteConfig.banner.enable && <div id="banner-wrapper" class={`absolute z-10 w-full transition duration-700 overflow-hidden`} style={`top: -${BANNER_HEIGHT_EXTEND}vh`}>
-    <ImageWrapper id="banner" alt="Banner image of the blog" class:list={["object-cover h-full transition duration-700 opacity-0 scale-105"]}
-                  src={siteConfig.banner.src} position={siteConfig.banner.position}
-    >
-    </ImageWrapper>
+    <div id="banner" class="relative h-full transition duration-700 opacity-0 scale-105">
+        <img
+            class:list={["absolute inset-0 h-full w-full object-cover banner-dark"]}
+            src={siteConfig.banner.src}
+            alt="Banner image of the blog"
+            style={`object-position: ${bannerPosition}`}
+            loading="eager"
+            decoding="async"
+        />
+        <img
+            class:list={["absolute inset-0 h-full w-full object-cover banner-light"]}
+            src={bannerLightSrc}
+            alt="Banner image of the blog"
+            style={`object-position: ${bannerPosition}`}
+            loading="eager"
+            decoding="async"
+        />
+    </div>
     <div id="banner-bottom-fade" aria-hidden="true"></div>
 </div>}
 
@@ -126,6 +141,27 @@ const mainPanelTop = siteConfig.banner.enable
 </Layout>
 
 <style>
+    #banner {
+        overflow: hidden;
+    }
+    #banner img {
+        object-position: center;
+    }
+    #banner .banner-light {
+        display: none;
+    }
+    :root:not(.dark) #banner .banner-dark {
+        display: none;
+    }
+    :root:not(.dark) #banner .banner-light {
+        display: block;
+    }
+    :root.dark #banner .banner-dark {
+        display: block;
+    }
+    :root.dark #banner .banner-light {
+        display: none;
+    }
     #banner-bottom-fade {
         position: absolute;
         inset-inline: 0;

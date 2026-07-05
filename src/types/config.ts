@@ -23,6 +23,7 @@ export type SiteConfig = {
 	banner: {
 		enable: boolean;
 		src: string;
+		lightSrc?: string;
 		position?: string;
 		credit: {
 			enable: boolean;
