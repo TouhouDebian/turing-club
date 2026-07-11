@@ -28,8 +28,12 @@ const removeTailingHash = (text: string) => {
 };
 
 const maxLevel = siteConfig.toc.depth;
+// Punctuation, emoji, and accented Latin letters do not determine a heading's
+// language. Only treat it as Chinese when it actually contains CJK text.
 const isEnglishHeading = (text: string) =>
-	!/[^\u0020-\u007E]/u.test(removeTailingHash(text).trim());
+	!/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(
+		removeTailingHash(text).trim(),
+	);
 
 let zhHeading1Count = 1;
 let enHeading1Count = 1;
