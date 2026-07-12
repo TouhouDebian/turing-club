@@ -2,9 +2,9 @@
 title: "本站“备案号”背后的故事 / The story behind the registration number"
 author: '2024届 Bob Gong / Class of 2024 Bob Gong'
 published: 2026-07-11
-description: '此文为本站第一篇纯手敲的文章。 / This is the first article on this site to be written entirely by hand.'
-image: './images/1912.png'
-tags: ["萌icp备", "anecdote", "THDeb", "1912"]
+description: '此文为本站第一篇纯手敲的文章。想不到一个不到一年历史，仅有俩人的高中社团已经是一个有故事的社团了^_^; / This is the first article on this site to be written entirely by hand. Unexpectedly, a high school club with a history of less than a year and only two people is already a club with a story^_^;'
+image: ''
+tags: ["萌icp备", "anecdote", "1912", "apologize"]
 category: '本站故事 / The story'
 draft: false 
 ---
@@ -21,7 +21,7 @@ draft: false
 
 ![图示 1](./images/bilibili.png)
 
-等等！居然也是个车万众！？
+> 等等！居然也是个车万众！？
 
 当留意到来自另外一个城市的新朋友为了联系上一个“陌生人”，从QQ查到我的博客（目前宕机中）再到我的B站发私信，花了不小的力气，我明白这不是简单的机缘巧合。如果对方并不在意这件事，也许我们不会有机会见面吧。
 
@@ -35,7 +35,7 @@ draft: false
 
 :::section{.lang-en}
 
-> My first time writing an article the traditional way, without Codex. It took much more effort than I expected. I really need to improve the default instructions later...
+> My first time writing an article the traditional way, without Codex. Althogh I used Google Translate to translate this article to English. It took much more effort than I expected. I really need to improve the default instructions later...
 
 # On behalf of the entire club, I apologize for “stealing” the registration number from Tianjin No. 4 High School’s introduction page 🙇
 
@@ -45,7 +45,7 @@ That evening, after finishing my TOEFL study and getting home, I opened Bilibili
 
 ![Illustration 1](./images/bilibili.png)
 
-Wait, he is a Touhou fan too?!
+> Wait, he is a Touhou fan too?!
 
 When I realized how much effort this new friend from another city had made to contact a “stranger”—tracing my QQ profile to my blog (currently offline), then finding me on Bilibili and sending me a private message, I understood that this was more than a simple coincidence. If they had not cared about the matter, perhaps we would never have had the chance to meet.
 
