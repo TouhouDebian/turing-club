@@ -3,7 +3,7 @@ title: "本站“备案号”背后的故事 / The story behind the registration
 author: '2024届 Bob Gong / Class of 2024 Bob Gong'
 published: 2026-07-11
 description: '此文为本站第一篇纯手敲的文章。想不到一个不到一年历史，仅有俩人的高中社团已经是一个有故事的社团了^_^; / This is the first article on this site to be written entirely by hand. Unexpectedly, a high school club with a history of less than a year and only two people is already a club with a story^_^;'
-image: ''
+image: './images/vs.png'
 tags: ["萌icp备", "anecdote", "1912", "apologize"]
 category: '本站故事 / The story'
 draft: false 
@@ -30,7 +30,7 @@ draft: false
 2024届副社长  
 2026年7月11日23点11分
 
-![图示 2](./images/vs.png)
+
 
 
 :::
@@ -56,7 +56,7 @@ That is all I have time to write to make sure the story is still fresh...
 Vice President, Class of 2024  
 11:11 p.m., July 11, 2026
 
-![Illustration 2](./images/vs.png)
+
 
 
 :::
