@@ -3,8 +3,27 @@ import LinkDirectory from "../../components/LinkDirectory.astro";
 
 const iconSrc = "/links/tianyi-high-school.png";
 const entries = [
-	{ titleZh: "本校官网", titleEn: "School Website", descriptionZh: "江苏省天一中学官方信息发布入口。", descriptionEn: "The official information portal of Jiangsu Tianyi High School.", href: "https://www.tyzx.com.cn/", displayText: "www.tyzx.com.cn", iconSrc, external: true },
-	{ titleZh: "学校非官方维基", titleEn: "Unofficial School Wiki", descriptionZh: "由同学共同维护的非官方知识库。", descriptionEn: "An unofficial knowledge base maintained by students.", href: "https://tyapwiki.cc.cd/", displayText: "tyapwiki.cc.cd", iconSrc, external: true },
+	{
+		titleZh: "本校官网",
+		titleEn: "School Website",
+		descriptionZh: "江苏省天一中学官方信息发布入口。",
+		descriptionEn:
+			"The official information portal of Jiangsu Tianyi High School.",
+		href: "https://www.tyzx.com.cn/",
+		displayText: "www.tyzx.com.cn",
+		iconSrc,
+		external: true,
+	},
+	{
+		titleZh: "学校非官方维基",
+		titleEn: "Unofficial School Wiki",
+		descriptionZh: "由同学共同维护的非官方知识库。",
+		descriptionEn: "An unofficial knowledge base maintained by students.",
+		href: "https://tyapwiki.cc.cd/",
+		displayText: "tyapwiki.cc.cd",
+		iconSrc,
+		external: true,
+	},
 ];
 ---
 <LinkDirectory titleZh="本校相关" titleEn="Tianyi High School" backHref="/links/" backZh="返回友链分类" backEn="Back to categories" entries={entries} />
