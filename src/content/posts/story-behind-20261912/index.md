@@ -25,11 +25,13 @@ draft: false
 
 当留意到来自另外一个城市的新朋友为了联系上一个“陌生人”，从QQ查到我的博客（目前宕机中）再到我的B站发私信，花了不小的力气，我明白这不是简单的机缘巧合。如果对方并不在意这件事，也许我们不会有机会见面吧。
 
+为了时效性，无奈只能先写这么多了...
+
 2024届副社长  
 2026年7月11日23点11分
 
 ![图示 2](./images/vs.png)
-###### 为了时效性，只能写这么多了( ´▽` )
+
 
 :::
 
@@ -49,11 +51,13 @@ That evening, after finishing my TOEFL study and getting home, I opened Bilibili
 
 When I realized how much effort this new friend from another city had made to contact a “stranger”—tracing my QQ profile to my blog (currently offline), then finding me on Bilibili and sending me a private message, I understood that this was more than a simple coincidence. If they had not cared about the matter, perhaps we would never have had the chance to meet.
 
+That is all I have time to write to make sure the story is still fresh...
+
 Vice President, Class of 2024  
 11:11 p.m., July 11, 2026
 
 ![Illustration 2](./images/vs.png)
-###### That is all I have time to write while the story is still fresh ( ´▽` )
+
 
 :::
 
