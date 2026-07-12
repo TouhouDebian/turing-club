@@ -1,0 +1,10 @@
+---
+import LinkDirectory from "../../../components/LinkDirectory.astro";
+
+const entries = [{
+	titleZh: "天津市第四中学", titleEn: "Tianjin No.4 High School",
+	descriptionZh: "查看学校介绍与学校 Wiki。", descriptionEn: "Open the introduction and wiki links.",
+	href: "/links/external/tianjin-no4/", displayText: "2 个站点 / 2 sites", iconSrc: "/links/tianjin-no4-high-school.png",
+}];
+---
+<LinkDirectory titleZh="外校友链" titleEn="Other Schools" backHref="/links/" backZh="返回友链分类" backEn="Back to categories" entries={entries} />

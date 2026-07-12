@@ -1,0 +1,10 @@
+---
+import LinkDirectory from "../../../components/LinkDirectory.astro";
+
+const iconSrc = "/links/tianjin-no4-high-school.png";
+const entries = [
+	{ titleZh: "学校介绍", titleEn: "School Introduction", descriptionZh: "天津市第四中学相关介绍页面。", descriptionEn: "An introduction page for Tianjin No.4 High School.", href: "https://tj4z.myfxhy.top/", displayText: "tj4z.myfxhy.top", iconSrc, external: true },
+	{ titleZh: "学校Wiki", titleEn: "School Wiki", descriptionZh: "天津市第四中学相关 Wiki。", descriptionEn: "A wiki for Tianjin No.4 High School.", href: "https://wiki.myfxhy.top/", displayText: "wiki.myfxhy.top", iconSrc, external: true },
+];
+---
+<LinkDirectory titleZh="天津市第四中学" titleEn="Tianjin No.4 High School" backHref="/links/external/" backZh="返回外校友链" backEn="Back to other schools" entries={entries} />

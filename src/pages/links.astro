@@ -100,13 +100,13 @@ const randomFriendUrls = [
 
 		<section class="link-view" data-link-view="root">
 			<div class="friend-grid">
-				<button class="card-base friend-card category-card" type="button" data-open-view="local">
+				<a class="card-base friend-card category-card" href="/links/local/">
 					<div class="friend-icon image-icon">
 						<img src={localSchoolIcon} alt="" />
 					</div>
 					<div class="friend-copy">
 						<h2>
-							<span class="lang-zh">本校（江苏省天一中学）相关</span>
+							<span class="lang-zh">本校相关</span>
 							<span class="lang-en">Tianyi High School</span>
 						</h2>
 						<p class="lang-zh">本校官网与同学维护的非官方维基。</p>
@@ -119,9 +119,9 @@ const randomFriendUrls = [
 					<div class="friend-arrow" aria-hidden="true">
 						<Icon name="material-symbols:chevron-right-rounded" class="text-[1.7rem]" />
 					</div>
-				</button>
+				</a>
 
-				<button class="card-base friend-card category-card" type="button" data-open-view="external">
+				<a class="card-base friend-card category-card" href="/links/external/">
 					<div class="friend-icon image-icon">
 						<img src={externalSchoolIcon} alt="" />
 					</div>
@@ -140,125 +140,10 @@ const randomFriendUrls = [
 					<div class="friend-arrow" aria-hidden="true">
 						<Icon name="material-symbols:chevron-right-rounded" class="text-[1.7rem]" />
 					</div>
-				</button>
+				</a>
 			</div>
 		</section>
 
-		<section class="link-view" data-link-view="local" hidden>
-			<div class="subpage-toolbar">
-				<button type="button" class="back-button" data-back-view="root">
-					<Icon name="material-symbols:arrow-back-rounded" class="text-[1.15rem]" />
-					<span class="lang-zh">返回友链分类</span>
-					<span class="lang-en">Back to categories</span>
-				</button>
-				<h2>
-					<span class="lang-zh">本校（江苏省天一中学）相关</span>
-					<span class="lang-en">Tianyi High School</span>
-				</h2>
-			</div>
-			<div class="friend-grid">
-				{localLinks.map((link) => (
-					<a
-						class="card-base friend-card"
-						href={link.url}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<div class="friend-icon image-icon">
-							<img src={link.iconSrc} alt="" />
-						</div>
-						<div class="friend-copy">
-							<h2>
-								<span class="lang-zh">{link.titleZh}</span>
-								<span class="lang-en">{link.titleEn}</span>
-							</h2>
-							<p class="lang-zh">{link.descriptionZh}</p>
-							<p class="lang-en">{link.descriptionEn}</p>
-							<div class="friend-url">{link.displayUrl}</div>
-						</div>
-						<div class="friend-arrow" aria-hidden="true">
-							<Icon name="material-symbols:chevron-right-rounded" class="text-[1.7rem]" />
-						</div>
-					</a>
-				))}
-			</div>
-		</section>
-
-		<section class="link-view" data-link-view="external" hidden>
-			<div class="subpage-toolbar">
-				<button type="button" class="back-button" data-back-view="root">
-					<Icon name="material-symbols:arrow-back-rounded" class="text-[1.15rem]" />
-					<span class="lang-zh">返回友链分类</span>
-					<span class="lang-en">Back to categories</span>
-				</button>
-				<h2>
-					<span class="lang-zh">外校友链</span>
-					<span class="lang-en">Other Schools</span>
-				</h2>
-			</div>
-			<div class="friend-grid">
-				<button class="card-base friend-card category-card" type="button" data-open-view="tj4">
-					<div class="friend-icon image-icon">
-						<img src={externalSchoolIcon} alt="" />
-					</div>
-					<div class="friend-copy">
-						<h2>
-							<span class="lang-zh">天津市第四中学</span>
-							<span class="lang-en">Tianjin No.4 High School</span>
-						</h2>
-						<p class="lang-zh">查看学校介绍与学校 Wiki。</p>
-						<p class="lang-en">Open the introduction and wiki links.</p>
-						<div class="friend-url">
-							<span class="lang-zh">2 个站点</span>
-							<span class="lang-en">2 sites</span>
-						</div>
-					</div>
-					<div class="friend-arrow" aria-hidden="true">
-						<Icon name="material-symbols:chevron-right-rounded" class="text-[1.7rem]" />
-					</div>
-				</button>
-			</div>
-		</section>
-
-		<section class="link-view" data-link-view="tj4" hidden>
-			<div class="subpage-toolbar">
-				<button type="button" class="back-button" data-back-view="external">
-					<Icon name="material-symbols:arrow-back-rounded" class="text-[1.15rem]" />
-					<span class="lang-zh">返回外校友链</span>
-					<span class="lang-en">Back to other schools</span>
-				</button>
-				<h2>
-					<span class="lang-zh">天津市第四中学</span>
-					<span class="lang-en">Tianjin No.4 High School</span>
-				</h2>
-			</div>
-			<div class="friend-grid">
-				{externalSchoolLinks.map((link) => (
-					<a
-						class="card-base friend-card"
-						href={link.url}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<div class="friend-icon image-icon">
-							<img src={link.iconSrc} alt="" />
-						</div>
-						<div class="friend-copy">
-							<h2>
-								<span class="lang-zh">{link.titleZh}</span>
-								<span class="lang-en">{link.titleEn}</span>
-							</h2>
-							<p class="lang-zh">{link.descriptionZh}</p>
-							<p class="lang-en">{link.descriptionEn}</p>
-							<div class="friend-url">{link.displayUrl}</div>
-						</div>
-						<div class="friend-arrow" aria-hidden="true">
-							<Icon name="material-symbols:chevron-right-rounded" class="text-[1.7rem]" />
-						</div>
-					</a>
-				))}
-			</div>
-		</section>
 	</div>
 </MainGridLayout>
 
@@ -493,26 +378,6 @@ const randomFriendUrls = [
 </style>
 
 <script is:inline define:vars={{ randomFriendUrls }}>
-	const linkViews = document.querySelectorAll("[data-link-view]");
-
-	const showLinkView = (viewName) => {
-		linkViews.forEach((view) => {
-			view.hidden = view.dataset.linkView !== viewName;
-		});
-	};
-
-	document.querySelectorAll("[data-open-view]").forEach((button) => {
-		button.addEventListener("click", () => {
-			showLinkView(button.dataset.openView);
-		});
-	});
-
-	document.querySelectorAll("[data-back-view]").forEach((button) => {
-		button.addEventListener("click", () => {
-			showLinkView(button.dataset.backView);
-		});
-	});
-
 	const randomFriendButton = document.getElementById("random-friend-link");
 	randomFriendButton?.addEventListener("click", () => {
 		if (!Array.isArray(randomFriendUrls) || randomFriendUrls.length === 0) return;

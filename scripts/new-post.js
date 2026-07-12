@@ -53,6 +53,16 @@ category: ''
 draft: false 
 lang: ''
 ---
+
+:::section{.lang-zh}
+
+
+:::
+
+:::section{.lang-en}
+
+
+:::
 `
 
 fs.writeFileSync(path.join(targetDir, fileName), content)

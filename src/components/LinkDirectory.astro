@@ -1,0 +1,81 @@
+---
+import { Icon } from "astro-icon/components";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+interface Entry {
+	titleZh: string;
+	titleEn: string;
+	descriptionZh: string;
+	descriptionEn: string;
+	href: string;
+	displayText: string;
+	iconSrc: string;
+	external?: boolean;
+}
+
+interface Props {
+	titleZh: string;
+	titleEn: string;
+	backHref: string;
+	backZh: string;
+	backEn: string;
+	entries: Entry[];
+}
+
+const { titleZh, titleEn, backHref, backZh, backEn, entries } = Astro.props;
+---
+
+<MainGridLayout title={`${titleZh} / ${titleEn}`} description={`${titleZh} / ${titleEn}`}>
+	<div class="space-y-4">
+		<div class="directory-toolbar">
+			<a href={backHref} class="back-button">
+				<Icon name="material-symbols:arrow-back-rounded" class="text-[1.15rem]" />
+				<span class="lang-zh">{backZh}</span>
+				<span class="lang-en">{backEn}</span>
+			</a>
+			<h1>
+				<span class="lang-zh">{titleZh}</span>
+				<span class="lang-en">{titleEn}</span>
+			</h1>
+		</div>
+		<div class="friend-grid">
+			{entries.map((entry) => (
+				<a
+					class="card-base friend-card"
+					href={entry.href}
+					target={entry.external ? "_blank" : undefined}
+					rel={entry.external ? "noopener noreferrer" : undefined}
+				>
+					<div class="friend-icon"><img src={entry.iconSrc} alt="" /></div>
+					<div class="friend-copy">
+						<h2><span class="lang-zh">{entry.titleZh}</span><span class="lang-en">{entry.titleEn}</span></h2>
+						<p class="lang-zh">{entry.descriptionZh}</p>
+						<p class="lang-en">{entry.descriptionEn}</p>
+						<div class="friend-url">{entry.displayText}</div>
+					</div>
+					<div class="friend-arrow"><Icon name="material-symbols:chevron-right-rounded" class="text-[1.7rem]" /></div>
+				</a>
+			))}
+		</div>
+	</div>
+</MainGridLayout>
+
+<style>
+	.directory-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+	.directory-toolbar h1 { color:rgba(0,0,0,.9); font-size:clamp(1.35rem,3vw,2rem); font-weight:800; margin:0; text-align:right; }
+	:global(.dark) .directory-toolbar h1, :global(.dark) .friend-card { color:rgba(255,255,255,.9); }
+	.back-button { display:inline-flex; align-items:center; justify-content:center; gap:.45rem; border-radius:.75rem; background:color-mix(in oklch,var(--primary) 20%,var(--card-bg)); color:var(--primary); font-weight:800; padding:.85rem 1rem; text-decoration:none; white-space:nowrap; }
+	.back-button:hover { background:color-mix(in oklch,var(--primary) 28%,var(--card-bg)); }
+	.friend-grid { display:grid; gap:1rem; grid-template-columns:repeat(2,minmax(0,1fr)); }
+	.friend-card { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; color:rgba(0,0,0,.9); gap:1rem; padding:1.25rem; text-decoration:none; transition:transform .22s ease,background .22s ease; }
+	.friend-card:hover { background:color-mix(in oklch,var(--card-bg) 88%,var(--primary) 12%); transform:translateY(-2px); }
+	.friend-icon,.friend-arrow { display:grid; place-items:center; border-radius:.75rem; background:color-mix(in oklch,var(--primary) 18%,transparent); color:var(--primary); }
+	.friend-icon { width:4.8rem; aspect-ratio:1; overflow:hidden; }
+	.friend-icon img { width:78%; aspect-ratio:1; border-radius:999px; object-fit:contain; }
+	.friend-arrow { width:2.8rem; height:4.8rem; }
+	.friend-copy h2 { font-size:1.2rem; font-weight:800; margin:0; }
+	.friend-copy p { color:rgba(0,0,0,.58); font-weight:650; line-height:1.45; margin:.35rem 0 0; }
+	:global(.dark) .friend-copy p { color:rgba(255,255,255,.62); }
+	.friend-url { color:var(--primary); font-size:.86rem; font-weight:700; margin-top:.55rem; }
+	@media(max-width:768px) { .directory-toolbar { align-items:flex-start; flex-direction:column; } .directory-toolbar h1 { text-align:left; } .back-button { width:100%; } .friend-grid { grid-template-columns:1fr; } .friend-card { grid-template-columns:auto minmax(0,1fr); } .friend-arrow { display:none; } }
+</style>
