@@ -22,6 +22,27 @@ const runningDays = Math.max(
 	Math.floor((now.getTime() - siteStartDate.getTime()) / 86_400_000),
 );
 
+const formatRunningTime = (totalDays: number, language: "zh" | "en") => {
+	const years = Math.floor(totalDays / 365);
+	const daysAfterYears = totalDays % 365;
+	const months = Math.floor(daysAfterYears / 30);
+	const days = daysAfterYears % 30;
+
+	if (language === "zh") {
+		if (years > 0) return `${years}年${months}个月${days}天`;
+		if (months > 0) return `${months}个月${days}天`;
+		return `${days}天`;
+	}
+
+	const unit = (value: number, singular: string, plural = `${singular}s`) =>
+		`${value} ${value === 1 ? singular : plural}`;
+	if (years > 0) {
+		return `${unit(years, "year")} ${unit(months, "month")} ${unit(days, "day")}`;
+	}
+	if (months > 0) return `${unit(months, "month")} ${unit(days, "day")}`;
+	return unit(days, "day");
+};
+
 const posts = await getSortedPosts();
 const categories = await getCategoryList();
 const tags = await getTagList();
@@ -60,7 +81,10 @@ const stats = [
 		icon: "material-symbols:calendar-clock-outline-rounded",
 		zhLabel: "运营时长",
 		enLabel: "Running",
-		value: `${runningDays.toLocaleString("en-US")}d`,
+		value: "",
+		zhValue: formatRunningTime(runningDays, "zh"),
+		enValue: formatRunningTime(runningDays, "en"),
+		isRunningTime: true,
 	},
 ];
 ---
@@ -76,8 +100,63 @@ const stats = [
                         <span class="lang-en">{item.enLabel}</span>
                     </span>
                 </div>
-                <span class="font-semibold text-[var(--primary)] tabular-nums">{item.value}</span>
+				<span
+					class="font-semibold text-[var(--primary)] tabular-nums"
+					data-running-time={item.isRunningTime ? "" : undefined}
+					data-start-date={item.isRunningTime ? siteStartDate.toISOString() : undefined}
+				>
+					{item.isRunningTime ? (
+						<>
+							<span class="lang-zh" data-running-value="zh">{item.zhValue}</span>
+							<span class="lang-en" data-running-value="en">{item.enValue}</span>
+						</>
+					) : item.value}
+				</span>
             </div>
         ))}
     </div>
 </WidgetLayout>
+
+<script>
+	const updateRunningTime = () => {
+		const container = document.querySelector<HTMLElement>("[data-running-time]");
+		if (!container?.dataset.startDate) return;
+
+		const startTime = new Date(container.dataset.startDate).getTime();
+		const totalDays = Math.max(
+			0,
+			Math.floor((Date.now() - startTime) / 86_400_000),
+		);
+		const years = Math.floor(totalDays / 365);
+		const daysAfterYears = totalDays % 365;
+		const months = Math.floor(daysAfterYears / 30);
+		const days = daysAfterYears % 30;
+		const unit = (value: number, singular: string) =>
+			`${value} ${value === 1 ? singular : `${singular}s`}`;
+
+		const zhValue =
+			years > 0
+				? `${years}年${months}个月${days}天`
+				: months > 0
+					? `${months}个月${days}天`
+					: `${days}天`;
+		const enValue =
+			years > 0
+				? `${unit(years, "year")} ${unit(months, "month")} ${unit(days, "day")}`
+				: months > 0
+					? `${unit(months, "month")} ${unit(days, "day")}`
+					: unit(days, "day");
+
+		const zhElement = container.querySelector<HTMLElement>(
+			'[data-running-value="zh"]',
+		);
+		const enElement = container.querySelector<HTMLElement>(
+			'[data-running-value="en"]',
+		);
+		if (zhElement) zhElement.textContent = zhValue;
+		if (enElement) enElement.textContent = enValue;
+	};
+
+	updateRunningTime();
+	document.addEventListener("astro:page-load", updateRunningTime);
+</script>
