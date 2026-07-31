@@ -118,23 +118,26 @@ const modelData = modelOptions.map((model) => ({
 	<canvas id="live2d-canvas"></canvas>
 	<div id="live2d-status" aria-live="polite">Live2D loading</div>
 	<div id="live2d-bubble" aria-live="polite"></div>
-	<a
-		id="live2d-credit"
-		href="https://github.com/n0099/TouhouCannonBall-Live2d-Models/tree/main/Flandre"
-		target="_blank"
-		rel="noopener noreferrer"
-	>
-		Live2D
-	</a>
-	<a
-		id="live2d-author-credit"
-		href="https://x.com/Creamzenzai666"
-		target="_blank"
-		rel="noopener noreferrer"
-	>
-		<span class="lang-zh">原作者</span>
-		<span class="lang-en">Original artist</span>
-	</a>
+	<div id="live2d-credits">
+		<a
+			id="live2d-credit"
+			href="https://github.com/n0099/TouhouCannonBall-Live2d-Models/tree/main/Flandre"
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			Live2D
+		</a>
+		<a
+			id="live2d-author-credit"
+			href="https://x.com/Creamzenzai666"
+			target="_blank"
+			rel="noopener noreferrer"
+			aria-label="Original artist on X"
+			title="Original artist"
+		>
+			𝕏
+		</a>
+	</div>
 </div>
 
 <style>
@@ -248,8 +251,7 @@ const modelData = modelOptions.map((model) => ({
 	#live2d-toggle,
 	#live2d-reset,
 	#live2d-model-select,
-	#live2d-credit,
-	#live2d-author-credit {
+	#live2d-credits {
 		position: absolute;
 		pointer-events: auto;
 		opacity: 0;
@@ -259,8 +261,7 @@ const modelData = modelOptions.map((model) => ({
 	#live2d-widget:hover #live2d-toggle,
 	#live2d-widget:hover #live2d-reset,
 	#live2d-widget:hover #live2d-model-select,
-	#live2d-widget:hover #live2d-credit,
-	#live2d-widget:hover #live2d-author-credit {
+	#live2d-widget:hover #live2d-credits {
 		opacity: 1;
 	}
 
@@ -269,8 +270,7 @@ const modelData = modelOptions.map((model) => ({
 	#live2d-widget.live2d-hidden #live2d-bubble,
 	#live2d-widget.live2d-hidden #live2d-reset,
 	#live2d-widget.live2d-hidden #live2d-model-select,
-	#live2d-widget.live2d-hidden #live2d-credit,
-	#live2d-widget.live2d-hidden #live2d-author-credit {
+	#live2d-widget.live2d-hidden #live2d-credits {
 		display: none;
 	}
 
@@ -321,10 +321,17 @@ const modelData = modelOptions.map((model) => ({
 		line-height: 1;
 	}
 
+	#live2d-credits {
+		left: 50%;
+		bottom: 0;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		gap: 0.2rem;
+	}
+
 	#live2d-credit,
 	#live2d-author-credit {
-		left: 50%;
-		transform: translateX(-50%);
 		border-radius: 999px;
 		background: rgba(0, 0, 0, 0.42);
 		padding: 0.125rem 0.5rem;
@@ -334,12 +341,13 @@ const modelData = modelOptions.map((model) => ({
 		white-space: nowrap;
 	}
 
-	#live2d-credit {
-		bottom: 0;
-	}
-
 	#live2d-author-credit {
-		bottom: 1.55rem;
+		display: grid;
+		place-items: center;
+		width: 1.35rem;
+		height: 1.35rem;
+		padding: 0;
+		font-size: 0.76rem;
 	}
 
 	@media (max-width: 1023px) {
