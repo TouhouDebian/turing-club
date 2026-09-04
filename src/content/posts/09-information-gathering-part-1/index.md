@@ -15,13 +15,9 @@ draft: false
 
 > 此文为codex改编往年课件而成
 
-## 先把地图点亮
-
-如果你是第一次接触这个主题，不用先背一堆名词。先抓住一个小问题：它解决什么麻烦？输入从哪里来？最后能留下什么证据？
+## 课程简介
 
 信息收集与枚举上半部分先讲被动信息收集：尽量不直接接触目标系统，通过公开资料、搜索引擎、域名和网页痕迹建立目标画像。
-
-下面按“概念 -> 例子 -> 可操作的小任务”的顺序拆开。读完不一定立刻变成高手，但至少能知道下一步该点亮哪块地图。
 
 ## 你会学到
 
@@ -31,11 +27,9 @@ draft: false
 
 ## 1. 信息收集的意义
 
-信息收集不是八卦，而是为了减少盲目操作。知道目标资产、技术栈、公开入口和历史暴露信息，才能制定更稳妥的测试计划。
+信息收集用于确认目标资产、技术栈、公开入口和历史暴露信息。这些资料可以帮助制定测试范围和步骤。
 
 收集阶段最重要的是记录来源。没有来源的信息很难复核，也不适合写进报告。
-
-> 小提示：先别急着开大招，把输入、处理、输出连成一条线，很多问题会自己露头。
 
 ## 2. 被动信息收集
 
@@ -43,15 +37,11 @@ draft: false
 
 Google hacking 的重点是查询思路，不是复制语法。先明确想找什么，再设计搜索语句。
 
-> 小提示：这一步像看关卡小地图：确认边界、资源和出口，再开始操作会稳很多。
-
 ## 3. 不足与下一步
 
 被动收集会受公开资料质量影响，可能过时、不完整或存在误导。因此后续需要主动枚举和验证，但主动操作必须遵守授权范围。
 
 把“不确定”写出来是专业表现。报告中应区分确认事实、推测和待验证线索。
-
-> 小提示：看到命令别只复制，顺手问一句：它读了什么、改了什么、留下了什么证据？
 
 ![图示 1](./images/slide-17-56.png)
 
@@ -71,48 +61,20 @@ Google hacking 的重点是查询思路，不是复制语法。先明确想找�
 
 ## Overview
 
-If this topic is new to you, do not start by memorizing every term. First ask a smaller question: what problem does it solve, where does input enter, and what evidence can we observe?
-
 Part 1 focuses on passive reconnaissance: building a target profile from public information before touching the target.
-
-The article follows a simple path: idea, example, and a small task you can reproduce safely.
-
-## Learning Goals
-
-- Explain the main workflow behind Information Gathering and Enumeration, Part 1.
-- Use OSINT, Reconnaissance, Information Gathering to read commands, traffic, logs, or code with evidence.
-- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Purpose of reconnaissance
 
 Reconnaissance reduces guessing. Evidence and sources matter.
 
-Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
-
-> Side note: Do not rush the special move: draw input, processing, and output first.
-
 ## 2. Passive reconnaissance
 
 Passive reconnaissance uses public sources with minimal target interaction.
-
-Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
-
-> Side note: Treat this like checking the minimap before a stage: scope, resources, and exits matter.
 
 ## 3. Limitations and next steps
 
 Separate confirmed facts, assumptions, and leads that need validation.
 
-Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
-
-> Side note: Do not just copy the command. Ask what it reads, what it changes, and what evidence it leaves.
-
 ![Illustration 1](./images/slide-17-56.png)
-
-## Practice
-
-- Summarize the main workflow of Information Gathering and Enumeration, Part 1 in your own words.
-- Reproduce one safe observation step and record the evidence.
-- Explain one likely risk and one matching defense.
 
 :::

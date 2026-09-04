@@ -2,7 +2,7 @@
 title: "03 Python基础(副社长presentation) / Python Basics"
 author: "2023届 Jack Zhang / Class of 2023 Jack Zhang"
 published: 2025-10-15
-description: "Python 基础课服务于后续自动化、安全脚本和数据处理。初学时应优先理解变量、流程控制、函数和调试，而不是急着写很长的程序。 / Python basics support automation, security scripting, and data processing. Variables, control flow, functions, and debugging come first."
+description: "Python 基础课服务于后续自动化、安全脚本和数据处理，内容包括变量、流程控制、函数和调试。 / Python basics support automation, security scripting, and data processing through variables, control flow, functions, and debugging."
 tags: ["Python", "Programming", "Control Flow", "Automation"]
 category: "2025.9-2026.6课件-S1启程 / 2025.9–2026.6 Slides – S1 Start"
 draft: false
@@ -14,13 +14,9 @@ draft: false
 
 > 此文为codex改编往年课件而成
 
-## 先把地图点亮
+## 课程简介
 
-如果你是第一次接触这个主题，不用先背一堆名词。先抓住一个小问题：它解决什么麻烦？输入从哪里来？最后能留下什么证据？
-
-Python 基础课服务于后续自动化、安全脚本和数据处理。初学时应优先理解变量、流程控制、函数和调试，而不是急着写很长的程序。
-
-下面按“概念 -> 例子 -> 可操作的小任务”的顺序拆开。读完不一定立刻变成高手，但至少能知道下一步该点亮哪块地图。
+Python 基础课服务于后续自动化、安全脚本和数据处理，内容包括变量、流程控制、函数和调试。
 
 ## 你会学到
 
@@ -32,9 +28,7 @@ Python 基础课服务于后续自动化、安全脚本和数据处理。初学�
 
 Python 适合作为第一门安全自动化语言，因为语法清晰，能快速处理文本、文件、网络请求和数据格式。学习时可以先把脚本看作“可重复执行的操作记录”。
 
-不要只追求代码能跑。每段代码都要能说清输入是什么、输出是什么、失败时会发生什么。
-
-> 小提示：报错不是敌人，它通常是在很诚实地告诉你哪一层没对上。
+除了检查代码能否运行，还要记录输入、输出和异常情况。
 
 ![图示 1](./images/slide-01-01.png)
 
@@ -46,8 +40,6 @@ Python 适合作为第一门安全自动化语言，因为语法清晰，能快�
 
 安全脚本常常处理脏数据，写判断时要考虑空值、格式错误和异常输入。
 
-> 小提示：工具是技能栏，不是自动胜利按钮；真正的主角仍然是你的判断链。
-
 ![图示 1](./images/slide-14-14.png)
 
 ![图示 2](./images/slide-09-09.png)
@@ -58,19 +50,15 @@ Python 适合作为第一门安全自动化语言，因为语法清晰，能快�
 
 函数名要表达意图，例如 `parse_log_line` 比 `do_thing` 更适合复盘和协作。
 
-> 小提示：先别急着开大招，把输入、处理、输出连成一条线，很多问题会自己露头。
-
 ![图示 1](./images/slide-17-17.png)
 
 ![图示 2](./images/slide-18-18.png)
 
 ## 4. 练习与调试
 
-调试不是出错后的补救，而是写程序的一部分。通过打印中间结果、缩小输入范围、阅读报错堆栈，可以更快定位问题。
+调试是编程过程的一部分。打印中间结果、缩小输入范围和阅读报错堆栈都有助于定位问题。
 
 写安全脚本时先在小样本上验证，再扩大到真实数据，避免错误脚本批量破坏文件或输出误判。
-
-> 小提示：这一步像看关卡小地图：确认边界、资源和出口，再开始操作会稳很多。
 
 ![图示 1](./images/slide-25-25.png)
 
@@ -90,25 +78,11 @@ Python 适合作为第一门安全自动化语言，因为语法清晰，能快�
 
 ## Overview
 
-If this topic is new to you, do not start by memorizing every term. First ask a smaller question: what problem does it solve, where does input enter, and what evidence can we observe?
-
 Python basics support automation, security scripting, and data processing. Variables, control flow, functions, and debugging come first.
-
-The article follows a simple path: idea, example, and a small task you can reproduce safely.
-
-## Learning Goals
-
-- Explain the main workflow behind Python Basics.
-- Use Python, Programming, Variables to read commands, traffic, logs, or code with evidence.
-- Stay inside authorized lab environments and document each step clearly.
 
 ## 1. Starting from scripts
 
 A script is a repeatable record of operations. Clear input and output matter.
-
-Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
-
-> Side note: Errors are not the villain; they usually point at the layer that does not match.
 
 ![Illustration 1](./images/slide-01-01.png)
 
@@ -118,10 +92,6 @@ Read it as a small investigation: what enters the system, what changes inside it
 
 Variables store state, branches choose paths, and loops repeat work.
 
-Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
-
-> Side note: Tools are skill slots, not an auto-win button. The real protagonist is your reasoning chain.
-
 ![Illustration 1](./images/slide-14-14.png)
 
 ![Illustration 2](./images/slide-09-09.png)
@@ -129,10 +99,6 @@ Read it as a small investigation: what enters the system, what changes inside it
 ## 3. Functions and modularity
 
 Functions name reusable logic and make scripts easier to test.
-
-Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
-
-> Side note: Do not rush the special move: draw input, processing, and output first.
 
 ![Illustration 1](./images/slide-17-17.png)
 
@@ -142,16 +108,6 @@ Read it as a small investigation: what enters the system, what changes inside it
 
 Debugging is part of programming. Test with small samples before scaling up.
 
-Read it as a small investigation: what enters the system, what changes inside it, and what evidence proves the result?
-
-> Side note: Treat this like checking the minimap before a stage: scope, resources, and exits matter.
-
 ![Illustration 1](./images/slide-25-25.png)
-
-## Practice
-
-- Summarize the main workflow of Python Basics in your own words.
-- Reproduce one safe observation step and record the evidence.
-- Explain one likely risk and one matching defense.
 
 :::
