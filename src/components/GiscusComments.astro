@@ -1,0 +1,140 @@
+---
+import { Icon } from "astro-icon/components";
+import { url } from "../utils/url-utils";
+
+const giscusConfig = {
+	repo: "TouhouDebian/turing-club",
+	repoId: "R_kgDOTIIqkA",
+	category: "General",
+	categoryId: "DIC_kwDOTIIqkM4DALmQ",
+};
+
+const giscusThemePaths = {
+	light: url("/giscus/turing-light.css"),
+	dark: url("/giscus/turing-dark.css"),
+};
+---
+
+<section class="card-base giscus-comments onload-animation">
+	<div class="giscus-heading">
+		<Icon name="material-symbols:forum-outline-rounded" class="text-[1.4rem]" />
+		<h2>
+			<span class="lang-zh">评论</span>
+			<span class="lang-en">Comments</span>
+		</h2>
+	</div>
+	<p class="giscus-note lang-zh">评论由 GitHub Discussions 提供，发布时需登录 GitHub。</p>
+	<p class="giscus-note lang-en">Comments use GitHub Discussions. Sign in to GitHub to post.</p>
+	<div class="giscus-shell">
+		<script
+			is:inline
+			src="https://giscus.app/client.js"
+			data-repo={giscusConfig.repo}
+			data-repo-id={giscusConfig.repoId}
+			data-category={giscusConfig.category}
+			data-category-id={giscusConfig.categoryId}
+			data-mapping="pathname"
+			data-strict="0"
+			data-reactions-enabled="1"
+			data-emit-metadata="0"
+			data-input-position="top"
+			data-theme="light"
+			data-lang="zh-CN"
+			data-loading="lazy"
+			crossorigin="anonymous"
+			async
+		></script>
+	</div>
+</section>
+
+<script is:inline define:vars={{ giscusThemePaths }}>
+	(() => {
+		const giscusOrigin = "https://giscus.app";
+		const cssCache = new Map();
+
+		const encodeCss = (css) => {
+			const bytes = new TextEncoder().encode(css);
+			let binary = "";
+			for (const byte of bytes) binary += String.fromCharCode(byte);
+			return window.btoa(binary);
+		};
+
+		const loadThemeCss = async (themePath) => {
+			if (cssCache.has(themePath)) return cssCache.get(themePath);
+			const response = await fetch(themePath);
+			if (!response.ok) throw new Error("Failed to load giscus theme");
+			const css = await response.text();
+			cssCache.set(themePath, css);
+			return css;
+		};
+
+		const getThemeValue = async () => {
+			const themePath = document.documentElement.classList.contains("dark")
+				? giscusThemePaths.dark
+				: giscusThemePaths.light;
+			const css = await loadThemeCss(themePath);
+			const hue = Number.parseInt(
+				getComputedStyle(document.documentElement).getPropertyValue("--hue").trim(),
+				10,
+			) || 250;
+			return `data:text/css;base64,${encodeCss(`main { --giscus-hue: ${hue}; }\n${css}`)}`;
+		};
+
+		const syncGiscusTheme = async () => {
+			const frame = document.querySelector("iframe.giscus-frame");
+			if (!frame?.contentWindow) return;
+			let theme;
+			try {
+				theme = await getThemeValue();
+			} catch {
+				theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+			}
+			frame.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, giscusOrigin);
+		};
+
+		window.addEventListener("message", (event) => {
+			if (event.origin === giscusOrigin && event.data?.giscus) syncGiscusTheme();
+		});
+		new MutationObserver(syncGiscusTheme).observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ["class", "style"],
+		});
+		window.setTimeout(syncGiscusTheme, 800);
+		window.setTimeout(syncGiscusTheme, 1800);
+	})();
+</script>
+
+<style>
+	.giscus-comments {
+		margin-bottom: 1rem;
+		padding: 1.5rem;
+	}
+
+	.giscus-heading {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+		color: var(--primary);
+	}
+
+	.giscus-heading h2 {
+		margin: 0;
+		font-size: 1.35rem;
+		font-weight: 800;
+	}
+
+	.giscus-note {
+		margin: 0.45rem 0 1.15rem;
+		color: rgba(0, 0, 0, 0.55);
+		font-size: 0.9rem;
+		font-weight: 600;
+	}
+
+	:global(.dark) .giscus-note {
+		color: rgba(255, 255, 255, 0.58);
+	}
+
+	.giscus-shell {
+		min-height: 18rem;
+	}
+</style>
