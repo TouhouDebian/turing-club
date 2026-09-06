@@ -35,6 +35,38 @@ let { title, banner, description, lang, setOGTypeArticle } = Astro.props;
 // Swup can update the body for each page visit, but it's after the page transition, causing a delay for banner height change
 // so use Swup hooks instead to change the height immediately when a link is clicked
 const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
+const siteRoot = new URL("/", Astro.site ?? Astro.url.origin);
+const canonicalURL = new URL(Astro.url.pathname, siteRoot);
+const defaultDescription =
+	"天一中学图灵社官方网站，记录社团课程、活动，以及计算机、编程和网络安全相关内容。Official website of Tianyi High School Turing Club.";
+const metaDescription = description?.trim() || defaultDescription;
+const siteStructuredData = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@type": "Organization",
+			"@id": `${siteRoot.href}#organization`,
+			name: siteConfig.title,
+			alternateName: "Tianyi High School Turing Club",
+			url: siteRoot.href,
+			logo: new URL(profileConfig.avatar ?? "/favicon/zunix.svg", siteRoot)
+				.href,
+			sameAs: ["https://github.com/TouhouDebian/turing-club"],
+		},
+		{
+			"@type": "WebSite",
+			"@id": `${siteRoot.href}#website`,
+			url: siteRoot.href,
+			name: siteConfig.title,
+			alternateName: "Turing Club",
+			description: defaultDescription,
+			inLanguage: ["zh-CN", "en"],
+			publisher: {
+				"@id": `${siteRoot.href}#organization`,
+			},
+		},
+	],
+};
 
 // defines global css variables
 // why doing this in Layout instead of GlobalStyles: https://github.com/withastro/astro/issues/6728#issuecomment-1502203757
@@ -87,13 +119,17 @@ const bannerOffset =
 		<title>{pageTitle}</title>
 
 		<meta charset="UTF-8" />
-		<meta name="description" content={description || pageTitle}>
+		<meta name="description" content={metaDescription}>
 		<meta name="author" content={profileConfig.name}>
+		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+		<link rel="canonical" href={canonicalURL.href}>
 
 		<meta property="og:site_name" content={siteConfig.title}>
-		<meta property="og:url" content={Astro.url}>
+		<meta property="og:url" content={canonicalURL.href}>
 		<meta property="og:title" content={pageTitle}>
-		<meta property="og:description" content={description || pageTitle}>
+		<meta property="og:description" content={metaDescription}>
+		<meta property="og:locale" content="zh_CN">
+		<meta property="og:locale:alternate" content="en_US">
 		{setOGTypeArticle ? (
         <meta property="og:type" content="article" />
         ) : (
@@ -101,9 +137,9 @@ const bannerOffset =
         )}
 
 		<meta name="twitter:card" content="summary_large_image">
-		<meta property="twitter:url" content={Astro.url}>
+		<meta property="twitter:url" content={canonicalURL.href}>
 		<meta name="twitter:title" content={pageTitle}>
-		<meta name="twitter:description" content={description || pageTitle}>
+		<meta name="twitter:description" content={metaDescription}>
 
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
@@ -156,6 +192,9 @@ const bannerOffset =
 		<slot name="head"></slot>
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={new URL("rss.xml", Astro.site).href}/>
+		{isHomePage && (
+			<script type="application/ld+json" set:html={JSON.stringify(siteStructuredData)} />
+		)}
 
 	</head>
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
