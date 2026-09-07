@@ -24,7 +24,7 @@ import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
-const site = "https://tycybersec.cc.cd/";
+const site = "https://turing.tyzx.org/";
 const base = "/";
 
 // https://astro.build/config
