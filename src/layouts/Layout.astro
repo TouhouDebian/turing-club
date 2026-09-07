@@ -39,7 +39,7 @@ const siteRoot = new URL("/", Astro.site ?? Astro.url.origin);
 const canonicalURL = new URL(Astro.url.pathname, siteRoot);
 const searchSiteName = siteConfig.searchSiteName ?? siteConfig.title;
 const defaultDescription =
-	"天一AP图灵社（天一中学图灵社）官方网站，记录社团课程、活动，以及计算机、编程和网络安全相关内容。Official website of Tianyi High School Turing Club.";
+	"天一中学图灵社官方网站，记录社团课程、活动，以及计算机、编程和网络安全相关内容。Official website of Tianyi High School Turing Club.";
 const metaDescription = description?.trim() || defaultDescription;
 const siteStructuredData = {
 	"@context": "https://schema.org",
@@ -47,8 +47,8 @@ const siteStructuredData = {
 		{
 			"@type": "Organization",
 			"@id": `${siteRoot.href}#organization`,
-			name: searchSiteName,
-			alternateName: [siteConfig.title, "Tianyi High School Turing Club"],
+			name: siteConfig.title,
+			alternateName: [searchSiteName, "Tianyi High School Turing Club"],
 			url: siteRoot.href,
 			logo: new URL(profileConfig.avatar ?? "/favicon/zunix.svg", siteRoot)
 				.href,
@@ -89,7 +89,7 @@ let pageTitle: string;
 if (title) {
 	pageTitle = `${title} - ${siteConfig.title}`;
 } else {
-	pageTitle = `${searchSiteName} - ${siteConfig.subtitle}`;
+	pageTitle = `${siteConfig.title} - ${siteConfig.subtitle}`;
 }
 
 const favicons: Favicon[] =

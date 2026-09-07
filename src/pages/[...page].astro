@@ -2,7 +2,6 @@
 import type { GetStaticPaths } from "astro";
 import Pagination from "../components/control/Pagination.astro";
 import PostPage from "../components/PostPage.astro";
-import { siteConfig } from "../config";
 import { PAGE_SIZE } from "../constants/constants";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
@@ -16,29 +15,9 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page } = Astro.props;
 
 const len = page.data.length;
-const searchSiteName = siteConfig.searchSiteName ?? siteConfig.title;
 ---
 
 <MainGridLayout>
-	{page.currentPage === 1 && (
-		<section
-			class="card-base mb-4 px-6 py-5 onload-animation"
-			aria-labelledby="site-introduction-title"
-		>
-			<h1 id="site-introduction-title" class="mb-2 text-2xl font-bold text-90">
-				<span class="lang-zh" lang="zh-CN">{searchSiteName}</span>
-				<span class="lang-en" lang="en">Tianyi High School Turing Club</span>
-			</h1>
-			<p class="text-75 leading-7">
-				<span class="lang-zh" lang="zh-CN">
-					这里记录社团课程、活动，以及计算机、编程和网络安全相关内容。
-				</span>
-				<span class="lang-en" lang="en">
-					Club courses, activities, and notes on computing, programming, and cybersecurity.
-				</span>
-			</p>
-		</section>
-	)}
     <PostPage page={page}></PostPage>
     <Pagination class="mx-auto onload-animation" page={page} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>
 </MainGridLayout>
