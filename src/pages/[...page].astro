@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from "astro";
 import Pagination from "../components/control/Pagination.astro";
 import PostPage from "../components/PostPage.astro";
+import { siteConfig } from "../config";
 import { PAGE_SIZE } from "../constants/constants";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
@@ -15,6 +16,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page } = Astro.props;
 
 const len = page.data.length;
+const searchSiteName = siteConfig.searchSiteName ?? siteConfig.title;
 ---
 
 <MainGridLayout>
@@ -24,7 +26,7 @@ const len = page.data.length;
 			aria-labelledby="site-introduction-title"
 		>
 			<h1 id="site-introduction-title" class="mb-2 text-2xl font-bold text-90">
-				<span class="lang-zh" lang="zh-CN">天一中学图灵社</span>
+				<span class="lang-zh" lang="zh-CN">{searchSiteName}</span>
 				<span class="lang-en" lang="en">Tianyi High School Turing Club</span>
 			</h1>
 			<p class="text-75 leading-7">

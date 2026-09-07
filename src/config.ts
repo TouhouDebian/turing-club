@@ -9,6 +9,7 @@ import { LinkPreset } from "./types/config";
 
 export const siteConfig: SiteConfig = {
 	title: "天一中学图灵社",
+	searchSiteName: "天一AP图灵社",
 	subtitle: "Turing Club",
 	lang: "zh_CN", // Language code, e.g. 'en', 'zh_CN', 'ja', etc.
 	themeColor: {

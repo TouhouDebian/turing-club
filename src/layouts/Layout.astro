@@ -37,8 +37,9 @@ let { title, banner, description, lang, setOGTypeArticle } = Astro.props;
 const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
 const siteRoot = new URL("/", Astro.site ?? Astro.url.origin);
 const canonicalURL = new URL(Astro.url.pathname, siteRoot);
+const searchSiteName = siteConfig.searchSiteName ?? siteConfig.title;
 const defaultDescription =
-	"天一中学图灵社官方网站，记录社团课程、活动，以及计算机、编程和网络安全相关内容。Official website of Tianyi High School Turing Club.";
+	"天一AP图灵社（天一中学图灵社）官方网站，记录社团课程、活动，以及计算机、编程和网络安全相关内容。Official website of Tianyi High School Turing Club.";
 const metaDescription = description?.trim() || defaultDescription;
 const siteStructuredData = {
 	"@context": "https://schema.org",
@@ -46,8 +47,8 @@ const siteStructuredData = {
 		{
 			"@type": "Organization",
 			"@id": `${siteRoot.href}#organization`,
-			name: siteConfig.title,
-			alternateName: "Tianyi High School Turing Club",
+			name: searchSiteName,
+			alternateName: [siteConfig.title, "Tianyi High School Turing Club"],
 			url: siteRoot.href,
 			logo: new URL(profileConfig.avatar ?? "/favicon/zunix.svg", siteRoot)
 				.href,
@@ -57,8 +58,12 @@ const siteStructuredData = {
 			"@type": "WebSite",
 			"@id": `${siteRoot.href}#website`,
 			url: siteRoot.href,
-			name: siteConfig.title,
-			alternateName: "Turing Club",
+			name: searchSiteName,
+			alternateName: [
+				siteConfig.title,
+				"Turing Club",
+				"Tianyi High School Turing Club",
+			],
 			description: defaultDescription,
 			inLanguage: ["zh-CN", "en"],
 			publisher: {
@@ -84,7 +89,7 @@ let pageTitle: string;
 if (title) {
 	pageTitle = `${title} - ${siteConfig.title}`;
 } else {
-	pageTitle = `${siteConfig.title} - ${siteConfig.subtitle}`;
+	pageTitle = `${searchSiteName} - ${siteConfig.subtitle}`;
 }
 
 const favicons: Favicon[] =
@@ -125,7 +130,7 @@ const bannerOffset =
 		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 		<link rel="canonical" href={canonicalURL.href}>
 
-		<meta property="og:site_name" content={siteConfig.title}>
+		<meta property="og:site_name" content={searchSiteName}>
 		<meta property="og:url" content={canonicalURL.href}>
 		<meta property="og:title" content={pageTitle}>
 		<meta property="og:description" content={metaDescription}>

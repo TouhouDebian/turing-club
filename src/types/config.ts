@@ -2,6 +2,7 @@ import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
 
 export type SiteConfig = {
 	title: string;
+	searchSiteName?: string;
 	subtitle: string;
 
 	lang:
