@@ -10,7 +10,13 @@ const currentYear = new Date().getFullYear();
 <!--<div class="transition bg-[oklch(92%_0.01_var(&#45;&#45;hue))] dark:bg-black rounded-2xl py-8 mt-4 mb-8 flex flex-col items-center justify-center px-6">-->
 <div class="transition border-dashed border-[oklch(85%_0.01_var(--hue))] dark:border-white/15 rounded-2xl mb-12 flex flex-col items-center justify-center px-3 sm:px-6 py-7 sm:py-9">
     <div class="transition text-50 text-sm text-center">
-        <div class="flex flex-nowrap items-center justify-center gap-x-1.5 sm:gap-x-4 mb-4 text-sm font-medium whitespace-nowrap" aria-label="网站备案信息">
+        <div class="leading-7">
+            &copy; <span id="copyright-year">{currentYear}</span> <span class="lang-zh">{profileConfig.name}</span><span class="lang-en">Turing Club</span>. All Rights Reserved.<br>
+            Powered by
+            <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a> &
+            <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a>
+        </div>
+        <div class="flex flex-nowrap items-center justify-center gap-x-1.5 sm:gap-x-4 mt-4 text-sm font-medium whitespace-nowrap" aria-label="网站备案信息">
             <a class="transition inline-flex items-center gap-1 sm:gap-1.5 hover:text-[var(--primary)] focus-visible:text-[var(--primary)]" href="https://icp.gov.moe/?keyword=20261912" target="_blank" rel="noopener noreferrer">
                 <img class="size-3.5 object-contain" src="https://icp.gov.moe/favicon.ico" alt="" loading="lazy" decoding="async">
                 <span>萌ICP备20261912号</span>
@@ -20,12 +26,6 @@ const currentYear = new Date().getFullYear();
                 <img class="size-3.5 object-contain" src="https://gicp.hbia.top/favicon.svg" alt="" loading="lazy" decoding="async">
                 <span>幻ICP许20266666号</span>
             </a>
-        </div>
-        <div class="leading-7">
-            &copy; <span id="copyright-year">{currentYear}</span> <span class="lang-zh">{profileConfig.name}</span><span class="lang-en">Turing Club</span>. All Rights Reserved.<br>
-            Powered by
-            <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a> &
-            <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a>
         </div>
     </div>
 </div>
