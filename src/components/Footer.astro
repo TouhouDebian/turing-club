@@ -8,17 +8,24 @@ const currentYear = new Date().getFullYear();
 <!--<div class="border-t border-[var(&#45;&#45;primary)] mx-16 border-dashed py-8 max-w-[var(&#45;&#45;page-width)] flex flex-col items-center justify-center px-6">-->
 <div class="transition border-t border-black/10 dark:border-white/15 my-10 border-dashed mx-32"></div>
 <!--<div class="transition bg-[oklch(92%_0.01_var(&#45;&#45;hue))] dark:bg-black rounded-2xl py-8 mt-4 mb-8 flex flex-col items-center justify-center px-6">-->
-<div class="transition border-dashed border-[oklch(85%_0.01_var(--hue))] dark:border-white/15 rounded-2xl mb-12 flex flex-col items-center justify-center px-6">
+<div class="transition border-dashed border-[oklch(85%_0.01_var(--hue))] dark:border-white/15 rounded-2xl mb-12 flex flex-col items-center justify-center px-3 sm:px-6 py-7 sm:py-9">
     <div class="transition text-50 text-sm text-center">
-        &copy; <span id="copyright-year">{currentYear}</span> <span class="lang-zh">{profileConfig.name}</span><span class="lang-en">Turing Club</span>. All Rights Reserved.<br>
-        Powered by
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a> &
-        <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a><br>
-        <a href="https://icp.gov.moe/?keyword=20261912" target="_blank" rel="noopener noreferrer">
-            <img class="inline-block mt-2" src="/images/moe-icp-badge.svg" alt="萌ICP备20261912号" loading="lazy" decoding="async">
-        </a><br>
-        <a href="https://gicp.hbia.top/?keyword=%E5%B9%BBICP%E8%AE%B820266666%E5%8F%B7" target="_blank" rel="noopener noreferrer">
-            <img class="inline-block mt-2" src="https://img.shields.io/badge/ICP-%E5%B9%BBICP%E8%AE%B820266666%E5%8F%B7-DA291C" alt="幻ICP许20266666号" loading="lazy" decoding="async">
-        </a>
+        <div class="flex flex-nowrap items-center justify-center gap-x-1.5 sm:gap-x-6 mb-4 text-[11px] sm:text-base font-medium whitespace-nowrap" aria-label="网站备案信息">
+            <a class="transition inline-flex items-center gap-1.5 sm:gap-2 hover:text-[var(--primary)] focus-visible:text-[var(--primary)]" href="https://icp.gov.moe/?keyword=20261912" target="_blank" rel="noopener noreferrer">
+                <img class="size-4 sm:size-5 object-contain" src="https://icp.gov.moe/favicon.ico" alt="" loading="lazy" decoding="async">
+                <span>萌ICP备20261912号</span>
+            </a>
+            <span class="opacity-50" aria-hidden="true">｜</span>
+            <a class="transition inline-flex items-center gap-1.5 sm:gap-2 hover:text-[var(--primary)] focus-visible:text-[var(--primary)]" href="https://gicp.hbia.top/?keyword=%E5%B9%BBICP%E8%AE%B820266666%E5%8F%B7" target="_blank" rel="noopener noreferrer">
+                <img class="size-4 sm:size-5 object-contain" src="https://gicp.hbia.top/favicon.svg" alt="" loading="lazy" decoding="async">
+                <span>幻ICP许20266666号</span>
+            </a>
+        </div>
+        <div class="leading-7">
+            &copy; <span id="copyright-year">{currentYear}</span> <span class="lang-zh">{profileConfig.name}</span><span class="lang-en">Turing Club</span>. All Rights Reserved.<br>
+            Powered by
+            <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://astro.build">Astro</a> &
+            <a class="transition link text-[var(--primary)] font-medium" target="_blank" href="https://github.com/saicaca/fuwari">Fuwari</a>
+        </div>
     </div>
 </div>
