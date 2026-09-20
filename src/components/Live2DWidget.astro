@@ -1195,10 +1195,12 @@ const modelData = modelOptions.map((model) => ({
 		};
 
 		const getArticleContext = () => {
-			const root = document.querySelector("[data-pagefind-body]");
+			const root =
+				document.querySelector(".markdown-content[data-pagefind-body]") ??
+				document.querySelector(".prose[data-pagefind-body]");
 			if (!root) return null;
 			const language = getCurrentLanguage();
-			const section = root.querySelector(`section.lang-${language}`) ?? root;
+			const section = root.querySelector(`.lang-${language}`) ?? root;
 			const clone = section.cloneNode(true);
 			clone.querySelectorAll("script, style, button, .anchor").forEach((node) => node.remove());
 			return {
