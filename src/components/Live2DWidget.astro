@@ -976,8 +976,11 @@ const modelData = modelOptions.map((model) => ({
 			status.textContent = message;
 		};
 
-		const getCurrentLanguage = () =>
-			document.documentElement.dataset.language === "en" ? "en" : "zh";
+		const getCurrentLanguage = () => {
+			const pageLanguage = document.documentElement.dataset.language;
+			if (pageLanguage === "en" || pageLanguage === "zh") return pageLanguage;
+			return localStorage.getItem("language") === "en" ? "en" : "zh";
+		};
 
 		const estimateSpeechDuration = (text) => {
 			const normalized = String(text ?? "").trim();
@@ -1059,7 +1062,62 @@ const modelData = modelOptions.map((model) => ({
 
 		const chatHistory = [];
 		let chatPending = false;
-		let chatWelcomed = false;
+		let welcomedCharacterId = null;
+
+		const characterGreetings = {
+			akyuu: {
+				zh: ["欢迎。我会把值得记录的内容认真写下来。"],
+				en: ["Welcome. I will carefully record anything worth remembering."],
+			},
+			alice: {
+				zh: ["请坐。想聊魔法、程序，还是这篇文章？"],
+				en: ["Have a seat. Shall we discuss magic, code, or this article?"],
+			},
+			cirno: {
+				zh: ["最强的我来了！什么问题都放马过来吧！"],
+				en: ["The strongest is here! Bring me any question!"],
+			},
+			flandre: {
+				zh: ["找到你啦☆ 今天想和我聊什么？"],
+				en: ["Found you☆ What shall we talk about today?"],
+			},
+			koishi: {
+				zh: ["咦，我们是刚刚才遇见的吗？来聊天吧。"],
+				en: ["Oh, did we only just meet? Come chat with me."],
+			},
+			marisa: {
+				zh: ["交给我吧，DA☆ZE！今天想研究什么？"],
+				en: ["Leave it to me, DA☆ZE! What are we researching today?"],
+			},
+			mystia: {
+				zh: ["欢迎光临♪ 想听歌，还是想聊点别的？"],
+				en: ["Welcome♪ Would you like a song, or shall we talk?"],
+			},
+			reimu: {
+				zh: ["今日もいい天気☆", "今天也是好天气呢☆", "欢迎来到博丽神社。今天想聊什么？"],
+				en: ["Nice weather again today☆", "Welcome to the Hakurei Shrine. What is on your mind?"],
+			},
+			reisen: {
+				zh: ["欢迎。我会认真听的，请慢慢说。"],
+				en: ["Welcome. I am listening, so take your time."],
+			},
+			remilia: {
+				zh: ["欢迎来到红魔馆。说说你今日的来意吧。"],
+				en: ["Welcome to the Scarlet Devil Mansion. Tell me what brings you here."],
+			},
+			suika: {
+				zh: ["来得正好！坐下来痛快地聊聊吧。"],
+				en: ["Perfect timing! Sit down and let us have a proper chat."],
+			},
+			youmu: {
+				zh: ["我已经准备好了。有什么任务请尽管说。"],
+				en: ["I am ready. Please tell me what needs to be done."],
+			},
+			yuyuko: {
+				zh: ["欢迎呀。边休息边慢慢聊吧。"],
+				en: ["Welcome. Let us relax and take our time talking."],
+			},
+		};
 
 		const chatCopy = {
 			zh: {
@@ -1095,6 +1153,25 @@ const modelData = modelOptions.map((model) => ({
 			message.textContent = String(text ?? "").trim();
 			chatLog.appendChild(message);
 			chatLog.scrollTop = chatLog.scrollHeight;
+		};
+
+		const getBaseCharacterId = (modelId = currentModelId) =>
+			String(modelId || defaultModelId).replace(/-event$/, "");
+
+		const getCharacterGreeting = (modelId = currentModelId) => {
+			const greetings = characterGreetings[getBaseCharacterId(modelId)]?.[getCurrentLanguage()];
+			const fallback = getChatCopy().welcome;
+			if (!Array.isArray(greetings) || greetings.length === 0) return fallback;
+			return greetings[Math.floor(Math.random() * greetings.length)] || fallback;
+		};
+
+		const welcomeCharacter = (modelId = currentModelId, speak = false) => {
+			const baseCharacterId = getBaseCharacterId(modelId);
+			const greeting = getCharacterGreeting(modelId);
+			addChatMessage("assistant", greeting);
+			chatHistory.splice(0, chatHistory.length, { role: "assistant", content: greeting });
+			welcomedCharacterId = baseCharacterId;
+			if (speak) showSpokenText(greeting, "happy");
 		};
 
 		const inferOfflineMood = (text) => {
@@ -1140,9 +1217,8 @@ const modelData = modelOptions.map((model) => ({
 			chatToggle.setAttribute("aria-expanded", "true");
 			syncChatDirection();
 			chatInput.placeholder = getChatCopy().placeholder;
-			if (!chatWelcomed) {
-				addChatMessage("assistant", getChatCopy().welcome);
-				chatWelcomed = true;
+			if (welcomedCharacterId !== getBaseCharacterId()) {
+				welcomeCharacter();
 			}
 			window.setTimeout(() => chatInput.focus(), 0);
 		};
@@ -1152,10 +1228,37 @@ const modelData = modelOptions.map((model) => ({
 			chatToggle.setAttribute("aria-expanded", "false");
 		};
 
+		const requestOnlineReply = async (payload) => {
+			let lastError = null;
+			for (let attempt = 0; attempt < 2; attempt += 1) {
+				const controller = new AbortController();
+				const timeout = window.setTimeout(() => controller.abort(), 15_000);
+				try {
+					const response = await fetch("/api/live2d-chat", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload),
+						signal: controller.signal,
+					});
+					if (!response.ok) throw new Error(`AI unavailable (${response.status})`);
+					const result = await response.json();
+					if (!result?.reply) throw new Error("Empty AI reply");
+					return result;
+				} catch (error) {
+					lastError = error;
+					if (attempt === 0) await new Promise((resolve) => window.setTimeout(resolve, 450));
+				} finally {
+					window.clearTimeout(timeout);
+				}
+			}
+			throw lastError || new Error("AI unavailable");
+		};
+
 		const sendChatMessage = async (input) => {
 			const text = String(input ?? "").trim().slice(0, 600);
 			if (!text || chatPending) return;
 			chatPending = true;
+			setChatMode("checking");
 			chatInput.disabled = true;
 			chatSend.disabled = true;
 			addChatMessage("user", text);
@@ -1163,20 +1266,13 @@ const modelData = modelOptions.map((model) => ({
 			chatHistory.push({ role: "user", content: text });
 
 			try {
-				const response = await fetch("/api/live2d-chat", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
+				const result = await requestOnlineReply({
 						message: text,
 						character: currentModelId,
 						language: getCurrentLanguage(),
 						history: requestHistory,
 						article: getArticleContext(),
-					}),
-				});
-				if (!response.ok) throw new Error("AI unavailable");
-				const result = await response.json();
-				if (!result?.reply) throw new Error("Empty AI reply");
+					});
 				const reply = String(result.reply).slice(0, 700);
 				const mood = String(result.mood || "curious");
 				setChatMode("online");
@@ -2195,10 +2291,17 @@ const modelData = modelOptions.map((model) => ({
 			const selectedModel = modelsById.get(select.value) ?? modelsById.get(defaultModelId);
 			if (!selectedModel) return;
 			localStorage.setItem(modelStorageKey, selectedModel.id);
+			currentModelId = selectedModel.id;
 			chatName.textContent = selectedModel.name;
+			welcomeCharacter(selectedModel.id, true);
 			if (!widget.classList.contains("live2d-hidden")) {
 				loadModel(selectedModel, true);
 			}
+		});
+
+		window.addEventListener("languagechange", () => {
+			chatInput.placeholder = getChatCopy().placeholder;
+			setChatMode(chatState.dataset.mode || "checking");
 		});
 
 		widget.addEventListener("pointerdown", (event) => {
