@@ -65,6 +65,63 @@ const jsonResponse = (body, status = 200) =>
 		},
 	});
 
+const sleep = (milliseconds) =>
+	new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+const RETRYABLE_UPSTREAM_STATUSES = new Set([408, 409, 425, 429]);
+
+const requestDeepSeek = async ({ apiKey, model, messages }) => {
+	let lastError;
+
+	for (let attempt = 0; attempt < 2; attempt += 1) {
+		const controller = new AbortController();
+		const timeout = setTimeout(() => controller.abort(), 18_000);
+
+		try {
+			const upstream = await fetch(
+				"https://api.deepseek.com/chat/completions",
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${apiKey}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						model,
+						messages,
+						response_format: { type: "json_object" },
+						max_tokens: 360,
+						temperature: 0.75,
+						stream: false,
+					}),
+					signal: controller.signal,
+				},
+			);
+
+			if (upstream.ok) {
+				const result = await upstream.json();
+				return parseModelReply(result?.choices?.[0]?.message?.content);
+			}
+
+			lastError = new Error(`DeepSeek returned HTTP ${upstream.status}`);
+			if (
+				!RETRYABLE_UPSTREAM_STATUSES.has(upstream.status) &&
+				upstream.status < 500
+			) {
+				break;
+			}
+		} catch (error) {
+			lastError = error;
+		} finally {
+			clearTimeout(timeout);
+		}
+
+		if (attempt === 0) await sleep(500);
+	}
+
+	throw lastError ?? new Error("DeepSeek request failed");
+};
+
 const parseModelReply = (content) => {
 	const normalized = cleanText(content, 3000).replace(
 		/^```(?:json)?\s*|\s*```$/gi,
@@ -130,47 +187,26 @@ export async function onRequestPost(context) {
 每一次回答都要保持当前角色的性格、语气和用词，不能套用其他东方角色的口癖。不要声称自己是真实人物，不要编造文章中不存在的事实。用户询问当前文章时，应引用文章内容进行简洁解读；信息不足时明确说明。一般回答控制在 180 个汉字或 120 个英文词以内。使用${language === "en" ? "英文；即使历史消息含有中文，本次也必须只用英文" : "简体中文；即使历史消息含有英文，本次也必须以中文为主"}回答。
 只输出一个 JSON 对象，格式为 {"reply":"回答文本","mood":"情绪"}。mood 只能是 curious、happy、cute、annoyed、shy、proud 之一。根据对话语气选择情绪，不要输出 Markdown 代码围栏。${articleReference}`;
 
-	const controller = new AbortController();
-	const timeout = setTimeout(() => controller.abort(), 12_000);
 	try {
-		const upstream = await fetch("https://api.deepseek.com/chat/completions", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				model: env.DEEPSEEK_MODEL || "deepseek-flash",
-				messages: [
-					{ role: "system", content: systemPrompt },
-					...history,
-					{ role: "user", content: message },
-				],
-				response_format: { type: "json_object" },
-				max_tokens: 360,
-				temperature: 0.75,
-				stream: false,
-			}),
-			signal: controller.signal,
+		const reply = await requestDeepSeek({
+			apiKey: env.DEEPSEEK_API_KEY,
+			model: env.DEEPSEEK_MODEL || "deepseek-flash",
+			messages: [
+				{ role: "system", content: systemPrompt },
+				...history,
+				{ role: "user", content: message },
+			],
 		});
-
-		if (!upstream.ok) {
-			return jsonResponse(
-				{ offline: true, error: "AI service unavailable" },
-				502,
-			);
-		}
-
-		const result = await upstream.json();
-		const content = result?.choices?.[0]?.message?.content;
-		const reply = parseModelReply(content);
 		return jsonResponse({ ...reply, mode: "online", character: characterId });
-	} catch {
+	} catch (error) {
+		console.error("Live2D DeepSeek request failed", {
+			message: error instanceof Error ? error.message : String(error),
+			character: characterId,
+			language,
+		});
 		return jsonResponse(
 			{ offline: true, error: "AI service unavailable" },
 			502,
 		);
-	} finally {
-		clearTimeout(timeout);
 	}
 }
