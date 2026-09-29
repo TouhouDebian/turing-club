@@ -1,9 +1,10 @@
 ---
 import { Icon } from "astro-icon/components";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { url } from "../utils/url-utils";
 
-const localSchoolIcon = "/links/tianyi-high-school.png";
-const externalSchoolIcon = "/links/tianjin-no4-high-school.png";
+const localSchoolIcon = url("/links/tianyi-high-school.png");
+const externalSchoolIcon = url("/links/tianjin-no4-high-school.png");
 
 const localLinks = [
 	{
@@ -103,7 +104,7 @@ const randomFriendUrls = [
 
 		<section class="link-view" data-link-view="root">
 			<div class="friend-grid">
-				<a class="card-base friend-card category-card" href="/links/local/">
+				<a class="card-base friend-card category-card" href={url("/links/local/")}>
 					<div class="friend-icon image-icon">
 						<img src={localSchoolIcon} alt="" />
 					</div>
@@ -124,7 +125,7 @@ const randomFriendUrls = [
 					</div>
 				</a>
 
-				<a class="card-base friend-card category-card" href="/links/external/">
+				<a class="card-base friend-card category-card" href={url("/links/external/")}>
 					<div class="friend-icon image-icon">
 						<img src={externalSchoolIcon} alt="" />
 					</div>

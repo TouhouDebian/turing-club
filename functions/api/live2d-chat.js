@@ -63,13 +63,28 @@ const cleanText = (value, limit) =>
 		.trim()
 		.slice(0, limit);
 
-const jsonResponse = (body, status = 200) =>
+const GITHUB_PAGES_ORIGIN = "https://touhoudebian.github.io";
+
+const getCorsHeaders = (request) => {
+	const origin = request.headers.get("origin");
+	return origin === GITHUB_PAGES_ORIGIN
+		? {
+				"access-control-allow-origin": origin,
+				"access-control-allow-methods": "POST, OPTIONS",
+				"access-control-allow-headers": "content-type",
+				vary: "Origin",
+			}
+		: {};
+};
+
+const jsonResponse = (body, status = 200, headers = {}) =>
 	new Response(JSON.stringify(body), {
 		status,
 		headers: {
 			"cache-control": "no-store",
 			"content-type": "application/json; charset=utf-8",
 			"x-content-type-options": "nosniff",
+			...headers,
 		},
 	});
 
@@ -161,29 +176,43 @@ const getSensitiveTopicRefusal = (language) => ({
 
 export async function onRequestPost(context) {
 	const { request, env } = context;
+	const corsHeaders = getCorsHeaders(request);
 	if (!env.DEEPSEEK_API_KEY) {
 		return jsonResponse(
 			{ offline: true, error: "AI service is not configured" },
 			503,
+			corsHeaders,
 		);
 	}
 
 	const requestOrigin = request.headers.get("origin");
 	const requestUrl = new URL(request.url);
-	if (requestOrigin && new URL(requestOrigin).host !== requestUrl.host) {
+	if (
+		requestOrigin &&
+		new URL(requestOrigin).host !== requestUrl.host &&
+		requestOrigin !== GITHUB_PAGES_ORIGIN
+	) {
 		return jsonResponse({ offline: true, error: "Origin rejected" }, 403);
 	}
 
 	const contentLength = Number(request.headers.get("content-length") || 0);
 	if (contentLength > 24_000) {
-		return jsonResponse({ offline: true, error: "Request is too large" }, 413);
+		return jsonResponse(
+			{ offline: true, error: "Request is too large" },
+			413,
+			corsHeaders,
+		);
 	}
 
 	let payload;
 	try {
 		payload = await request.json();
 	} catch {
-		return jsonResponse({ offline: true, error: "Invalid JSON" }, 400);
+		return jsonResponse(
+			{ offline: true, error: "Invalid JSON" },
+			400,
+			corsHeaders,
+		);
 	}
 
 	const language = payload?.language === "en" ? "en" : "zh";
@@ -202,14 +231,22 @@ export async function onRequestPost(context) {
 		: [];
 
 	if (!message) {
-		return jsonResponse({ offline: true, error: "Message is required" }, 400);
+		return jsonResponse(
+			{ offline: true, error: "Message is required" },
+			400,
+			corsHeaders,
+		);
 	}
 
 	if (SENSITIVE_HISTORY_PATTERN.test(message)) {
-		return jsonResponse({
-			...getSensitiveTopicRefusal(language),
-			character: characterId,
-		});
+		return jsonResponse(
+			{
+				...getSensitiveTopicRefusal(language),
+				character: characterId,
+			},
+			200,
+			corsHeaders,
+		);
 	}
 
 	const articleReference = articleText
@@ -229,12 +266,16 @@ export async function onRequestPost(context) {
 				{ role: "user", content: message },
 			],
 		});
-		return jsonResponse({
-			...reply,
-			reply: maybeAddEmoticon(reply.reply, language),
-			mode: "online",
-			character: characterId,
-		});
+		return jsonResponse(
+			{
+				...reply,
+				reply: maybeAddEmoticon(reply.reply, language),
+				mode: "online",
+				character: characterId,
+			},
+			200,
+			corsHeaders,
+		);
 	} catch (error) {
 		console.error("Live2D DeepSeek request failed", {
 			message: error instanceof Error ? error.message : String(error),
@@ -244,6 +285,18 @@ export async function onRequestPost(context) {
 		return jsonResponse(
 			{ offline: true, error: "AI service unavailable" },
 			502,
+			corsHeaders,
 		);
 	}
+}
+
+export function onRequestOptions(context) {
+	const origin = context.request.headers.get("origin");
+	if (origin !== GITHUB_PAGES_ORIGIN) {
+		return new Response(null, { status: 403 });
+	}
+	return new Response(null, {
+		status: 204,
+		headers: getCorsHeaders(context.request),
+	});
 }

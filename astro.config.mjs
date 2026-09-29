@@ -25,7 +25,7 @@ import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
 const site = "https://turing.tyzx.org/";
-const base = "/";
+const base = process.env.DEPLOY_BASE || "/";
 
 // https://astro.build/config
 export default defineConfig({

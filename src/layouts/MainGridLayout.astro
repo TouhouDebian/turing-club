@@ -12,6 +12,7 @@ import {
 	BANNER_HEIGHT_EXTEND,
 	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
+import { url } from "../utils/url-utils";
 import Layout from "./Layout.astro";
 
 interface Props {
@@ -57,7 +58,7 @@ const mainPanelTop = siteConfig.banner.enable
     <div id="banner" class="relative h-full transition duration-700 opacity-0 scale-105">
         <img
             class:list={["absolute inset-0 h-full w-full object-cover banner-dark"]}
-            src={siteConfig.banner.src}
+            src={url(siteConfig.banner.src)}
             alt="Banner image of the blog"
             style={`object-position: ${bannerPosition}`}
             loading="eager"
@@ -65,7 +66,7 @@ const mainPanelTop = siteConfig.banner.enable
         />
         <img
             class:list={["absolute inset-0 h-full w-full object-cover banner-light"]}
-            src={bannerLightSrc}
+            src={url(bannerLightSrc)}
             alt="Banner image of the blog"
             style={`object-position: ${bannerPosition}`}
             loading="eager"

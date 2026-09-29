@@ -40,6 +40,8 @@ jobs:
 
       - name: Build with Astro
         run: pnpm build
+        env:
+          DEPLOY_BASE: /turing-club/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4

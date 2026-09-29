@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { url } from "../utils/url-utils";
 
 interface Entry {
 	titleZh: string;
@@ -28,7 +29,7 @@ const { titleZh, titleEn, backHref, backZh, backEn, entries } = Astro.props;
 <MainGridLayout title={`${titleZh} / ${titleEn}`} description={`${titleZh} / ${titleEn}`}>
 	<div class="space-y-4">
 		<div class="directory-toolbar">
-			<a href={backHref} class="back-button">
+			<a href={url(backHref)} class="back-button">
 				<Icon name="material-symbols:arrow-back-rounded" class="text-[1.15rem]" />
 				<span class="lang-zh">{backZh}</span>
 				<span class="lang-en">{backEn}</span>
@@ -42,11 +43,11 @@ const { titleZh, titleEn, backHref, backZh, backEn, entries } = Astro.props;
 			{entries.map((entry) => (
 				<a
 					class="card-base friend-card"
-					href={entry.href}
+					href={entry.external ? entry.href : url(entry.href)}
 					target={entry.external ? "_blank" : undefined}
 					rel={entry.external ? "noopener noreferrer" : undefined}
 				>
-					<div class="friend-icon"><img src={entry.iconSrc} alt="" /></div>
+					<div class="friend-icon"><img src={entry.iconSrc.startsWith("/") ? url(entry.iconSrc) : entry.iconSrc} alt="" /></div>
 					<div class="friend-copy">
 						<h2><span class="lang-zh">{entry.titleZh}</span><span class="lang-en">{entry.titleEn}</span></h2>
 						<p class="lang-zh">{entry.descriptionZh}</p>

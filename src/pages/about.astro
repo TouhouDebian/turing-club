@@ -2,6 +2,7 @@
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
+import { url } from "../utils/url-utils";
 ---
 
 <MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
@@ -11,7 +12,7 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
                 <div class="lang-zh">
                     <h1>关于天一中学图灵社</h1>
                     <figure class="turing-portrait">
-                        <img src="/images/alan-turing.png" alt="Alan Mathison Turing" loading="lazy" decoding="async" />
+                        <img src={url("/images/alan-turing.png")} alt="Alan Mathison Turing" loading="lazy" decoding="async" />
                         <figcaption>
                             <a href="https://baike.baidu.com/item/%E8%89%BE%E4%BC%A6%C2%B7%E9%BA%A6%E5%B8%AD%E6%A3%AE%C2%B7%E5%9B%BE%E7%81%B5/3940576" target="_blank" rel="noopener noreferrer">
                                 Alan Mathison Turing
@@ -63,7 +64,7 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
                 <div class="lang-en">
                     <h1>About Turing Club</h1>
                     <figure class="turing-portrait">
-                        <img src="/images/alan-turing.png" alt="Alan Mathison Turing" loading="lazy" decoding="async" />
+                        <img src={url("/images/alan-turing.png")} alt="Alan Mathison Turing" loading="lazy" decoding="async" />
                         <figcaption>
                             <a href="https://en.wikipedia.org/wiki/Alan_Turing" target="_blank" rel="noopener noreferrer">
                                 Alan Mathison Turing
