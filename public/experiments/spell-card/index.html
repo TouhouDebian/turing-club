@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>符卡轨迹实验 / Spell Card Trajectory Lab</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./lab.js" defer></script>
+</head>
+<body>
+  <main>
+    <header><div><span class="eyebrow">GERP-02 / KINEMATICS</span><h1 data-text="title">符卡轨迹实验</h1></div><span class="badge" data-text="simulation">计算机模拟</span></header>
+    <div class="controls">
+      <label><span data-text="pattern">阵型</span><select id="pattern"><option value="ring" data-text="ring">环形</option><option value="spiral" data-text="spiral">螺旋</option><option value="seal" data-text="seal">封印</option></select></label>
+      <label><span><span data-text="count">每轮弹数</span> <output id="count-value">24</output></span><input id="count" type="range" min="8" max="64" step="4" value="24"></label>
+      <label><span><span data-text="speed">速度</span> <output id="speed-value">90 u/s</output></span><input id="speed" type="range" min="30" max="150" step="10" value="90"></label>
+      <label><span><span data-text="angle">初始角度</span> <output id="angle-value">0°</output></span><input id="angle" type="range" min="0" max="355" step="5" value="0"></label>
+    </div>
+    <div class="toolbar"><button id="play" type="button" aria-label="开始 / Play" title="开始 / Play">▶</button><button id="reset" type="button" aria-label="复位 / Reset" title="复位 / Reset">↺</button><button id="step" type="button" aria-label="前进 0.1 秒 / Step 0.1 seconds" title="前进 0.1 秒 / Step 0.1 seconds">▸|</button><span id="state" role="status" data-text="ready">就绪</span><button class="export" id="export" type="button" data-text="export">导出 CSV</button></div>
+    <div class="stage"><canvas id="field" width="900" height="560" aria-label="弹幕粒子运动轨迹画布 / Particle trajectory canvas"></canvas></div>
+    <div class="readout"><span><span data-text="time">时间</span> <output id="time-value">0.00 s</output></span><span><span data-text="active">可见粒子</span> <output id="active-value">0</output></span><span><span data-text="first">首粒子</span> <output id="first-value">—</output></span></div>
+    <p class="caption" data-text="caption">固定坐标：900 × 560 u；速度单位 u/s。同一参数与时间对应同一结果，无重力、碰撞或能量建模。</p>
+  </main>
+</body>
+</html>
