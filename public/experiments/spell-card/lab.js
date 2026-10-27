@@ -4,12 +4,15 @@
   const ctx = canvas.getContext('2d');
   const duration = 8;
   const waveInterval = 0.55;
+  const previewTime = 2.4;
   const texts = {
     zh: {title:'符卡轨迹实验',simulation:'计算机模拟',pattern:'阵型',ring:'环形',spiral:'螺旋',seal:'封印',count:'每轮弹数',speed:'径向速度',angle:'初始角度',export:'导出 CSV',ready:'就绪',running:'运行中',paused:'已暂停',finished:'已结束',time:'时间',active:'可见粒子',first:'首粒子',caption:'固定坐标：900 × 560 u；速度单位 u/s。同一参数与时间对应同一结果，无重力、碰撞或能量建模。',play:'开始',pause:'暂停',reset:'复位',step:'前进 0.1 秒'},
     en: {title:'Spell Card Trajectory Lab',simulation:'Computer simulation',pattern:'Pattern',ring:'Ring',spiral:'Spiral',seal:'Seal',count:'Particles / wave',speed:'Radial speed',angle:'Initial angle',export:'Export CSV',ready:'Ready',running:'Running',paused:'Paused',finished:'Finished',time:'Time',active:'Visible',first:'First particle',caption:'Fixed coordinates: 900 × 560 u; speed in u/s. Identical parameters and time give identical positions. Gravity, collisions, and energy are not modeled.',play:'Play',pause:'Pause',reset:'Reset',step:'Step 0.1 seconds'},
   };
   let language = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'zh';
-  let time = 0;
+  texts.zh.timeline = '时间轴';
+  texts.en.timeline = 'Timeline';
+  let time = previewTime;
   let running = false;
   let last = null;
   let frame = 0;
@@ -25,19 +28,16 @@
       const age = at - wave * waveInterval;
       for (let index = 0; index < settings.count; index++) {
         const theta = 2 * Math.PI * index / settings.count + base + (settings.pattern === 'ring' ? 0 : wave * 0.2);
-        const radius = settings.speed * age;
-        let x = 450 + radius * Math.cos(theta);
-        let y = 280 + radius * Math.sin(theta);
-        if (settings.pattern === 'seal') {
-          // A prescribed curve for visualization, not a force-based model.
-          const turning = theta + age * 0.65;
-          x = 450 + radius * Math.cos(turning);
-          y = 280 + radius * Math.sin(turning);
-        }
+        const {x,y} = position(age,theta,settings);
         result.push({wave,index,x,y,age});
       }
     }
     return result;
+  }
+
+  function position(age, theta, settings) {
+    const turn = theta + (settings.pattern === 'seal' ? age * 0.65 : 0);
+    return {x:450 + settings.speed * age * Math.cos(turn),y:280 + settings.speed * age * Math.sin(turn)};
   }
 
   function render() {
@@ -45,19 +45,44 @@
     const dark = document.documentElement.classList.contains('dark');
     ctx.fillStyle = dark ? '#0c1420' : '#101b29';
     ctx.fillRect(0,0,900,560);
-    ctx.strokeStyle = '#25394e';
+    ctx.strokeStyle = '#1c2b3d';
     ctx.lineWidth = 1;
     for (let x = 50; x < 900; x += 50) {ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,560);ctx.stroke();}
     for (let y = 30; y < 560; y += 50) {ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(900,y);ctx.stroke();}
     ctx.fillStyle = '#b6cadd';ctx.font = '13px monospace';ctx.fillText('x / u',845,25);ctx.fillText('y / u',12,540);
-    ctx.strokeStyle = '#8dabc2';ctx.beginPath();ctx.arc(450,280,10,0,Math.PI*2);ctx.stroke();
+    ctx.save();
+    ctx.translate(450,280);
+    ctx.rotate(time * 0.3);
+    ctx.strokeStyle = '#638ca9';ctx.lineWidth = 1.5;
+    for (const radius of [17,25]) {ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.stroke();}
+    ctx.beginPath();
+    for(let i=0;i<=6;i++){const a=i*Math.PI/3;ctx.lineTo(22*Math.cos(a),22*Math.sin(a));}
+    ctx.stroke();ctx.restore();
     const all = particles(time, settings);
     const visible = all.filter((p) => p.x >= 0 && p.x <= 900 && p.y >= 0 && p.y <= 560);
     for (const p of visible) {
-      ctx.fillStyle = ['#f5c469','#7bcaff','#f497b2','#b4e5cd'][p.wave % 4];
-      ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(p.x-0.8,p.y-0.8,1.2,0,Math.PI*2);ctx.fill();
+      const color = ['#ffd475','#70dfff','#ff8dbb','#a0f5c8'][p.wave % 4];
+      const theta = 2*Math.PI*p.index/settings.count + settings.angle*Math.PI/180 + (settings.pattern==='ring'?0:p.wave*0.2);
+      // Sample the same analytical path; trails never change exported coordinates.
+      ctx.lineCap = 'round';ctx.lineWidth = 3;
+      for(let segment=0;segment<12;segment++){
+        const ageA = Math.max(0,p.age-0.48+segment*0.04);
+        const ageB = Math.max(0,p.age-0.48+(segment+1)*0.04);
+        if(ageA===ageB)continue;
+        const a=position(ageA,theta,settings),b=position(ageB,theta,settings);
+        ctx.globalAlpha=(segment+1)/12*0.65;ctx.strokeStyle=color;
+        ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      }
+      ctx.globalAlpha=1;
+      const halo=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,14);
+      halo.addColorStop(0,color);halo.addColorStop(1,'transparent');
+      ctx.globalAlpha=0.4;ctx.fillStyle=halo;ctx.beginPath();ctx.arc(p.x,p.y,14,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+      ctx.save();ctx.translate(p.x,p.y);
+      ctx.rotate(theta + (settings.pattern==='seal'?p.age*0.65+Math.atan2(0.65*p.age,1):0));
+      ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(0,0,7,3.5,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#fff8e8';ctx.beginPath();ctx.ellipse(0,0,3.5,1.5,0,0,Math.PI*2);ctx.fill();ctx.restore();
     }
+    $('timeline').value=String(time);
     $('time-value').textContent = `${time.toFixed(2)} s`;
     $('active-value').textContent = String(visible.length);
     $('first-value').textContent = all.length ? `(${all[0].x.toFixed(1)}, ${all[0].y.toFixed(1)})` : '—';
@@ -86,7 +111,8 @@
   $('play').onclick = () => {if(running)stop();else{if(time>=duration)time=0;running=true;schedule();}render();};
   $('reset').onclick = () => {stop();time=0;render();};
   $('step').onclick = () => {stop();time=Math.min(duration,Math.round((time+0.1)*1000)/1000);render();};
-  for (const id of ['pattern','count','speed','angle']) $(id).addEventListener('input',() => {stop();time=0;render();});
+  for (const id of ['pattern','count','speed','angle']) $(id).addEventListener('input',() => {stop();time=previewTime;render();});
+  $('timeline').addEventListener('input',()=>{stop();time=Math.min(duration,Math.max(0,Number($('timeline').value)));render();});
   $('export').onclick = () => {
     const settings=config();
     const rows=['pattern,count,speed_u_per_s,initial_angle_deg,time_s,wave,index,x_u,y_u'];
