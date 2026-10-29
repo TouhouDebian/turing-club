@@ -81,9 +81,19 @@ GitHub 也支持用户主页站点：仓库名必须是 `用户名.github.io`，
 
 用自己的账号登录 GitHub，在右上角 `+` 菜单选择 **New repository**。仓库名填 `my-first-site`，选 **Public**，开启 **Add README**，再创建仓库。
 
+![右上角加号菜单中的 New repository 入口](./images/new-repository.png)
+
+![新建仓库页面的 Repository name 输入框；将图中的 hello-world 换成 my-first-site](./images/repository-name.png)
+
+这里和下面的操作截图来自 [GitHub 官方文档](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)，示例账号、仓库名与实际界面可能不同。照着找按钮即可，不必照抄图中的名称。
+
 本篇按 GitHub Free 的公开仓库流程来做。操作自己的练习仓库就好，不要为了试设置去动社团正式网站。初始化 README 会让仓库先有一次提交和一个分支；分支通常叫 `main`，若你这里不同，记住实际名称。
 
 进入仓库，选择 **Add file → Upload files**，上传 `student-site` **里面的内容**，不是外面那一层文件夹，更不是 ZIP 压缩包。根目录应该直接看到 `index.html`、`style.css`、`script.js` 和 `images`。
+
+![仓库文件列表上方的 Add file 菜单，上传入口在这里](./images/upload-files.png)
+
+图中标出的是 **Add file** 按钮；展开后选择 **Upload files**。这张截图出自[官方文件上传说明](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)。
 
 提交说明可以写：
 
@@ -98,6 +108,12 @@ Add my first homepage
 ## 开启 Pages，再等部署完成
 
 打开**仓库的** Settings，不是个人账户设置。在侧栏找到 Pages，定位到 **Build and deployment**，选择：
+
+![仓库顶部导航栏中的 Settings 标签](./images/repository-settings.png)
+
+![Pages 设置中的发布分支下拉框，初次设置时可能显示 None](./images/pages-branch.png)
+
+图中的 **None** 表示还没有选择发布分支；在这里改成 `main`，目录选择根目录：
 
 ```text
 Source：Deploy from a branch
@@ -251,9 +267,19 @@ If the repository name is already taken in your account, choose another and adju
 
 Sign in to your own GitHub account, choose **New repository** from the top-right `+` menu, enter `my-first-site`, select **Public**, enable **Add README**, and create it.
 
+![New repository in GitHub's top-right plus menu](./images/new-repository.png)
+
+![Repository name field; replace hello-world in the example with my-first-site](./images/repository-name.png)
+
+These screenshots and the ones below come from [GitHub's official documentation](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository). Example accounts, repository names, and interface details may differ. Follow the controls, not the example names.
+
 This walkthrough uses a public repository on GitHub Free. Keep the exercise separate from the club's production website. Initializing a README creates a commit and a branch. The branch is usually `main`; remember the actual name if yours differs.
 
 Choose **Add file → Upload files**. Upload the **contents** of `student-site`, not the enclosing folder or the ZIP. The repository root should directly contain `index.html`, `style.css`, `script.js`, and `images`.
+
+![Add file button above the repository file list](./images/upload-files.png)
+
+Open the highlighted **Add file** menu, then select **Upload files**. This screenshot is from the [official file-upload instructions](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
 
 Use a commit message such as:
 
@@ -268,6 +294,12 @@ The empty `.nojekyll` file skips Jekyll processing. If hidden files were omitted
 ## Enable Pages and wait for deployment
 
 Open the **repository's** Settings, rather than your personal account settings. Find Pages in the sidebar, then **Build and deployment**:
+
+![Settings tab in the repository's top navigation](./images/repository-settings.png)
+
+![Publishing branch selector in Pages settings, initially showing None](./images/pages-branch.png)
+
+**None** means no publishing branch has been selected. Change it to `main`, then select the root folder:
 
 ```text
 Source: Deploy from a branch
