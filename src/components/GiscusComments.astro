@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
-import { url } from "../utils/url-utils";
+import darkCss from "../../public/giscus/turing-dark.css?raw";
+import lightCss from "../../public/giscus/turing-light.css?raw";
 
 const giscusConfig = {
 	repo: "TouhouDebian/turing-club",
@@ -9,10 +10,7 @@ const giscusConfig = {
 	categoryId: "DIC_kwDOTIIqkM4DALmQ",
 };
 
-const giscusThemePaths = {
-	light: url("/giscus/turing-light.css"),
-	dark: url("/giscus/turing-dark.css"),
-};
+const giscusThemes = { light: lightCss, dark: darkCss };
 ---
 
 <section class="card-base giscus-comments onload-animation">
@@ -25,32 +23,18 @@ const giscusThemePaths = {
 	</div>
 	<p class="giscus-note lang-zh">评论由 GitHub Discussions 提供，发布时需登录 GitHub。</p>
 	<p class="giscus-note lang-en">Comments use GitHub Discussions. Sign in to GitHub to post.</p>
-	<div class="giscus-shell">
-		<script
-			is:inline
-			src="https://giscus.app/client.js"
-			data-repo={giscusConfig.repo}
-			data-repo-id={giscusConfig.repoId}
-			data-category={giscusConfig.category}
-			data-category-id={giscusConfig.categoryId}
-			data-mapping="pathname"
-			data-strict="0"
-			data-reactions-enabled="1"
-			data-emit-metadata="0"
-			data-input-position="top"
-			data-theme="light"
-			data-lang="zh-CN"
-			data-loading="lazy"
-			crossorigin="anonymous"
-			async
-		></script>
-	</div>
+	<div class="giscus-shell"></div>
 </section>
 
-<script is:inline define:vars={{ giscusThemePaths }}>
+<script is:inline define:vars={{ giscusConfig, giscusThemes }}>
 	(() => {
+		window.disposeGiscusTheme?.();
+		const shell = document.currentScript.previousElementSibling.querySelector(".giscus-shell");
+		if (!shell) return;
 		const giscusOrigin = "https://giscus.app";
-		const cssCache = new Map();
+		const client = document.createElement("script");
+		const frameThemes = new WeakMap();
+		const frameListeners = new Map();
 
 		const encodeCss = (css) => {
 			const bytes = new TextEncoder().encode(css);
@@ -59,20 +43,11 @@ const giscusThemePaths = {
 			return window.btoa(binary);
 		};
 
-		const loadThemeCss = async (themePath) => {
-			if (cssCache.has(themePath)) return cssCache.get(themePath);
-			const response = await fetch(themePath);
-			if (!response.ok) throw new Error("Failed to load giscus theme");
-			const css = await response.text();
-			cssCache.set(themePath, css);
-			return css;
-		};
-
-		const getThemeValue = async () => {
-			const themePath = document.documentElement.classList.contains("dark")
-				? giscusThemePaths.dark
-				: giscusThemePaths.light;
-			const css = await loadThemeCss(themePath);
+		// Embed the CSS so neither a slow fetch nor an old response can change the theme.
+		const getThemeValue = () => {
+			const css = document.documentElement.classList.contains("dark")
+				? giscusThemes.dark
+				: giscusThemes.light;
 			const hue = Number.parseInt(
 				getComputedStyle(document.documentElement).getPropertyValue("--hue").trim(),
 				10,
@@ -80,27 +55,62 @@ const giscusThemePaths = {
 			return `data:text/css;base64,${encodeCss(`main { --giscus-hue: ${hue}; }\n${css}`)}`;
 		};
 
-		const syncGiscusTheme = async () => {
-			const frame = document.querySelector("iframe.giscus-frame");
-			if (!frame?.contentWindow) return;
-			let theme;
-			try {
-				theme = await getThemeValue();
-			} catch {
-				theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+		const syncGiscusTheme = () => {
+			if (!shell.isConnected) return;
+			const theme = getThemeValue();
+			// Keep the iframe URL short; custom CSS is delivered through postMessage.
+			client.dataset.theme = document.documentElement.classList.contains("dark") ? "dark" : "light";
+			for (const frame of shell.querySelectorAll("iframe.giscus-frame")) {
+				if (!frameListeners.has(frame)) {
+					const onLoad = () => {
+						frameThemes.delete(frame);
+						syncGiscusTheme();
+					};
+					frame.addEventListener("load", onLoad);
+					frameListeners.set(frame, onLoad);
+				}
+				if (!frame.contentWindow || frameThemes.get(frame) === theme) continue;
+				frame.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, giscusOrigin);
+				frameThemes.set(frame, theme);
 			}
-			frame.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, giscusOrigin);
 		};
 
-		window.addEventListener("message", (event) => {
-			if (event.origin === giscusOrigin && event.data?.giscus) syncGiscusTheme();
-		});
-		new MutationObserver(syncGiscusTheme).observe(document.documentElement, {
+		const onMessage = (event) => {
+			if (event.origin !== giscusOrigin || !event.data?.giscus) return;
+			const frame = [...frameListeners.keys()].find((item) => item.contentWindow === event.source);
+			if (!frame) return;
+			syncGiscusTheme();
+		};
+		window.addEventListener("message", onMessage);
+		const themeObserver = new MutationObserver(syncGiscusTheme);
+		themeObserver.observe(document.documentElement, {
 			attributes: true,
 			attributeFilter: ["class", "style"],
 		});
-		window.setTimeout(syncGiscusTheme, 800);
-		window.setTimeout(syncGiscusTheme, 1800);
+		const frameObserver = new MutationObserver(syncGiscusTheme);
+		frameObserver.observe(shell, { childList: true, subtree: true });
+		window.disposeGiscusTheme = () => {
+			themeObserver.disconnect();
+			frameObserver.disconnect();
+			window.removeEventListener("message", onMessage);
+			for (const [frame, listener] of frameListeners) frame.removeEventListener("load", listener);
+			frameListeners.clear();
+		};
+
+		Object.assign(client.dataset, giscusConfig, {
+			mapping: "pathname",
+			strict: "0",
+			reactionsEnabled: "1",
+			emitMetadata: "0",
+			inputPosition: "top",
+			lang: "zh-CN",
+			loading: "lazy",
+		});
+		client.src = `${giscusOrigin}/client.js`;
+		client.crossOrigin = "anonymous";
+		client.async = true;
+		syncGiscusTheme();
+		shell.appendChild(client);
 	})();
 </script>
 
