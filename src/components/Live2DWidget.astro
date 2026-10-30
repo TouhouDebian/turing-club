@@ -1,5 +1,7 @@
 ---
+import { Icon } from "astro-icon/components";
 import live2dMessages from "../live2d/messages/messages.json";
+import voiceManifest from "../live2d/messages/voices.json";
 import { url } from "../utils/url-utils";
 
 const modelOptions = [
@@ -99,6 +101,17 @@ const modelData = modelOptions.map((model) => ({
 	...model,
 	path: encodeURI(url(model.path)),
 }));
+const voiceData = Object.fromEntries(
+	Object.entries(voiceManifest).map(([text, voices]) => [
+		text,
+		Object.fromEntries(
+			Object.entries(voices).map(([voice, file]) => [
+				voice,
+				url(`/audio/live2d/${file}`),
+			]),
+		),
+	]),
+);
 ---
 
 <div id="live2d-widget" aria-label="Live2D model">
@@ -110,6 +123,10 @@ const modelData = modelOptions.map((model) => ({
 	</button>
 	<button id="live2d-chat-toggle" type="button" aria-label="Open Live2D chat" aria-expanded="false">
 		<span aria-hidden="true">💬</span>
+	</button>
+	<button id="live2d-voice-toggle" type="button" aria-label="开启油库里语音 / Enable Yukkuri voice" title="开启油库里语音 / Enable Yukkuri voice" aria-pressed="false">
+		<span class="voice-off"><Icon name="material-symbols:volume-off-rounded" /></span>
+		<span class="voice-on" hidden><Icon name="material-symbols:volume-up-rounded" /></span>
 	</button>
 	<select id="live2d-model-select" aria-label="Select Live2D model">
 		{modelOptions.map((model) => (
@@ -273,6 +290,7 @@ const modelData = modelOptions.map((model) => ({
 	#live2d-toggle,
 	#live2d-reset,
 	#live2d-chat-toggle,
+	#live2d-voice-toggle,
 	#live2d-model-select,
 	#live2d-credits {
 		position: absolute;
@@ -284,6 +302,7 @@ const modelData = modelOptions.map((model) => ({
 	#live2d-widget:hover #live2d-toggle,
 	#live2d-widget:hover #live2d-reset,
 	#live2d-widget:hover #live2d-chat-toggle,
+	#live2d-widget:hover #live2d-voice-toggle,
 	#live2d-widget:hover #live2d-model-select,
 	#live2d-widget:hover #live2d-credits {
 		opacity: 1;
@@ -294,6 +313,7 @@ const modelData = modelOptions.map((model) => ({
 	#live2d-widget.live2d-hidden #live2d-bubble,
 	#live2d-widget.live2d-hidden #live2d-reset,
 	#live2d-widget.live2d-hidden #live2d-chat-toggle,
+	#live2d-widget.live2d-hidden #live2d-voice-toggle,
 	#live2d-widget.live2d-hidden #live2d-chat-panel,
 	#live2d-widget.live2d-hidden #live2d-model-select,
 	#live2d-widget.live2d-hidden #live2d-credits {
@@ -336,6 +356,21 @@ const modelData = modelOptions.map((model) => ({
 		opacity: 1;
 		background: color-mix(in oklch, var(--primary) 72%, rgba(0, 0, 0, 0.45));
 	}
+
+	#live2d-voice-toggle {
+		top: 0.25rem;
+		right: 5.8rem;
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.45);
+		color: white;
+		display: grid;
+		place-items: center;
+	}
+	#live2d-voice-toggle[aria-pressed="true"],
+	#live2d-voice-toggle:focus-visible { opacity: 1; }
+	#live2d-voice-toggle span[hidden] { display: none; }
 
 	#live2d-model-select {
 		top: 2.1rem;
@@ -563,6 +598,7 @@ const modelData = modelOptions.map((model) => ({
 	define:vars={{
 		live2dMessages,
 		modelData,
+		voiceData,
 	}}
 >
 	(() => {
@@ -571,6 +607,7 @@ const modelData = modelOptions.map((model) => ({
 		const toggle = document.getElementById("live2d-toggle");
 		const reset = document.getElementById("live2d-reset");
 		const chatToggle = document.getElementById("live2d-chat-toggle");
+		const voiceToggle = document.getElementById("live2d-voice-toggle");
 		const chatPanel = document.getElementById("live2d-chat-panel");
 		const chatClose = document.getElementById("live2d-chat-close");
 		const chatName = document.getElementById("live2d-chat-name");
@@ -962,6 +999,7 @@ const modelData = modelOptions.map((model) => ({
 		};
 
 		const setHidden = (hidden) => {
+			if (hidden) stopVoice();
 			widget.classList.toggle("live2d-hidden", hidden);
 			toggle.textContent = hidden ? "L2D" : "×";
 			toggle.setAttribute(
@@ -1018,7 +1056,74 @@ const modelData = modelOptions.map((model) => ({
 			return profile;
 		};
 
+		let voiceEnabled = false;
+		let voiceContext;
+		let voiceAnalyser;
+		let voiceSamples;
+		let voiceMouth = 0;
+		let voiceGeneration = 0;
+		const voiceAudio = new Audio();
+		voiceAudio.preload = "none";
+		voiceAudio.volume = 0.65;
+		const stopVoice = () => {
+			voiceGeneration++;
+			voiceAudio.onended = null;
+			voiceAudio.onloadedmetadata = null;
+			voiceAudio.pause();
+			voiceAudio.removeAttribute("src");
+			voiceAudio.load();
+			voiceMouth = 0;
+		};
+		const playVoice = (text) => {
+			if (!voiceEnabled || document.hidden) return;
+			const voice = currentModelId.replace(/-event$/, "") === "marisa" ? "f2" : "f1";
+			const src = voiceData[text]?.[voice];
+			if (!src) return; // Unrecorded AI replies remain text-only, never play unrelated speech.
+			const generation = voiceGeneration;
+			voiceAudio.src = src;
+			voiceAudio.onloadedmetadata = () => {
+				if (generation !== voiceGeneration) return;
+				const duration = voiceAudio.duration * 1000;
+				speechProfileUntil = performance.now() + duration;
+				window.clearTimeout(bubbleTimer);
+				bubbleTimer = window.setTimeout(() => bubble.classList.remove("live2d-bubble-active"), duration + 800);
+			};
+			voiceAudio.onended = () => {
+				if (generation !== voiceGeneration) return;
+				voiceMouth = 0;
+				speechProfileUntil = performance.now();
+			};
+			void voiceAudio.play().catch(() => {
+				if (generation === voiceGeneration) stopVoice();
+			});
+		};
+		voiceToggle?.addEventListener("click", () => {
+			voiceEnabled = !voiceEnabled;
+			voiceToggle.setAttribute("aria-pressed", String(voiceEnabled));
+			const label = voiceEnabled ? "关闭油库里语音 / Mute Yukkuri voice" : "开启油库里语音 / Enable Yukkuri voice";
+			voiceToggle.title = label;
+			voiceToggle.setAttribute("aria-label", label);
+			voiceToggle.querySelector(".voice-off").hidden = voiceEnabled;
+			voiceToggle.querySelector(".voice-on").hidden = !voiceEnabled;
+			stopVoice();
+			if (!voiceEnabled) return;
+			const AudioContext = window.AudioContext;
+			if (AudioContext && !voiceContext) {
+				voiceContext = new AudioContext();
+				voiceAnalyser = voiceContext.createAnalyser();
+				voiceAnalyser.fftSize = 256;
+				voiceSamples = new Uint8Array(voiceAnalyser.fftSize);
+				voiceContext.createMediaElementSource(voiceAudio).connect(voiceAnalyser);
+				voiceAnalyser.connect(voiceContext.destination);
+			}
+			void voiceContext?.resume().catch(() => {});
+			showSpokenText(getCharacterGreeting(), "happy");
+		});
+		window.addEventListener("pagehide", stopVoice);
+		document.addEventListener("visibilitychange", () => { if (document.hidden) stopVoice(); });
+
 		const showSpokenText = (text, mood = null, messageIndex = 0) => {
+			stopVoice();
 			const normalized = String(text ?? "").trim();
 			if (!normalized) return;
 			bubble.textContent =
@@ -1049,6 +1154,7 @@ const modelData = modelOptions.map((model) => ({
 			bubbleTimer = window.setTimeout(() => {
 				bubble.classList.remove("live2d-bubble-active");
 			}, Math.max(3000, profile.duration + 800));
+			playVoice(normalized);
 			return profile;
 		};
 
@@ -1572,10 +1678,16 @@ const modelData = modelOptions.map((model) => ({
 			expressionActive,
 			blushActive,
 		) => {
-			const mouthOpen = Math.max(
+			let mouthOpen = Math.max(
 				expressionActive ? 0.95 : 0,
 				profile ? profile.mouthOpen * ease : 0,
 			);
+			if (voiceAnalyser && !voiceAudio.paused) {
+				voiceAnalyser.getByteTimeDomainData(voiceSamples);
+				const energy = voiceSamples.reduce((sum, value) => sum + ((value - 128) / 128) ** 2, 0) / voiceSamples.length;
+				voiceMouth = voiceMouth * 0.4 + Math.min(1, Math.sqrt(energy) * 4) * 0.6;
+				mouthOpen = voiceMouth;
+			}
 			const idleProfile = getIdleProfile();
 			const idleExpressionWeight = profile ? Math.max(0, 1 - ease) : 1;
 			const eyeSmile = Math.max(
