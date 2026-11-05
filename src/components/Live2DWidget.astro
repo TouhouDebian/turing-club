@@ -1079,8 +1079,10 @@ const voiceData = Object.fromEntries(
 			.replace(/[a-z]/gi, (letter) => letterReadings[letter.toLowerCase().charCodeAt(0) - 97])
 			.replace(/[0-9]/g, (digit) => ["ゼロ", "イチ", "ニ", "サン", "ヨン", "ゴ", "ロク", "ナナ", "ハチ", "キュー"][Number(digit)])
 			.replace(/ヴ/g, "ブ")
+			.replace(/['’`]/g, "")
 			.replace(/[^\u3041-\u3096\u30a1-\u30faー]/gu, "、")
-			.replace(/、+/g, "、").replace(/^、|、$/g, "");
+			.replace(/、+/g, "、")
+			.replace(/(^|、)[ーッっ]+/g, "$1").replace(/^、|、$/g, "");
 		const loadSynthResources = () => synthResources ??= (async () => {
 			await new Promise((resolve, reject) => {
 				if (window.yukkuri) return resolve();
@@ -1094,6 +1096,51 @@ const voiceData = Object.fromEntries(
 			if (!response.ok) throw new Error("Cannot load Yukkuri pronunciation map");
 			return response.text();
 		})().catch((error) => { synthResources = null; throw error; });
+		const joinVoiceWavs = (waves) => {
+			const parsed = waves.map((wave) => {
+				const bytes = wave instanceof Uint8Array ? wave : new Uint8Array(wave);
+				const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+				let format;
+				let data;
+				for (let offset = 12; offset + 8 <= bytes.length;) {
+					const id = String.fromCharCode(...bytes.subarray(offset, offset + 4));
+					const size = view.getUint32(offset + 4, true);
+					if (offset + 8 + size > bytes.length) throw new Error("Invalid speech WAV");
+					if (id === "fmt ") format = bytes.slice(offset + 8, offset + 24);
+					if (id === "data") data = bytes.slice(offset + 8, offset + 8 + size);
+					offset += 8 + size + (size % 2);
+				}
+				if (!format || !data) throw new Error("Missing speech WAV data");
+				return { format, data };
+			});
+			const length = parsed.reduce((sum, wave) => sum + wave.data.length, 0);
+			const output = new Uint8Array(44 + length);
+			const view = new DataView(output.buffer);
+			const tag = (offset, text) => output.set([...text].map((letter) => letter.charCodeAt(0)), offset);
+			tag(0, "RIFF"); view.setUint32(4, output.length - 8, true); tag(8, "WAVE");
+			tag(12, "fmt "); view.setUint32(16, 16, true); output.set(parsed[0].format, 20);
+			tag(36, "data"); view.setUint32(40, length, true);
+			let offset = 44;
+			for (const wave of parsed) {
+				if (!wave.format.every((value, index) => value === parsed[0].format[index])) throw new Error("Speech format changed");
+				output.set(wave.data, offset);
+				offset += wave.data.length;
+			}
+			return output;
+		};
+		const splitVoiceKana = (kana) => {
+			const parts = [];
+			for (const phrase of kana.split("、")) {
+				let remaining = phrase;
+				while (remaining) {
+					let end = Math.min(40, remaining.length);
+					while (end < remaining.length && /[ァィゥェォャュョぁぃぅぇぉゃゅょー]/.test(remaining[end])) end++;
+					parts.push(remaining.slice(0, end));
+					remaining = remaining.slice(end);
+				}
+			}
+			return parts;
+		};
 		const synthesizeVoice = (text, voice, generation) => {
 			const job = synthQueue.catch(() => {}).then(async () => {
 				if (generation !== voiceGeneration) return null;
@@ -1108,7 +1155,7 @@ const voiceData = Object.fromEntries(
 					synthVoice = null;
 					synthInstance = await window.yukkuri.load(`${yukkuriBase}voices/${voice}.zip`, `${voice}/AquesTalk.dll`, {
 						wasmPath: `${yukkuriBase}voices/v86.wasm`, map,
-						k2k: { toKana: (value) => safeKana(converter ? converter.toKana(value) : value) },
+						k2k: { toKana: (value) => safeKana(converter && /[a-z]/i.test(value) ? converter.toKana(value) : value) },
 					});
 					synthVoice = voice;
 					synthEnglish = english;
@@ -1117,8 +1164,18 @@ const voiceData = Object.fromEntries(
 				const spoken = text.normalize("NFKC")
 					.replace(/https?:\/\/\S+/g, english ? "link" : "链接")
 					.replace(/[`*_#☆♪～]/g, "").slice(0, 240);
-				if (!synthInstance.koe(spoken)) return null;
-				return synthInstance.run(spoken, 100);
+				const kana = synthInstance.koe(spoken);
+				if (!kana) return null;
+				const waves = [];
+				for (const part of splitVoiceKana(kana)) {
+					if (generation !== voiceGeneration) return null;
+					try {
+						waves.push(await synthInstance.run(part, 100));
+					} catch (error) {
+						throw new Error(`Speech segment failed: ${error.message}`);
+					}
+				}
+				return joinVoiceWavs(waves);
 			});
 			synthQueue = job;
 			return job;
@@ -1137,6 +1194,8 @@ const voiceData = Object.fromEntries(
 			if (voiceBlobUrl) URL.revokeObjectURL(voiceBlobUrl);
 			voiceBlobUrl = null;
 			voiceMouth = 0;
+			voiceToggle.removeAttribute("aria-busy");
+			voiceToggle.dataset.voiceState = voiceEnabled ? "ready" : "muted";
 		};
 		const playVoice = async (text) => {
 			if (!voiceEnabled || document.hidden) return;
@@ -1144,6 +1203,9 @@ const voiceData = Object.fromEntries(
 			const generation = voiceGeneration;
 			let src = voiceData[text]?.[voice];
 			if (!src) {
+				voiceToggle.setAttribute("aria-busy", "true");
+				voiceToggle.dataset.voiceState = "loading";
+				voiceToggle.title = getCurrentLanguage() === "en" ? "Generating speech…" : "正在生成语音…";
 				try {
 					const wav = await synthesizeVoice(text, voice, generation);
 					if (!wav || generation !== voiceGeneration || !voiceEnabled || document.hidden) return;
@@ -1151,10 +1213,18 @@ const voiceData = Object.fromEntries(
 					src = voiceBlobUrl;
 				} catch (error) {
 					console.warn("Yukkuri speech unavailable; keeping text reply", error);
+					if (generation === voiceGeneration) {
+						voiceToggle.removeAttribute("aria-busy");
+						voiceToggle.title = getCurrentLanguage() === "en" ? "Speech failed. Toggle voice to retry." : "语音生成失败，点击关闭后重新开启重试";
+						voiceToggle.dataset.voiceState = "error";
+					}
 					return;
 				}
 			}
 			voiceAudio.src = src;
+			voiceToggle.removeAttribute("aria-busy");
+			voiceToggle.title = "关闭油库里语音 / Mute Yukkuri voice";
+			voiceToggle.dataset.voiceState = "playing";
 			voiceAudio.onloadedmetadata = () => {
 				if (generation !== voiceGeneration) return;
 				const duration = voiceAudio.duration * 1000;
@@ -1165,6 +1235,7 @@ const voiceData = Object.fromEntries(
 			voiceAudio.onended = () => {
 				if (generation !== voiceGeneration) return;
 				voiceMouth = 0;
+				voiceToggle.dataset.voiceState = "ready";
 				speechProfileUntil = performance.now();
 			};
 			voiceAudio.onerror = () => {

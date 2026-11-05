@@ -22,4 +22,28 @@ for (const input of [
 }
 assert.equal(sanitize("✨() **"), "");
 assert.equal(sanitize("ヴ"), "ブ");
+assert.equal(sanitize("ジ'ーアオ"), "ジーアオ");
+assert.equal(sanitize("ーアオ、ーシー"), "アオ、シー");
+
+const helperStart = source.indexOf("const joinVoiceWavs =");
+const helperEnd = source.indexOf("const synthesizeVoice =", helperStart);
+const helpers = vm.runInNewContext(`${source.slice(helperStart, helperEnd)}\n({joinVoiceWavs, splitVoiceKana})`, { Uint8Array, DataView });
+const kana = "ニーハオ".repeat(40);
+const parts = helpers.splitVoiceKana(kana);
+assert(parts.length > 1);
+assert.equal(parts.join(""), kana);
+assert(parts.every((part) => !/^[ーァィゥェォャュョ]/.test(part)));
+const wav = new Uint8Array(48);
+const view = new DataView(wav.buffer);
+for (const [offset, tag] of [[0, "RIFF"], [8, "WAVE"], [12, "fmt "], [36, "data"]]) wav.set([...tag].map((c) => c.charCodeAt(0)), offset);
+view.setUint32(4, 40, true); view.setUint32(16, 16, true);
+view.setUint16(20, 1, true); view.setUint16(22, 1, true);
+view.setUint32(24, 8000, true); view.setUint32(28, 16000, true);
+view.setUint16(32, 2, true); view.setUint16(34, 16, true);
+view.setUint32(40, 4, true); wav.set([1, 2, 3, 4], 44);
+const joined = helpers.joinVoiceWavs([wav, wav]);
+assert.equal(joined.length, 52);
+assert.equal(new DataView(joined.buffer).getUint32(40, true), 8);
+assert.deepEqual([...joined.slice(44)], [1, 2, 3, 4, 1, 2, 3, 4]);
 console.log("PASS: speech text excludes unsupported punctuation, emoji, markup and Latin remnants");
+console.log("PASS: long phonemes split safely and WAV chunks join without losing samples");
