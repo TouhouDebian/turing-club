@@ -1067,7 +1067,20 @@ const voiceData = Object.fromEntries(
 		let synthResources;
 		let synthInstance;
 		let synthVoice;
+		let synthEnglish;
+		let synthConverter;
 		let synthQueue = Promise.resolve();
+		const loadEnglishConverter = () => synthConverter ??= window.yukkuri.createK2K(`${yukkuriBase}small_dic.zip`).catch((error) => {
+			synthConverter = null;
+			throw error;
+		});
+		const letterReadings = ["エー", "ビー", "シー", "ディー", "イー", "エフ", "ジー", "エイチ", "アイ", "ジェー", "ケー", "エル", "エム", "エヌ", "オー", "ピー", "キュー", "アール", "エス", "ティー", "ユー", "ブイ", "ダブリュー", "エックス", "ワイ", "ゼット"];
+		const safeKana = (text) => String(text)
+			.replace(/[a-z]/gi, (letter) => letterReadings[letter.toLowerCase().charCodeAt(0) - 97])
+			.replace(/[0-9]/g, (digit) => ["ゼロ", "イチ", "ニ", "サン", "ヨン", "ゴ", "ロク", "ナナ", "ハチ", "キュー"][Number(digit)])
+			.replace(/ヴ/g, "ブ")
+			.replace(/[^\u3041-\u3096\u30a1-\u30faー]/gu, "、")
+			.replace(/、+/g, "、").replace(/^、|、$/g, "");
 		const loadSynthResources = () => synthResources ??= (async () => {
 			await new Promise((resolve, reject) => {
 				if (window.yukkuri) return resolve();
@@ -1086,17 +1099,25 @@ const voiceData = Object.fromEntries(
 				if (generation !== voiceGeneration) return null;
 				const map = await loadSynthResources();
 				if (generation !== voiceGeneration) return null;
-				if (synthVoice !== voice) {
+				const english = getCurrentLanguage() === "en" || /[a-z]/i.test(text);
+				const converter = english ? await loadEnglishConverter() : null;
+				if (generation !== voiceGeneration) return null;
+				if (synthVoice !== voice || synthEnglish !== english) {
 					await synthInstance?.destroy();
 					synthInstance = null;
 					synthVoice = null;
 					synthInstance = await window.yukkuri.load(`${yukkuriBase}voices/${voice}.zip`, `${voice}/AquesTalk.dll`, {
 						wasmPath: `${yukkuriBase}voices/v86.wasm`, map,
+						k2k: { toKana: (value) => safeKana(converter ? converter.toKana(value) : value) },
 					});
 					synthVoice = voice;
+					synthEnglish = english;
 				}
 				if (generation !== voiceGeneration) return null;
-				const spoken = text.replace(/https?:\/\/\S+/g, "链接").replace(/[`*_#☆♪～]/g, "").slice(0, 240);
+				const spoken = text.normalize("NFKC")
+					.replace(/https?:\/\/\S+/g, english ? "link" : "链接")
+					.replace(/[`*_#☆♪～]/g, "").slice(0, 240);
+				if (!synthInstance.koe(spoken)) return null;
 				return synthInstance.run(spoken, 100);
 			});
 			synthQueue = job;
@@ -1108,6 +1129,7 @@ const voiceData = Object.fromEntries(
 		const stopVoice = () => {
 			voiceGeneration++;
 			voiceAudio.onended = null;
+			voiceAudio.onerror = null;
 			voiceAudio.onloadedmetadata = null;
 			voiceAudio.pause();
 			voiceAudio.removeAttribute("src");
@@ -1145,8 +1167,15 @@ const voiceData = Object.fromEntries(
 				voiceMouth = 0;
 				speechProfileUntil = performance.now();
 			};
-			void voiceAudio.play().catch(() => {
-				if (generation === voiceGeneration) stopVoice();
+			voiceAudio.onerror = () => {
+				if (generation === voiceGeneration) console.warn("Yukkuri audio playback failed", voiceAudio.error);
+			};
+			void voiceContext?.resume().catch(() => {});
+			void voiceAudio.play().catch((error) => {
+				if (generation === voiceGeneration) {
+					console.warn("Yukkuri playback blocked", error);
+					stopVoice();
+				}
 			});
 		};
 		voiceToggle?.addEventListener("click", () => {

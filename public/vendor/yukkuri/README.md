@@ -3,8 +3,9 @@
 Source: https://github.com/Love-Kogasa/zh-yukkuri-offline
 Revision: a42d4dd7e732807962b1d284345f25ba5e4e68c9
 
-Only the bundled browser synthesizer, pronunciation map, v86 runtime and f1/f2
-voice packages are included. Synthesis runs on the visitor's device; text is not
+The bundled browser synthesizer, pronunciation map, v86 runtime, f1/f2
+voice packages and small_dic.zip for the upstream BakaK2K English beta are included.
+Synthesis runs on the visitor's device; text is not
 sent to an external TTS service. The synthesizer is loaded only when an
 unrecorded line needs speech and the visitor has enabled audio.
 
@@ -18,4 +19,7 @@ before reusing its original code beyond this integration.
 Reimu and other characters use f1; Marisa (including Event) uses f2.
 Fixed prerecorded lines remain the fast path. Dynamic text is limited to 240
 characters for speech; the complete reply remains visible in chat. English
-pronunciation is experimental with the upstream default converter.
+pronunciation uses the upstream offline BakaK2K beta dictionary, loaded only
+for English mode or mixed Latin text. Pronunciation remains experimental and
+is Japanese-accented, not a native English TTS voice. Unsupported punctuation,
+emoji and markup are normalized for speech without changing displayed replies.
