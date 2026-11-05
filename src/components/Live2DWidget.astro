@@ -599,6 +599,7 @@ const voiceData = Object.fromEntries(
 		live2dMessages,
 		modelData,
 		voiceData,
+		yukkuriBase: url("/vendor/yukkuri/"),
 	}}
 >
 	(() => {
@@ -1062,6 +1063,45 @@ const voiceData = Object.fromEntries(
 		let voiceSamples;
 		let voiceMouth = 0;
 		let voiceGeneration = 0;
+		let voiceBlobUrl;
+		let synthResources;
+		let synthInstance;
+		let synthVoice;
+		let synthQueue = Promise.resolve();
+		const loadSynthResources = () => synthResources ??= (async () => {
+			await new Promise((resolve, reject) => {
+				if (window.yukkuri) return resolve();
+				const script = document.createElement("script");
+				script.src = `${yukkuriBase}yukkuri-zh.dist.js`;
+				script.onload = resolve;
+				script.onerror = reject;
+				document.head.appendChild(script);
+			});
+			const response = await fetch(`${yukkuriBase}converter.tsv`);
+			if (!response.ok) throw new Error("Cannot load Yukkuri pronunciation map");
+			return response.text();
+		})().catch((error) => { synthResources = null; throw error; });
+		const synthesizeVoice = (text, voice, generation) => {
+			const job = synthQueue.catch(() => {}).then(async () => {
+				if (generation !== voiceGeneration) return null;
+				const map = await loadSynthResources();
+				if (generation !== voiceGeneration) return null;
+				if (synthVoice !== voice) {
+					await synthInstance?.destroy();
+					synthInstance = null;
+					synthVoice = null;
+					synthInstance = await window.yukkuri.load(`${yukkuriBase}voices/${voice}.zip`, `${voice}/AquesTalk.dll`, {
+						wasmPath: `${yukkuriBase}voices/v86.wasm`, map,
+					});
+					synthVoice = voice;
+				}
+				if (generation !== voiceGeneration) return null;
+				const spoken = text.replace(/https?:\/\/\S+/g, "链接").replace(/[`*_#☆♪～]/g, "").slice(0, 240);
+				return synthInstance.run(spoken, 100);
+			});
+			synthQueue = job;
+			return job;
+		};
 		const voiceAudio = new Audio();
 		voiceAudio.preload = "none";
 		voiceAudio.volume = 0.65;
@@ -1072,14 +1112,26 @@ const voiceData = Object.fromEntries(
 			voiceAudio.pause();
 			voiceAudio.removeAttribute("src");
 			voiceAudio.load();
+			if (voiceBlobUrl) URL.revokeObjectURL(voiceBlobUrl);
+			voiceBlobUrl = null;
 			voiceMouth = 0;
 		};
-		const playVoice = (text) => {
+		const playVoice = async (text) => {
 			if (!voiceEnabled || document.hidden) return;
 			const voice = currentModelId.replace(/-event$/, "") === "marisa" ? "f2" : "f1";
-			const src = voiceData[text]?.[voice];
-			if (!src) return; // Unrecorded AI replies remain text-only, never play unrelated speech.
 			const generation = voiceGeneration;
+			let src = voiceData[text]?.[voice];
+			if (!src) {
+				try {
+					const wav = await synthesizeVoice(text, voice, generation);
+					if (!wav || generation !== voiceGeneration || !voiceEnabled || document.hidden) return;
+					voiceBlobUrl = URL.createObjectURL(new Blob([wav], { type: "audio/wav" }));
+					src = voiceBlobUrl;
+				} catch (error) {
+					console.warn("Yukkuri speech unavailable; keeping text reply", error);
+					return;
+				}
+			}
 			voiceAudio.src = src;
 			voiceAudio.onloadedmetadata = () => {
 				if (generation !== voiceGeneration) return;

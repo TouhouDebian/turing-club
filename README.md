@@ -16,7 +16,7 @@ The source code and articles for [天一中学图灵社 / Turing Club](https://t
 - Light / dark themes, separate light-mode banner, configurable accent color, responsive layout, and smooth page transitions.
 - [Pagefind](https://pagefind.app/) search, article outlines, image viewing, syntax-highlighted code blocks, math, RSS, and sitemap generation.
 - [Giscus](https://giscus.app/) comments backed by GitHub Discussions, synchronized with the site theme; GitHub sign-in is required to post.
-- Desktop Touhou Live2D widget, defaulting to Flandre, with character selection, mouse tracking, and optional prerecorded Yukkuri voice lines. Voice starts muted; arbitrary AI replies are not read aloud.
+- Desktop Touhou Live2D widget, defaulting to Flandre, with character selection, mouse tracking, and optional Yukkuri speech. Voice starts muted; fixed lines use recordings and AI replies use lazy-loaded browser-local synthesis (up to 240 characters per reply). Marisa uses f2; other characters use f1.
 - School-related links, external school links, an About page, and a guestbook.
 
 The AI chat endpoint in `functions/api/live2d-chat.js` is a separate Cloudflare Pages Function. A static Astro build or GitHub Pages deployment alone does **not** run that endpoint. Its server environment needs `DEEPSEEK_API_KEY` (and optionally `DEEPSEEK_MODEL`); never put keys in Markdown, public assets, or client-side code.

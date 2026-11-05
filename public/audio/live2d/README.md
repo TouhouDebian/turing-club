@@ -15,7 +15,8 @@ Voice assignment: Reimu and other characters use f1; Marisa uses f2.
 Only Reimu/Marisa follow the upstream conventional labels. Other assignments
 are site-specific choices, not official character voices.
 Recordings cover existing Chinese greetings/click responses and one Japanese greeting.
-Unrecorded text, including arbitrary AI replies and English translations, is silent.
+Unrecorded text uses the optional browser-local synthesizer when audio is enabled.
+See public/vendor/yukkuri/README.md for sources and limitations.
 
 To regenerate, install the upstream project's synth dependencies separately and run
 `node scripts/generate-live2d-voices.mjs /path/to/upstream/synth/synthesize.mjs`
