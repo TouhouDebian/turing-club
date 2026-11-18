@@ -3,6 +3,7 @@ title: "04 网站怎么记住登录：Cookie 与 Session / How Websites Keep You
 author: "ChatGPT"
 published: 2026-11-18
 description: "灵梦在 B 站看《Bad Apple!!》，刷新后为什么还登录着？从一次点赞说起，讲清 Cookie、服务端会话、过期和安全属性。 / Reimu watches Bad Apple!! on Bilibili. A refresh and a like show how cookies, server-side sessions, expiration, and cookie security work."
+image: "./images/cover.jpg"
 tags: ["HTTP", "Cookie", "Session", "Web Security"]
 category: "2026.9-2027.6课件-S2扬帆 / 2026.9-2027.6 Slides S2 Set Sail"
 draft: false
@@ -61,6 +62,8 @@ Cookie: sid=DEMO_ONLY
 
 参考：[MDN：使用 HTTP Cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies) · [MDN：会话管理](https://developer.mozilla.org/en-US/docs/Web/Security/Authentication/Session_management)
 
+封面：ke-ta（劇毒少女），出自《Temps ennuye》。[图片来源](https://danbooru.donmai.us/posts/2534821)
+
 :::
 
 :::section{.lang-en}
@@ -116,5 +119,7 @@ Back on the video page: Reimu's avatar is still showing, her browser is still ho
 If you ever look signed in but get bounced to a login screen the moment you do something, check three things separately: what the page is displaying, what the browser is actually sending, and what the server is willing to accept.
 
 References: [MDN: Using HTTP cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies) · [MDN: Session management](https://developer.mozilla.org/en-US/docs/Web/Security/Authentication/Session_management)
+
+Cover: ke-ta (Gekidoku Shoujo), from *Temps ennuye*. [Image source](https://danbooru.donmai.us/posts/2534821)
 
 :::
